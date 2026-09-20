@@ -83,3 +83,6 @@ day30_rebuild_assessment/
 !.env.example
 !.env.sample
 !.env.template
+
+# Windows download metadata
+*:Zone.Identifier
