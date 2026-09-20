@@ -3239,6 +3239,16 @@ No single test count replaces complete lifecycle and runtime validation.
 
 ---
 
+## 36. Dashboard Singleton Admission
+
+The dashboard launch admits one active AMR platform per Linux user. It holds
+an exclusive kernel lock at ~/.ros/cpp_robotics_sim/web_interface.lock.
+Duplicate launches are rejected before stale-process cleanup begins. The
+kernel releases flock ownership if the owning process dies, while the PID
+stored in the lock file is informational and is not authoritative ownership.
+The current stale-process cleanup still uses legacy pattern-based matching;
+its ownership limitations are deferred to the process-registry work.
+
 <!-- RELEASE_MEDIA_START -->
 ## Release Media
 

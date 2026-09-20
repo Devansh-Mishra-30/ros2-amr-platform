@@ -171,6 +171,12 @@ if(BUILD_TESTING)
     TIMEOUT 30
   )
 
+  ament_add_pytest_test(
+    test_web_interface_admission
+    test/test_web_interface_admission.py
+    TIMEOUT 30
+  )
+
   # ---------------------------------------------------------------------------
   # C++ unit tests
   # ---------------------------------------------------------------------------

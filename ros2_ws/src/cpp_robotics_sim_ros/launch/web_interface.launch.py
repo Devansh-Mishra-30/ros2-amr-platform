@@ -222,6 +222,16 @@ def cleanup_stale_project_processes() -> None:
         )
 
 
+def get_single_instance_lock_path() -> Path:
+    """Return the per-user lock path for the dashboard runtime."""
+    return (
+        Path.home()
+        / '.ros'
+        / 'cpp_robotics_sim'
+        / 'web_interface.lock'
+    )
+
+
 def acquire_single_instance_lock() -> None:
     """
     Prevent multiple web-interface launch instances.
@@ -230,40 +240,50 @@ def acquire_single_instance_lock() -> None:
     """
     global _LOCK_FILE_HANDLE
 
-    lock_path = (
-        Path.home()
-        / '.ros'
-        / 'cpp_robotics_sim'
-        / 'web_interface.lock'
-    )
+    lock_path = get_single_instance_lock_path()
 
     lock_path.parent.mkdir(
         parents=True,
         exist_ok=True,
     )
-
-    lock_file = lock_path.open(
-        'w',
-        encoding='utf-8',
-    )
+    lock_file = lock_path.open('a+', encoding='utf-8')
+    ownership_acquired = False
+    ownership_transferred = False
 
     try:
-        fcntl.flock(
-            lock_file.fileno(),
-            fcntl.LOCK_EX | fcntl.LOCK_NB,
-        )
-    except BlockingIOError as error:
+        try:
+            fcntl.flock(
+                lock_file.fileno(),
+                fcntl.LOCK_EX | fcntl.LOCK_NB,
+            )
+        except BlockingIOError as error:
+            raise RuntimeError(
+                'Another robotics dashboard instance is already '
+                'running. Stop it before launching another copy.'
+            ) from error
+
+        ownership_acquired = True
+        lock_file.seek(0)
+        lock_file.truncate()
+        lock_file.write(str(os.getpid()))
+        lock_file.flush()
+
+        _LOCK_FILE_HANDLE = lock_file
+        ownership_transferred = True
+    finally:
+        if ownership_transferred:
+            return
+
+        if ownership_acquired:
+            try:
+                fcntl.flock(
+                    lock_file.fileno(),
+                    fcntl.LOCK_UN,
+                )
+            except OSError:
+                pass
+
         lock_file.close()
-
-        raise RuntimeError(
-            'Another robotics dashboard instance is already '
-            'running. Stop it before launching another copy.'
-        ) from error
-
-    lock_file.write(str(os.getpid()))
-    lock_file.flush()
-
-    _LOCK_FILE_HANDLE = lock_file
 
 
 def release_single_instance_lock() -> None:
@@ -280,6 +300,17 @@ def release_single_instance_lock() -> None:
     finally:
         _LOCK_FILE_HANDLE.close()
         _LOCK_FILE_HANDLE = None
+
+
+def prepare_runtime_admission() -> None:
+    """Acquire runtime ownership before recovering stale processes."""
+    acquire_single_instance_lock()
+
+    try:
+        cleanup_stale_project_processes()
+    except Exception:
+        release_single_instance_lock()
+        raise
 
 
 def validate_workspace(
@@ -363,14 +394,7 @@ def create_browser_action(
     )
 
 
-def generate_launch_description():
-    cleanup_stale_project_processes()
-    acquire_single_instance_lock()
-
-    atexit.register(
-        release_single_instance_lock
-    )
-
+def _build_launch_description():
     websocket_port = LaunchConfiguration(
         'websocket_port'
     )
@@ -607,3 +631,15 @@ def generate_launch_description():
             browser_action,
         ]
     )
+
+
+def generate_launch_description():
+    """Acquire runtime ownership and build the launch description safely."""
+    prepare_runtime_admission()
+
+    try:
+        atexit.register(release_single_instance_lock)
+        return _build_launch_description()
+    except Exception:
+        release_single_instance_lock()
+        raise
