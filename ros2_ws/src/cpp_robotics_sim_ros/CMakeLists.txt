@@ -66,6 +66,11 @@ install(
   DESTINATION lib/${PROJECT_NAME}
 )
 
+install(
+  PROGRAMS
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 # -----------------------------------------------------------------------------
 # Install public headers
 # -----------------------------------------------------------------------------
@@ -111,6 +116,7 @@ install(
     scripts/localization_manager_node.py
     scripts/mapping_manager_node.py
     scripts/navigation_goal_manager_node.py
+    scripts/process_registry.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -128,6 +134,12 @@ if(BUILD_TESTING)
   # ---------------------------------------------------------------------------
   # Python unit tests
   # ---------------------------------------------------------------------------
+
+  ament_add_pytest_test(
+    test_process_registry
+    test/test_process_registry.py
+    TIMEOUT 60
+  )
 
   ament_add_pytest_test(
     test_navigation_goal_validation
