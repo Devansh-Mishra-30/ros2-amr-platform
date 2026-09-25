@@ -8,8 +8,10 @@
 
 import json
 import math
+import os
 from pathlib import Path
 import re
+import sys
 from typing import Optional
 
 from geometry_msgs.msg import PoseWithCovarianceStamped
@@ -23,6 +25,12 @@ from rclpy.qos import (
     ReliabilityPolicy,
 )
 from std_msgs.msg import String
+
+SCRIPT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+if SCRIPT_DIRECTORY not in sys.path:
+    sys.path.insert(0, SCRIPT_DIRECTORY)
+
+from lifecycle_ros_adapter import bind_lifecycle  # noqa: E402,I100
 
 
 class LocalizationManagerNode(Node):
@@ -163,6 +171,8 @@ class LocalizationManagerNode(Node):
         self.selected_environment = ''
         self.mode_state = 'stopped'
         self.simulation_state = 'stopped'
+        self.lifecycle_accepting = False
+        self.lifecycle_component = bind_lifecycle(self, 'localization', self)
 
         self.publish_status(
             status='ready',
@@ -342,6 +352,16 @@ class LocalizationManagerNode(Node):
         self,
         message: String,
     ) -> None:
+        if not getattr(self, 'lifecycle_accepting', True):
+            self.publish_status(
+                status='error',
+                message=(
+                    'Localization lifecycle is not ACTIVE '
+                    f'(state={self.lifecycle_component.state.value})'
+                ),
+            )
+            return
+
         try:
             map_name, environment = (
                 self.parse_map_request(message.data)
@@ -465,6 +485,16 @@ class LocalizationManagerNode(Node):
         self,
         message: String,
     ) -> None:
+        if not getattr(self, 'lifecycle_accepting', True):
+            self.publish_status(
+                status='error',
+                message=(
+                    'Localization lifecycle is not ACTIVE '
+                    f'(state={self.lifecycle_component.state.value})'
+                ),
+            )
+            return
+
         if self.simulation_state != 'running':
             self.publish_status(
                 status='error',
@@ -612,6 +642,44 @@ class LocalizationManagerNode(Node):
         self.selected_map_publisher.publish(
             message
         )
+
+    def on_configure(self) -> None:
+        return None
+
+    def on_activate(self) -> None:
+        self.lifecycle_accepting = True
+
+    def on_deactivate(self) -> None:
+        self.lifecycle_accepting = False
+
+    def _clear_transient_localization_state(self) -> None:
+        self.lifecycle_accepting = False
+        self.selected_map_name = ''
+        self.selected_map_path = ''
+        self.selected_map_environment = ''
+        self.publish_selected_map()
+        self.publish_status(
+            status='ready',
+            message='Localization manager cleanup complete; no map selected',
+        )
+
+    def on_cleanup(self) -> None:
+        self._clear_transient_localization_state()
+
+    def on_shutdown(self) -> None:
+        self.lifecycle_accepting = False
+
+    def on_error(self) -> None:
+        self.lifecycle_accepting = False
+
+    def on_recover(self) -> bool:
+        self._clear_transient_localization_state()
+        return not self.selected_map_path
+
+    def on_rollback(self, transition, source_state) -> bool:
+        del transition, source_state
+        self.lifecycle_accepting = False
+        return True
 
     def publish_status(
         self,

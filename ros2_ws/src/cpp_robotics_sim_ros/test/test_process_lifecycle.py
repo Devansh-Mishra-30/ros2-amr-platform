@@ -21,6 +21,7 @@ sys.path.insert(0, str(SCRIPTS))
 import process_lifecycle as lifecycle  # noqa: E402,I100
 import process_registry as registry_module  # noqa: E402,I100
 from runtime_verification import (  # noqa: E402,I100
+    count_ros_nodes,
     find_duplicate_os_processes,
     find_duplicate_ros_nodes,
 )
@@ -201,9 +202,32 @@ def test_pid_start_time_and_pgid_mismatch_are_rejected():
 
 def test_ros_duplicates_are_exact_and_domain_snapshot_scoped():
     duplicates = find_duplicate_ros_nodes(
-        ['/mode_manager', '/mode_manager', '/unrelated', '/unrelated']
+        [
+            '/mode_manager', '/mode_manager',
+            '/scan_frame_bridge', '/scan_frame_bridge',
+            '/unrelated', '/unrelated',
+        ]
     )
-    assert duplicates == {'/mode_manager': 2}
+    assert duplicates == {
+        '/mode_manager': 2,
+        '/scan_frame_bridge': 2,
+    }
+
+
+def test_runtime_acceptance_manager_counts_are_independent_of_critical_duplicates():
+    node_names = [
+        '/simulation_manager', '/mapping_manager',
+        '/localization_manager', '/navigation_goal_manager',
+        '/scan_frame_bridge', '/scan_frame_bridge',
+    ]
+    counts = count_ros_nodes(node_names)
+    required_managers = (
+        '/simulation_manager', '/mapping_manager',
+        '/localization_manager', '/navigation_goal_manager',
+    )
+
+    assert all(counts.get(name, 0) == 1 for name in required_managers)
+    assert find_duplicate_ros_nodes(node_names) == {'/scan_frame_bridge': 2}
 
 
 def test_os_duplicates_use_exact_platform_entry_points():

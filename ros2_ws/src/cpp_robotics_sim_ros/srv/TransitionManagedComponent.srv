@@ -1,0 +1,8 @@
+string transition
+string orchestration_id
+---
+cpp_robotics_sim_ros/LifecycleTransitionEvent result
+cpp_robotics_sim_ros/LifecycleTransitionEvent[] component_results
+cpp_robotics_sim_ros/LifecycleTransitionEvent[] rollback_results
+cpp_robotics_sim_ros/LifecycleTransitionEvent[] rollback_failures
+string[] rollback_unavailable

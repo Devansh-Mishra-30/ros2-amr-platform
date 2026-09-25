@@ -23,6 +23,13 @@ endif()
 # -----------------------------------------------------------------------------
 
 find_package(ament_cmake REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/ManagedLifecycleState.msg"
+  "msg/LifecycleTransitionEvent.msg"
+  "srv/TransitionManagedComponent.srv"
+)
 
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -119,6 +126,11 @@ install(
     scripts/process_registry.py
     scripts/process_lifecycle.py
     scripts/runtime_verification.py
+    scripts/managed_component.py
+    scripts/platform_lifecycle_orchestrator.py
+    scripts/platform_lifecycle_orchestrator_node.py
+    scripts/lifecycle_ros_adapter.py
+    scripts/v012_lifecycle_acceptance.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -146,6 +158,30 @@ if(BUILD_TESTING)
   ament_add_pytest_test(
     test_process_lifecycle
     test/test_process_lifecycle.py
+    TIMEOUT 60
+  )
+
+  ament_add_pytest_test(
+    test_managed_component
+    test/test_managed_component.py
+    TIMEOUT 30
+  )
+
+  ament_add_pytest_test(
+    test_platform_lifecycle_orchestrator
+    test/test_platform_lifecycle_orchestrator.py
+    TIMEOUT 30
+  )
+
+  ament_add_pytest_test(
+    test_lifecycle_ros_interfaces
+    test/test_lifecycle_ros_interfaces.py
+    TIMEOUT 30
+  )
+
+  ament_add_pytest_test(
+    test_manager_lifecycle_integration
+    test/test_manager_lifecycle_integration.py
     TIMEOUT 60
   )
 

@@ -7,6 +7,8 @@
 
 import json
 import math
+import os
+import sys
 import threading
 from typing import Any, Optional
 
@@ -14,6 +16,7 @@ from action_msgs.msg import GoalStatus
 from nav2_msgs.action import NavigateToPose
 import rclpy
 from rclpy.action import ActionClient
+from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from rclpy.qos import (
@@ -23,6 +26,13 @@ from rclpy.qos import (
     ReliabilityPolicy,
 )
 from std_msgs.msg import String
+
+SCRIPT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+if SCRIPT_DIRECTORY not in sys.path:
+    sys.path.insert(0, SCRIPT_DIRECTORY)
+
+from lifecycle_ros_adapter import bind_lifecycle  # noqa: E402,I100
+from managed_component import LifecycleState  # noqa: E402,I100
 
 
 class NavigationGoalManagerNode(Node):
@@ -181,10 +191,12 @@ class NavigationGoalManagerNode(Node):
             )
         )
 
+        self.action_callback_group = ReentrantCallbackGroup()
         self.action_client = ActionClient(
             self,
             NavigateToPose,
             self.action_name,
+            callback_group=self.action_callback_group,
         )
 
         self.state_lock = threading.RLock()
@@ -194,6 +206,11 @@ class NavigationGoalManagerNode(Node):
 
         self.goal_request_in_progress = False
         self.active_goal_handle = None
+        self.goal_finished = threading.Event()
+        self.goal_finished.set()
+        self.cancel_response_event = threading.Event()
+        self.cancel_response_accepted = False
+        self.lifecycle_accepting = False
         self.cancel_requested = False
         self.shutdown_prepared = False
 
@@ -212,6 +229,8 @@ class NavigationGoalManagerNode(Node):
             state='idle',
             message='No navigation goal is active',
         )
+
+        self.lifecycle_component = bind_lifecycle(self, 'navigation', self)
 
         self.get_logger().info(
             'Navigation goal manager ready: '
@@ -366,6 +385,17 @@ class NavigationGoalManagerNode(Node):
         self,
         message: String,
     ) -> None:
+        if not getattr(self, 'lifecycle_accepting', True):
+            self.publish_status(
+                state='rejected',
+                message=(
+                    'Navigation lifecycle is not ACTIVE '
+                    f'(state={self.lifecycle_component.state.value})'
+                ),
+                result='rejected',
+            )
+            return
+
         goal, validation_error = (
             self.parse_goal_request(message.data)
         )
@@ -419,6 +449,7 @@ class NavigationGoalManagerNode(Node):
                 return
 
             self.goal_request_in_progress = True
+            self.goal_finished.clear()
             self.cancel_requested = False
 
             self.request_sequence += 1
@@ -923,6 +954,9 @@ class NavigationGoalManagerNode(Node):
             with self.state_lock:
                 if self.current_request_id == request_id:
                     self.cancel_requested = False
+                self.cancel_response_accepted = False
+                if hasattr(self, 'cancel_response_event'):
+                    self.cancel_response_event.set()
 
             self.publish_status(
                 state='aborted',
@@ -945,6 +979,9 @@ class NavigationGoalManagerNode(Node):
     ) -> None:
         with self.state_lock:
             if self.current_request_id != request_id:
+                self.cancel_response_accepted = False
+                if hasattr(self, 'cancel_response_event'):
+                    self.cancel_response_event.set()
                 return
 
             goal = self.current_goal
@@ -954,9 +991,15 @@ class NavigationGoalManagerNode(Node):
         except Exception as error:
             with self.state_lock:
                 if self.current_request_id != request_id:
+                    self.cancel_response_accepted = False
+                    if hasattr(self, 'cancel_response_event'):
+                        self.cancel_response_event.set()
                     return
 
                 self.cancel_requested = False
+                self.cancel_response_accepted = False
+                if hasattr(self, 'cancel_response_event'):
+                    self.cancel_response_event.set()
 
             self.publish_status(
                 state='aborted',
@@ -982,6 +1025,10 @@ class NavigationGoalManagerNode(Node):
                 return
 
         if goals_canceling:
+            with self.state_lock:
+                self.cancel_response_accepted = True
+                if hasattr(self, 'cancel_response_event'):
+                    self.cancel_response_event.set()
             self.publish_status(
                 state='canceling',
                 message=(
@@ -995,6 +1042,9 @@ class NavigationGoalManagerNode(Node):
                     return
 
                 self.cancel_requested = False
+                self.cancel_response_accepted = False
+                if hasattr(self, 'cancel_response_event'):
+                    self.cancel_response_event.set()
 
             self.publish_status(
                 state='rejected',
@@ -1158,6 +1208,9 @@ class NavigationGoalManagerNode(Node):
         self.current_request_id = None
         self.current_goal = None
         self.last_feedback = {}
+        completion = getattr(self, 'goal_finished', None)
+        if completion is not None:
+            completion.set()
 
     def publish_status(
         self,
@@ -1222,40 +1275,109 @@ class NavigationGoalManagerNode(Node):
             )
 
     def prepare_shutdown(self) -> None:
-        with self.state_lock:
-            if self.shutdown_prepared:
-                return
-
-            self.shutdown_prepared = True
-            goal_handle = self.active_goal_handle
-
-        if goal_handle is None:
+        if self.shutdown_prepared:
             return
-
-        try:
-            goal_handle.cancel_goal_async()
-            self.get_logger().info(
-                'Requested active navigation goal '
-                'cancellation during shutdown'
-            )
-        except Exception:
-            self.get_logger().exception(
-                'Unable to cancel navigation goal '
-                'during shutdown'
-            )
-        finally:
+        if (
+            hasattr(self, 'lifecycle_component')
+            and self.lifecycle_component.state == LifecycleState.FINALIZED
+        ):
+            self.shutdown_prepared = True
+            return
+        self.shutdown_prepared = True
+        if not hasattr(self, 'lifecycle_component'):
+            # Preserve the historical helper behavior for focused domain
+            # fixtures constructed without the ROS lifecycle adapter.
+            with self.state_lock:
+                goal_handle = self.active_goal_handle
+            if goal_handle is not None:
+                try:
+                    goal_handle.cancel_goal_async()
+                    self.get_logger().info(
+                        'Requested active navigation goal cancellation during shutdown'
+                    )
+                except Exception:
+                    self.get_logger().exception(
+                        'Unable to cancel navigation goal during shutdown'
+                    )
             with self.state_lock:
                 self.reset_goal_state_locked()
+            return
+        result = self.lifecycle_component.transition('shutdown')
+        if hasattr(self, 'publish_lifecycle_result'):
+            self.publish_lifecycle_result(result)
+        if not result.success:
+            self.get_logger().error(
+                f'Navigation lifecycle shutdown failed: {result.reason}'
+            )
+
+    def lifecycle_accepts_operations(self) -> bool:
+        return (
+            not hasattr(self, 'lifecycle_component')
+            or (
+                self.lifecycle_component.state == LifecycleState.ACTIVE
+                and self.lifecycle_accepting
+            )
+        )
+
+    def on_configure(self) -> None:
+        return None
+
+    def on_activate(self) -> None:
+        self.lifecycle_accepting = True
+
+    def on_deactivate(self) -> None:
+        self.lifecycle_accepting = False
+        self._cancel_and_wait_for_goal()
+
+    def _cancel_and_wait_for_goal(self) -> None:
+        if not self.goal_is_active():
+            return
+        self.cancel_response_accepted = False
+        self.cancel_response_event.clear()
+        self.request_cancel('Lifecycle deactivation; canceling active goal')
+        if not self.cancel_response_event.wait(timeout=5.0):
+            if self.goal_finished.is_set() and not self.goal_is_active():
+                return
+            raise TimeoutError('Nav2 cancellation response was not received')
+        if not self.cancel_response_accepted:
+            raise RuntimeError('Nav2 did not accept active-goal cancellation')
+        if not self.goal_finished.wait(timeout=10.0):
+            raise TimeoutError('active navigation goal did not reach a terminal state')
+
+    def on_cleanup(self) -> None:
+        self._cancel_and_wait_for_goal()
+
+    def on_shutdown(self) -> None:
+        self.lifecycle_accepting = False
+        self._cancel_and_wait_for_goal()
+
+    def on_error(self) -> None:
+        self.lifecycle_accepting = False
+        self._cancel_and_wait_for_goal()
+
+    def on_recover(self) -> bool:
+        self._cancel_and_wait_for_goal()
+        return not self.goal_is_active()
+
+    def on_rollback(self, transition, source_state) -> bool:
+        del transition, source_state
+        self.lifecycle_accepting = False
+        self._cancel_and_wait_for_goal()
+        return not self.goal_is_active()
 
 
 def main(args=None) -> None:
     rclpy.init(args=args)
 
     node: Optional[NavigationGoalManagerNode] = None
+    executor = None
 
     try:
+        from rclpy.executors import MultiThreadedExecutor
         node = NavigationGoalManagerNode()
-        rclpy.spin(node)
+        executor = MultiThreadedExecutor(num_threads=3)
+        executor.add_node(node)
+        executor.spin()
 
     except (
         KeyboardInterrupt,
@@ -1267,6 +1389,9 @@ def main(args=None) -> None:
         if node is not None:
             node.prepare_shutdown()
             node.destroy_node()
+
+        if executor is not None:
+            executor.shutdown()
 
         if rclpy.ok():
             rclpy.shutdown()

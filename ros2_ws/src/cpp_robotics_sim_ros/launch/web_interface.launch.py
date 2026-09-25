@@ -28,6 +28,7 @@ from launch.substitutions import (
     PythonExpression,
 )
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 
 
 _LOCK_FILE_HANDLE = None
@@ -267,6 +268,9 @@ def _build_launch_description():
     open_browser = LaunchConfiguration(
         'open_browser'
     )
+    mode_startup_grace_period = LaunchConfiguration(
+        'mode_startup_grace_period'
+    )
 
     package_share = Path(
         get_package_share_directory(
@@ -360,6 +364,9 @@ def _build_launch_description():
             str(mode_manager_config),
             {
                 'use_sim_time': False,
+                'startup_grace_period': ParameterValue(
+                    mode_startup_grace_period, value_type=float,
+                ),
             },
         ],
     )
@@ -403,6 +410,14 @@ def _build_launch_description():
                 'server_wait_timeout': 2.0,
             },
         ],
+    )
+
+    platform_lifecycle_orchestrator = Node(
+        package=PROJECT_PACKAGE,
+        executable='platform_lifecycle_orchestrator_node.py',
+        name='platform_lifecycle_orchestrator',
+        output='screen',
+        parameters=[{'use_sim_time': False}],
     )
 
     rosbridge_websocket = Node(
@@ -467,6 +482,13 @@ def _build_launch_description():
                     'in the default browser'
                 ),
             ),
+            DeclareLaunchArgument(
+                'mode_startup_grace_period',
+                default_value='3.0',
+                description=(
+                    'Mode launch identity-capture grace period in seconds'
+                ),
+            ),
             LogInfo(
                 msg=(
                     'Dashboard safety preflight passed.'
@@ -489,6 +511,7 @@ def _build_launch_description():
             mapping_manager,
             localization_manager,
             navigation_goal_manager,
+            platform_lifecycle_orchestrator,
             rosbridge_websocket,
             dashboard_server,
             browser_action,

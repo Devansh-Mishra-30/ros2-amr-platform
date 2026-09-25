@@ -607,6 +607,9 @@ def test_save_map_runs_expected_command_and_reports_success(
         '0.25',
         '--occ',
         '0.65',
+        '--ros-args',
+        '-p',
+        'save_map_timeout:=5.0',
     ]
 
     assert call['capture_output'] is True

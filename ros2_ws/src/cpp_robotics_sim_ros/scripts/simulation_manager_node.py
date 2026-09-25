@@ -30,7 +30,6 @@ from rclpy.qos import (
 from std_msgs.msg import Bool
 from std_msgs.msg import String
 from std_srvs.srv import Trigger
-
 SCRIPT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 if SCRIPT_DIRECTORY not in sys.path:
     sys.path.insert(0, SCRIPT_DIRECTORY)
@@ -44,6 +43,8 @@ from process_lifecycle import (  # noqa: E402,I100,I101
     terminate_owned_process,
 )
 from process_registry import ProcessRecord, ProcessRegistry  # noqa: E402,I100
+from lifecycle_ros_adapter import bind_lifecycle  # noqa: E402,I100
+from managed_component import LifecycleState, LifecycleTransition  # noqa: E402,I100
 
 
 class SimulationState(str, Enum):
@@ -236,6 +237,7 @@ class SimulationManagerNode(Node):
         )
 
         self.set_state(SimulationState.STOPPED)
+        self.lifecycle_component = bind_lifecycle(self, 'simulation', self)
         self.publish_environment_status(
             state='ready',
             message=(
@@ -481,6 +483,11 @@ class SimulationManagerNode(Node):
     ) -> Trigger.Response:
         del request
 
+        if not self.lifecycle_accepts_operations():
+            response.success = False
+            response.message = self.lifecycle_rejection_reason()
+            return response
+
         success, message = self.start_simulation()
         response.success = success
         response.message = message
@@ -493,6 +500,11 @@ class SimulationManagerNode(Node):
     ) -> Trigger.Response:
         del request
 
+        if not self.lifecycle_accepts_operations():
+            response.success = False
+            response.message = self.lifecycle_rejection_reason()
+            return response
+
         success, message = self.stop_simulation()
         response.success = success
         response.message = message
@@ -504,6 +516,11 @@ class SimulationManagerNode(Node):
         response: Trigger.Response,
     ) -> Trigger.Response:
         del request
+
+        if not self.lifecycle_accepts_operations():
+            response.success = False
+            response.message = self.lifecycle_rejection_reason()
+            return response
 
         self.get_logger().info(
             'Simulation reset requested'
@@ -667,6 +684,64 @@ class SimulationManagerNode(Node):
             )
             self.get_logger().info(message)
             return True, message
+
+    def lifecycle_accepts_operations(self) -> bool:
+        return (
+            not hasattr(self, 'lifecycle_component')
+            or (
+                self.lifecycle_component.state == LifecycleState.ACTIVE
+                and not self.stop_in_progress
+            )
+        )
+
+    def lifecycle_rejection_reason(self) -> str:
+        return (
+            'Simulation lifecycle is not ACTIVE '
+            f'(state={self.lifecycle_component.state.value})'
+        )
+
+    def on_configure(self) -> None:
+        return None
+
+    def on_activate(self) -> None:
+        return None
+
+    def on_deactivate(self) -> None:
+        success, reason = self.stop_simulation()
+        if not success:
+            raise RuntimeError(f'simulation cleanup failed: {reason}')
+
+    def on_cleanup(self) -> None:
+        success, reason = self.stop_simulation()
+        if not success:
+            raise RuntimeError(f'simulation cleanup failed: {reason}')
+
+    def on_shutdown(self) -> None:
+        success, reason = self.stop_simulation()
+        if not success:
+            raise RuntimeError(f'simulation shutdown cleanup failed: {reason}')
+
+    def on_error(self) -> None:
+        success, reason = self.stop_simulation()
+        if not success:
+            raise RuntimeError(f'simulation error cleanup failed: {reason}')
+
+    def on_recover(self) -> bool:
+        success, reason = self.stop_simulation()
+        if not success:
+            raise RuntimeError(f'simulation recovery cleanup failed: {reason}')
+        return (
+            self.process_record is None
+            and not any(
+                record.component == 'simulation_launch'
+                for record in self.process_registry.list_records()
+            )
+        )
+
+    def on_rollback(self, transition, source_state) -> bool:
+        del transition, source_state
+        success, _reason = self.stop_simulation()
+        return success
 
     def stop_simulation(self) -> tuple[bool, str]:
         with self.process_lock:
@@ -1046,6 +1121,13 @@ class SimulationManagerNode(Node):
         if self.shutdown_prepared:
             return
 
+        if (
+            hasattr(self, 'lifecycle_component')
+            and self.lifecycle_component.state == LifecycleState.FINALIZED
+        ):
+            self.shutdown_prepared = True
+            return
+
         self.shutdown_prepared = True
 
         if rclpy.ok(context=self.context):
@@ -1053,7 +1135,16 @@ class SimulationManagerNode(Node):
                 'Simulation manager shutting down'
             )
 
-        success, message = self.stop_simulation()
+        if hasattr(self, 'lifecycle_component'):
+            result = self.lifecycle_component.transition(
+                LifecycleTransition.SHUTDOWN
+            )
+            success, message = result.success, result.reason
+        else:
+            success, message = self.stop_simulation()
+
+        if hasattr(self, 'publish_lifecycle_result'):
+            self.publish_lifecycle_result(result)
 
         if (
             not success

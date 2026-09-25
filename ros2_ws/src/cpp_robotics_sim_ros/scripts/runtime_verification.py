@@ -54,12 +54,17 @@ def find_duplicate_ros_nodes(
     critical_nodes: frozenset[str] = CRITICAL_ROS_NODES,
 ) -> dict[str, int]:
     """Count exact-name duplicates in one ROS domain's graph snapshot."""
-    counts = Counter(name.strip() for name in node_names if name.strip())
+    counts = count_ros_nodes(node_names)
     return {
         name: count
         for name, count in sorted(counts.items())
         if name in critical_nodes and count > 1
     }
+
+
+def count_ros_nodes(node_names: Iterable[str]) -> dict[str, int]:
+    """Count exact fully-qualified ROS node names in a graph snapshot."""
+    return dict(Counter(name.strip() for name in node_names if name.strip()))
 
 
 def classify_critical_os_process(arguments: Sequence[str]) -> str | None:

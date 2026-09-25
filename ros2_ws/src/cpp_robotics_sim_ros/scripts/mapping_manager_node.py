@@ -8,9 +8,11 @@
 
 import json
 import math
+import os
 from pathlib import Path
 import re
 import subprocess
+import sys
 import threading
 from typing import Optional
 
@@ -24,6 +26,12 @@ from rclpy.qos import (
     ReliabilityPolicy,
 )
 from std_msgs.msg import String
+
+SCRIPT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+if SCRIPT_DIRECTORY not in sys.path:
+    sys.path.insert(0, SCRIPT_DIRECTORY)
+
+from lifecycle_ros_adapter import bind_lifecycle  # noqa: E402,I100
 
 
 class MappingManagerNode(Node):
@@ -132,6 +140,10 @@ class MappingManagerNode(Node):
         self.selected_environment = ''
         self.save_in_progress = False
         self.save_lock = threading.Lock()
+        self.save_completed = threading.Event()
+        self.save_completed.set()
+        self.lifecycle_accepting = False
+        self.lifecycle_component = bind_lifecycle(self, 'mapping', self)
 
         self.publish_status(
             status='ready',
@@ -235,7 +247,23 @@ class MappingManagerNode(Node):
     ) -> None:
         map_name = message.data.strip()
 
+        if not getattr(self, 'lifecycle_accepting', True):
+            self.publish_status(
+                status='error',
+                message=(
+                    'Mapping lifecycle is not ACTIVE '
+                    f'(state={self.lifecycle_component.state.value})'
+                ),
+            )
+            return
+
         with self.save_lock:
+            if not getattr(self, 'lifecycle_accepting', True):
+                self.publish_status(
+                    status='error',
+                    message='Mapping lifecycle is deactivating',
+                )
+                return
             if self.save_in_progress:
                 self.publish_status(
                     status='error',
@@ -258,6 +286,10 @@ class MappingManagerNode(Node):
                 return
 
             self.save_in_progress = True
+            if not hasattr(self, 'save_completed'):
+                self.save_completed = threading.Event()
+                self.save_completed.set()
+            self.save_completed.clear()
             environment = self.selected_environment
 
         thread = threading.Thread(
@@ -357,6 +389,9 @@ class MappingManagerNode(Node):
                 str(self.free_threshold),
                 '--occ',
                 str(self.occupied_threshold),
+                '--ros-args',
+                '-p',
+                'save_map_timeout:=5.0',
             ]
 
             try:
@@ -430,10 +465,45 @@ class MappingManagerNode(Node):
             )
 
             self.publish_saved_maps()
-
         finally:
             with self.save_lock:
                 self.save_in_progress = False
+                completed = getattr(self, 'save_completed', None)
+                if completed is not None:
+                    completed.set()
+
+    def on_configure(self) -> None:
+        return None
+
+    def on_activate(self) -> None:
+        self.lifecycle_accepting = True
+
+    def on_deactivate(self) -> None:
+        self.lifecycle_accepting = False
+        if not self.save_completed.wait(timeout=self.save_timeout + 2.0):
+            raise TimeoutError('map save did not complete before deactivation timeout')
+        with self.save_lock:
+            if self.save_in_progress:
+                raise RuntimeError('map save completion was not verified')
+
+    def on_cleanup(self) -> None:
+        self.on_deactivate()
+
+    def on_shutdown(self) -> None:
+        self.on_deactivate()
+
+    def on_error(self) -> None:
+        self.on_deactivate()
+
+    def on_recover(self) -> bool:
+        self.on_deactivate()
+        with self.save_lock:
+            return not self.save_in_progress and self.save_completed.is_set()
+
+    def on_rollback(self, transition, source_state) -> bool:
+        del transition, source_state
+        self.on_deactivate()
+        return True
 
     def publish_status(
         self,
