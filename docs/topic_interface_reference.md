@@ -371,9 +371,11 @@ Behavior:
 
 ```text
 Stop the managed simulation process group.
-Attempt SIGTERM first.
-Escalate to SIGKILL if required.
+Verify its persisted process and session identity before signaling.
+Attempt SIGINT first.
+Use bounded SIGTERM, then SIGKILL escalation if required.
 Publish stopping, then stopped or error.
+Persist a structured shutdown report even if ROS publishing is unavailable.
 ```
 
 Command:

@@ -9,7 +9,7 @@
 import importlib.util
 from pathlib import Path
 import threading
-from types import ModuleType
+from types import ModuleType, SimpleNamespace
 
 
 def load_mode_manager_module() -> ModuleType:
@@ -461,9 +461,21 @@ def make_process_monitor_manager(
         return_code=process_return_code,
     )
     manager.process_group_id = 4321
+    manager.process_record = SimpleNamespace(
+        instance_id='mode-test', pgid=4321, component='mode_navigation'
+    )
+    deregistered = []
+    manager.process_registry = SimpleNamespace(
+        deregister=lambda instance_id: deregistered.append(instance_id),
+    )
     manager.mode = mode
     manager.requested_mode = requested_mode
     manager.last_error = ''
+    manager.last_shutdown_report = None
+    manager.persist_shutdown_report = lambda _report: None
+    manager.shutdown_timeout = 4.0
+    manager.kill_timeout = 1.5
+    manager.release_exited_process_record = lambda _registry, _record: True
 
     logger = FakeLogger()
     manager.get_logger = lambda: logger
@@ -537,7 +549,7 @@ def test_monitor_process_reports_unexpected_exit(
 
     assert manager.process is None
     assert manager.process_group_id is None
-    assert terminated_groups == [4321]
+    assert terminated_groups == []
     assert published_modes == [
         OperatingMode.ERROR
     ]
@@ -569,7 +581,7 @@ def test_monitor_process_accepts_expected_stop() -> None:
 
     assert manager.process is None
     assert manager.process_group_id is None
-    assert terminated_groups == [4321]
+    assert terminated_groups == []
     assert published_modes == [
         OperatingMode.STOPPED
     ]
@@ -585,6 +597,11 @@ def test_clear_finished_process_cleans_process_group() -> None:
         return_code=0,
     )
     manager.process_group_id = 6789
+    manager.process_record = SimpleNamespace(
+        instance_id='mode-test', pgid=6789, component='mode_mapping'
+    )
+    manager.process_registry = SimpleNamespace(deregister=lambda _value: True)
+    manager.release_exited_process_record = lambda _registry, _record: True
 
     terminated_groups = []
     manager.terminate_process_group = (
@@ -598,7 +615,7 @@ def test_clear_finished_process_cleans_process_group() -> None:
 
     assert manager.process is None
     assert manager.process_group_id is None
-    assert terminated_groups == [6789]
+    assert terminated_groups == []
 
 
 def test_clear_finished_process_preserves_running_process() -> None:
@@ -610,6 +627,7 @@ def test_clear_finished_process_preserves_running_process() -> None:
     )
     manager.process = process
     manager.process_group_id = 6789
+    manager.process_record = SimpleNamespace(instance_id='mode-test')
 
     terminated_groups = []
     manager.terminate_process_group = (
@@ -626,6 +644,31 @@ def test_clear_finished_process_preserves_running_process() -> None:
     assert terminated_groups == []
 
 
+def test_reset_runtime_state_restores_stopped_baseline() -> None:
+    manager = object.__new__(ModeManagerNode)
+    manager.process = FakeProcess(return_code=None)
+    manager.process_group_id = 6789
+    manager.process_record = SimpleNamespace(instance_id='mode-test')
+    manager.mode = OperatingMode.NAVIGATION
+    manager.requested_mode = OperatingMode.NAVIGATION
+    manager.last_error = 'transient mode error'
+    published_modes = []
+    manager.publish_mode = lambda mode: (
+        published_modes.append(mode),
+        setattr(manager, 'mode', mode),
+    )[-1]
+
+    manager.reset_runtime_state()
+
+    assert manager.process is None
+    assert manager.process_group_id is None
+    assert manager.process_record is None
+    assert manager.requested_mode == OperatingMode.STOPPED
+    assert manager.mode == OperatingMode.STOPPED
+    assert manager.last_error == ''
+    assert published_modes == [OperatingMode.STOPPED]
+
+
 def test_terminate_process_group_returns_true_when_absent() -> None:
     """Treat an already absent process group as successfully stopped."""
     manager = object.__new__(ModeManagerNode)
@@ -640,75 +683,42 @@ def test_terminate_process_group_returns_true_when_absent() -> None:
 def test_terminate_process_group_confirms_sigterm_exit(
     monkeypatch,
 ) -> None:
-    """Confirm successful termination after SIGTERM."""
+    """Delegate termination only for the matching ownership record."""
     manager = object.__new__(ModeManagerNode)
-
-    manager._context = object()
+    manager.process_record = SimpleNamespace(pgid=1234)
+    manager.process_registry = object()
+    manager.process = None
+    manager.shutdown_timeout = 10.0
     manager.kill_timeout = 0.2
-
-    existence_results = iter((True, False))
-    manager.process_group_exists = (
-        lambda process_group_id:
-            next(existence_results)
-    )
-
-    sent_signals = []
-
-    monkeypatch.setattr(
-        MODULE.rclpy,
-        'ok',
-        lambda context=None: False,
-    )
-    monkeypatch.setattr(
-        MODULE.os,
-        'killpg',
-        lambda process_group_id, sent_signal:
-            sent_signals.append(
-                (process_group_id, sent_signal)
-            ),
+    calls = []
+    manager.terminate_process_record = lambda *args, **kwargs: (
+        calls.append((args, kwargs))
+        or SimpleNamespace(success=True)
     )
 
     result = manager.terminate_process_group(1234)
 
     assert result is True
-    assert sent_signals == [
-        (1234, MODULE.signal.SIGTERM)
-    ]
+    assert len(calls) == 1
+    assert manager.process_record is None
 
 
 def test_terminate_process_group_reports_sigkill_survivor(
     monkeypatch,
 ) -> None:
-    """Return failure when a process group survives SIGKILL."""
+    """Preserve ownership when identity-safe termination reports failure."""
     manager = object.__new__(ModeManagerNode)
-
-    manager._context = object()
+    record = SimpleNamespace(pgid=1234)
+    manager.process_record = record
+    manager.process_registry = object()
+    manager.process = None
+    manager.shutdown_timeout = 10.0
     manager.kill_timeout = 0.0
-
-    manager.process_group_exists = (
-        lambda process_group_id: True
-    )
-
-    sent_signals = []
-
-    monkeypatch.setattr(
-        MODULE.rclpy,
-        'ok',
-        lambda context=None: False,
-    )
-    monkeypatch.setattr(
-        MODULE.os,
-        'killpg',
-        lambda process_group_id, sent_signal:
-            sent_signals.append(
-                (process_group_id, sent_signal)
-            ),
+    manager.terminate_process_record = lambda *args, **kwargs: SimpleNamespace(
+        success=False
     )
 
     result = manager.terminate_process_group(1234)
 
     assert result is False
-    assert sent_signals == [
-        (1234, MODULE.signal.SIGTERM),
-        (1234, MODULE.signal.SIGKILL),
-    ]
+    assert manager.process_record is record

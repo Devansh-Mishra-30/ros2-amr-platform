@@ -117,6 +117,8 @@ install(
     scripts/mapping_manager_node.py
     scripts/navigation_goal_manager_node.py
     scripts/process_registry.py
+    scripts/process_lifecycle.py
+    scripts/runtime_verification.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -138,6 +140,12 @@ if(BUILD_TESTING)
   ament_add_pytest_test(
     test_process_registry
     test/test_process_registry.py
+    TIMEOUT 60
+  )
+
+  ament_add_pytest_test(
+    test_process_lifecycle
+    test/test_process_lifecycle.py
     TIMEOUT 60
   )
 

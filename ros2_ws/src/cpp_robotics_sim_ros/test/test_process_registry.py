@@ -50,6 +50,7 @@ def _record(instance_id: str = 'instance-a', *, pid: int = 101):
         component='simulation',
         pid=pid,
         pgid=pid,
+        session_id=pid,
         parent_pid=1,
         proc_start_time=1000 + pid,
         exe='/usr/bin/python3',
@@ -117,9 +118,9 @@ def test_register_replace_sort_and_deregister(tmp_path) -> None:
 
 def test_parse_proc_stat_handles_spaces_and_parentheses() -> None:
     pid = 321
-    fields = ['S', '10', '20'] + ['0'] * 16 + ['123456']
-    text = f"{pid} (worker ) with spaces) " + ' '.join(fields)
-    assert MODULE._parse_proc_stat(pid, text) == (pid, 20, 10, 123456)
+    fields = ['S', '10', '20', '20'] + ['0'] * 15 + ['123456']
+    text = f'{pid} (worker ) with spaces) ' + ' '.join(fields)
+    assert MODULE._parse_proc_stat(pid, text) == (pid, 20, 20, 10, 123456)
 
 
 def test_real_helper_identity_captures_and_verifies() -> None:
@@ -136,6 +137,7 @@ def test_real_helper_identity_captures_and_verifies() -> None:
         )
         assert identity.pid == process.pid
         assert identity.pgid == process.pid
+        assert identity.session_id == process.pid
         assert identity.proc_start_time > 0
         assert identity.exe
         assert MODULE.verify_process_identity(record) is True
@@ -164,6 +166,7 @@ def test_missing_pid_is_rejected() -> None:
     [
         ('proc_start_time', lambda record: record.proc_start_time + 1),
         ('pgid', lambda record: record.pgid + 1),
+        ('session_id', lambda record: record.session_id + 1),
         ('exe', lambda _record: '/definitely/not/the/real/executable'),
         ('cmdline_fingerprint', lambda _record: '["different"]'),
     ],
@@ -191,13 +194,94 @@ def test_reconcile_removes_stale_without_signaling(tmp_path, monkeypatch) -> Non
     monkeypatch.setattr(
         MODULE.os,
         'killpg',
-        lambda *_args, **_kwargs: pytest.fail('registry must not signal'),
+        lambda _pgid, signal_value: (
+            (_ for _ in ()).throw(ProcessLookupError())
+            if signal_value == 0
+            else pytest.fail('registry must not send a terminating signal')
+        ),
         raising=False,
     )
 
     stale = registry.reconcile_stale_records()
     assert [record.instance_id for record in stale] == ['stale']
     assert registry.list_records() == []
+
+
+def test_reconcile_retains_record_while_process_group_exists(
+    tmp_path, monkeypatch
+) -> None:
+    registry = MODULE.ProcessRegistry(_paths(tmp_path))
+    record = _record('questionable-group', pid=99999999)
+    registry.register(record)
+    monkeypatch.setattr(
+        MODULE, 'owned_process_group_status', lambda _item: 'ambiguous'
+    )
+
+    assert registry.reconcile_stale_records() == []
+    assert registry.list_records() == [record]
+
+
+def test_existing_group_with_no_readable_members_is_ambiguous(
+    monkeypatch,
+) -> None:
+    record = _record('unreadable-group', pid=99999999)
+    monkeypatch.setattr(
+        MODULE, 'verify_process_identity', lambda _item: False
+    )
+    monkeypatch.setattr(
+        MODULE, 'process_group_session_ids', lambda _pgid: set()
+    )
+    monkeypatch.setattr(
+        MODULE, 'process_group_exists', lambda _pgid: True
+    )
+
+    assert MODULE.owned_process_group_status(record) == 'ambiguous'
+
+
+def test_unique_registration_rejects_questionable_existing_group(
+    tmp_path, monkeypatch
+) -> None:
+    registry = MODULE.ProcessRegistry(_paths(tmp_path))
+    registry.register(_record('existing', pid=101))
+    monkeypatch.setattr(
+        MODULE, 'owned_process_group_status', lambda _item: 'ambiguous'
+    )
+
+    with pytest.raises(RuntimeError, match='active or ambiguous owner'):
+        registry.register_unique(_record('replacement', pid=202))
+
+
+def test_refresh_group_members_rechecks_leader_after_proc_scan(
+    tmp_path, monkeypatch
+) -> None:
+    registry = MODULE.ProcessRegistry(_paths(tmp_path))
+    record = _record('changing-leader', pid=202)
+    registry.register(record)
+    member = MODULE.ProcessIdentity(
+        pid=203,
+        pgid=record.pgid,
+        session_id=record.session_id,
+        parent_pid=record.pid,
+        proc_start_time=1203,
+        exe='/usr/bin/python3',
+        cmdline_fingerprint='["python3","child.py"]',
+    )
+    verification_results = iter((True, False))
+    monkeypatch.setattr(
+        MODULE,
+        'verify_process_identity',
+        lambda _record: next(verification_results),
+    )
+    monkeypatch.setattr(
+        MODULE,
+        'capture_process_session_members',
+        lambda *_args, **_kwargs: (member,),
+    )
+
+    with pytest.raises(RuntimeError, match='changed while descendants'):
+        registry.refresh_group_members(record)
+
+    assert registry.list_records() == [record]
 
 
 def test_malformed_manifest_is_rejected(tmp_path) -> None:
@@ -229,7 +313,7 @@ def test_concurrent_writers_do_not_lose_records(tmp_path) -> None:
     paths = _paths(tmp_path)
     module_path = Path(__file__).resolve().parents[1] / 'scripts' / 'process_registry.py'
     helper = textwrap.dedent(
-        '''
+        """
         import importlib.util
         from pathlib import Path
         import sys
@@ -254,13 +338,14 @@ def test_concurrent_writers_do_not_lose_records(tmp_path) -> None:
             component='writer',
             pid=pid_value,
             pgid=pid_value,
+            session_id=pid_value,
             parent_pid=1,
             proc_start_time=100000 + pid_value,
             exe='/usr/bin/python3',
             cmdline_fingerprint='["writer"]',
             state='active',
         ))
-        '''
+        """
     )
 
     processes = [

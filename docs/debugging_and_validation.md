@@ -2413,34 +2413,21 @@ manager stop workflow.
 ### 25.5 Emergency manual cleanup
 
 Use only after normal project shutdown has failed and evidence has been
-captured:
+captured. Ask the installed ownership helper to recover only identity-verified
+registered groups:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
-
-pkill -TERM -f 'ros2 launch' || true
-pkill -TERM -f 'gz sim' || true
-pkill -TERM -f 'gzserver' || true
-pkill -TERM -f 'gzclient' || true
-pkill -TERM -f 'ruby.*gz' || true
-
-sleep 3
-
-pgrep -af 'ros2 launch|gz sim|gzserver|gzclient|ruby.*gz' || true
+cd ~/robotics_projects/ros2-amr-platform
+ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/process_lifecycle.py \
+  --recover \
+  --report ~/.ros/cpp_robotics_sim/shutdown_reports/manual_recovery.json
 ```
 
-Escalate only remaining confirmed project-owned processes:
-
-```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
-
-pkill -KILL -f 'gz sim' || true
-pkill -KILL -f 'gzserver' || true
-pkill -KILL -f 'gzclient' || true
-pkill -KILL -f 'ruby.*gz' || true
-```
-
-Record why escalation was required.
+The helper refuses ambiguous or mismatched identities. If it reports a
+remaining record, inspect that PID, PGID, SID, `/proc` start time, executable,
+and command line. Do not use a broad `pkill` rule; it can target unrelated ROS
+or Gazebo workloads. Record any manual, explicitly targeted escalation and why
+it was required.
 
 ---
 
@@ -3243,11 +3230,13 @@ No single test count replaces complete lifecycle and runtime validation.
 
 The dashboard launch admits one active AMR platform per Linux user. It holds
 an exclusive kernel lock at ~/.ros/cpp_robotics_sim/web_interface.lock.
-Duplicate launches are rejected before stale-process cleanup begins. The
+Duplicate launches are rejected before ownership reconciliation begins. The
 kernel releases flock ownership if the owning process dies, while the PID
 stored in the lock file is informational and is not authoritative ownership.
-The current stale-process cleanup still uses legacy pattern-based matching;
-its ownership limitations are deferred to the process-registry work.
+Startup and shutdown reconciliation use the process registry and refuse to
+signal a PID or process group whose saved identity cannot be verified. Exact
+process classification is used only for duplicate diagnostics, never as signal
+authorization.
 
 <!-- RELEASE_MEDIA_START -->
 ## Release Media

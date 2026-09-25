@@ -9,8 +9,8 @@ from enum import Enum
 import json
 import math
 import os
-import signal
 import subprocess
+import sys
 import threading
 import time
 from typing import Optional
@@ -27,8 +27,23 @@ from rclpy.qos import (
     QoSProfile,
     ReliabilityPolicy,
 )
+from std_msgs.msg import Bool
 from std_msgs.msg import String
 from std_srvs.srv import Trigger
+
+SCRIPT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+if SCRIPT_DIRECTORY not in sys.path:
+    sys.path.insert(0, SCRIPT_DIRECTORY)
+
+from process_lifecycle import (  # noqa: E402,I100,I101
+    defer_termination_signals,
+    deregister_exited_process,
+    persist_shutdown_result,
+    register_managed_process,
+    ShutdownResult,
+    terminate_owned_process,
+)
+from process_registry import ProcessRecord, ProcessRegistry  # noqa: E402,I100
 
 
 class SimulationState(str, Enum):
@@ -84,11 +99,11 @@ class SimulationManagerNode(Node):
         )
         self.declare_parameter(
             'shutdown_timeout',
-            10.0,
+            4.0,
         )
         self.declare_parameter(
             'kill_timeout',
-            3.0,
+            1.5,
         )
 
         self.launch_package = str(
@@ -175,6 +190,16 @@ class SimulationManagerNode(Node):
                 10,
             )
         )
+        self.navigation_cancel_publisher = self.create_publisher(
+            String,
+            '/navigation/cancel_request',
+            10,
+        )
+        self.emergency_stop_publisher = self.create_publisher(
+            Bool,
+            '/control/emergency_stop',
+            10,
+        )
 
         self.start_service = self.create_service(
             Trigger,
@@ -195,10 +220,15 @@ class SimulationManagerNode(Node):
         )
 
         self.process: Optional[subprocess.Popen] = None
+        self.process_record: Optional[ProcessRecord] = None
+        self.process_registry = ProcessRegistry()
+        self.process_registry.reconcile_stale_records()
         self.process_lock = threading.RLock()
         self.state = SimulationState.STOPPED
         self.last_error = ''
         self.shutdown_prepared = False
+        self.stop_in_progress = False
+        self.last_shutdown_report: Optional[ShutdownResult] = None
 
         self.monitor_timer = self.create_timer(
             0.5,
@@ -503,6 +533,8 @@ class SimulationManagerNode(Node):
 
     def start_simulation(self) -> tuple[bool, str]:
         with self.process_lock:
+            if self.shutdown_prepared or self.stop_in_progress:
+                return False, 'Simulation manager is shutting down'
             if self.process_is_running():
                 message = (
                     'Simulation is already running'
@@ -551,8 +583,14 @@ class SimulationManagerNode(Node):
                     command,
                     start_new_session=True,
                 )
-            except (OSError, subprocess.SubprocessError) as error:
+                self.process_record = self.register_process(
+                    self.process_registry,
+                    self.process,
+                    'simulation_launch',
+                )
+            except (OSError, RuntimeError, subprocess.SubprocessError) as error:
                 self.process = None
+                self.process_record = None
                 self.last_error = str(error)
                 self.set_state(SimulationState.ERROR)
 
@@ -571,12 +609,50 @@ class SimulationManagerNode(Node):
                     f'with return code {return_code}'
                 )
                 self.process = None
+                if self.process_record is not None:
+                    if self.release_exited_process_record(
+                        self.process_registry,
+                        self.process_record,
+                    ):
+                        self.process_record = None
+                    else:
+                        self.last_error += (
+                            '; process-group descendants remain and the '
+                            'ownership record was retained'
+                        )
                 self.set_state(SimulationState.ERROR)
 
                 self.get_logger().error(self.last_error)
                 return False, self.last_error
 
+            try:
+                self.process_record = self.refresh_process_record(
+                    self.process_registry, self.process_record
+                )
+            except (OSError, RuntimeError, ValueError) as error:
+                report = self.terminate_process_record(
+                    self.process_registry,
+                    self.process_record,
+                    process=self.process,
+                    sigint_timeout=self.shutdown_timeout,
+                    sigterm_timeout=self.kill_timeout,
+                    sigkill_timeout=self.kill_timeout,
+                )
+                self.last_shutdown_report = report
+                self.persist_shutdown_report(report)
+                if report.success:
+                    self.process = None
+                    self.process_record = None
+                self.last_error = (
+                    'Failed to persist simulation descendant identities: '
+                    + str(error)
+                )
+                self.set_state(SimulationState.ERROR)
+                self.get_logger().error(self.last_error)
+                return False, self.last_error
+
             self.set_state(SimulationState.RUNNING)
+            self.publish_emergency_stop(False)
             self.publish_environment_status(
                 state='running',
                 message=(
@@ -594,103 +670,179 @@ class SimulationManagerNode(Node):
 
     def stop_simulation(self) -> tuple[bool, str]:
         with self.process_lock:
+            shutdown_started = time.monotonic()
             if not self.process_is_running():
                 self.clear_finished_process()
                 self.cleanup_remaining_processes()
+                if self.process_record is not None:
+                    report = self.terminate_process_record(
+                        self.process_registry,
+                        self.process_record,
+                        sigint_timeout=self.shutdown_timeout,
+                        sigterm_timeout=self.kill_timeout,
+                        sigkill_timeout=self.kill_timeout,
+                    )
+                    self.last_shutdown_report = report
+                    self.persist_shutdown_report(report)
+                    if not report.success:
+                        self.last_error = report.error
+                        self.stop_in_progress = False
+                        self.set_state(SimulationState.ERROR)
+                        return False, self.last_error
+                    self.process_record = None
                 self.set_state(SimulationState.STOPPED)
+
+                self.stop_in_progress = False
+                self.last_shutdown_report = ShutdownResult(
+                    success=True,
+                    component='simulation_launch',
+                    pid=None,
+                    pgid=None,
+                    total_duration_seconds=round(
+                        time.monotonic() - shutdown_started, 6
+                    ),
+                    signal_result='already_exited',
+                    stages_completed=[
+                        'reject_new_operations',
+                        'clear_runtime_state',
+                        'produce_shutdown_report',
+                    ],
+                )
+                self.persist_shutdown_report(self.last_shutdown_report)
+                self.reset_runtime_state()
 
                 message = 'Simulation is already stopped'
                 self.get_logger().info(message)
                 return True, message
 
             assert self.process is not None
-
             process = self.process
-            process_pid = process.pid
-
+            self.stop_in_progress = True
             self.set_state(SimulationState.STOPPING)
 
-            self.get_logger().info(
-                f'Stopping simulation process group {process_pid}'
-            )
+            stages = ['reject_new_operations']
+            self.publish_navigation_cancel()
+            stages.append('cancel_navigation_goal')
+            self.publish_emergency_stop(True)
+            stages.append('command_zero_velocity')
+
+            if not self.wait_for_modes_stopped(self.shutdown_timeout):
+                self.last_error = (
+                    'Timed out waiting for the owned operating mode to stop'
+                )
+                self.last_shutdown_report = ShutdownResult(
+                    success=False,
+                    component='simulation_launch',
+                    pid=process.pid,
+                    pgid=(
+                        self.process_record.pgid
+                        if self.process_record is not None
+                        else None
+                    ),
+                    total_duration_seconds=round(
+                        time.monotonic() - shutdown_started, 6
+                    ),
+                    failed_stage='stop_active_mode',
+                    error=self.last_error,
+                    stages_completed=stages,
+                )
+                self.persist_shutdown_report(self.last_shutdown_report)
+                self.stop_in_progress = False
+                self.set_state(SimulationState.ERROR)
+                return False, self.last_error
+            stages.extend(['stop_active_mode', 'stop_mode_launch_group'])
+
+            if self.process_record is None:
+                self.last_error = (
+                    'Simulation process has no ownership record; refusing '
+                    'to signal it'
+                )
+                self.last_shutdown_report = ShutdownResult(
+                    success=False,
+                    component='simulation_launch',
+                    pid=process.pid,
+                    pgid=None,
+                    total_duration_seconds=round(
+                        time.monotonic() - shutdown_started, 6
+                    ),
+                    failed_stage='verify_simulation_ownership',
+                    identity_verification_status='missing_record',
+                    signal_result='refused',
+                    error=self.last_error,
+                    stages_completed=stages,
+                )
+                self.persist_shutdown_report(self.last_shutdown_report)
+                self.stop_in_progress = False
+                self.set_state(SimulationState.ERROR)
+                return False, self.last_error
 
             try:
-                os.killpg(
-                    os.getpgid(process_pid),
-                    signal.SIGINT,
+                # Gazebo can create additional same-session process groups
+                # after startup. Capture their stable identities immediately
+                # before cleanup so ownership remains explicit and bounded.
+                self.process_record = self.refresh_process_record(
+                    self.process_registry, self.process_record
                 )
-
-                process.wait(
-                    timeout=self.shutdown_timeout
+            except (OSError, RuntimeError, ValueError) as error:
+                self.last_error = (
+                    'Failed to refresh simulation descendant identities: '
+                    + str(error)
                 )
-
-            except subprocess.TimeoutExpired:
-                self.get_logger().warning(
-                    'Simulation did not stop after SIGINT; '
-                    'sending SIGTERM'
+                self.last_shutdown_report = ShutdownResult(
+                    success=False,
+                    component='simulation_launch',
+                    pid=process.pid,
+                    pgid=self.process_record.pgid,
+                    total_duration_seconds=round(
+                        time.monotonic() - shutdown_started, 6
+                    ),
+                    failed_stage='refresh_simulation_ownership',
+                    identity_verification_status='refused',
+                    signal_result='refused',
+                    error=self.last_error,
+                    stages_completed=stages,
                 )
-
-                try:
-                    os.killpg(
-                        os.getpgid(process_pid),
-                        signal.SIGTERM,
-                    )
-                    process.wait(
-                        timeout=self.kill_timeout
-                    )
-
-                except subprocess.TimeoutExpired:
-                    self.get_logger().error(
-                        'Simulation did not stop after SIGTERM; '
-                        'sending SIGKILL'
-                    )
-
-                    try:
-                        os.killpg(
-                            os.getpgid(process_pid),
-                            signal.SIGKILL,
-                        )
-                    except ProcessLookupError:
-                        pass
-
-                    try:
-                        process.wait(
-                            timeout=self.kill_timeout
-                        )
-                    except subprocess.TimeoutExpired:
-                        self.last_error = (
-                            'Simulation process did not exit '
-                            'after SIGKILL'
-                        )
-                        self.set_state(
-                            SimulationState.ERROR
-                        )
-
-                        self.get_logger().error(
-                            self.last_error
-                        )
-                        return False, self.last_error
-
-            except ProcessLookupError:
-                self.get_logger().warning(
-                    'Simulation process group no longer exists'
-                )
-
-            except (OSError, subprocess.SubprocessError) as error:
-                self.last_error = str(error)
+                self.persist_shutdown_report(self.last_shutdown_report)
+                self.stop_in_progress = False
                 self.set_state(SimulationState.ERROR)
+                return False, self.last_error
 
-                message = (
-                    f'Failed to stop simulation cleanly: {error}'
-                )
-                self.get_logger().error(message)
-                return False, message
+            self.get_logger().info(
+                'Stopping verified simulation process group '
+                f'{self.process_record.pgid}'
+            )
+            report = self.terminate_process_record(
+                self.process_registry,
+                self.process_record,
+                process=process,
+                sigint_timeout=self.shutdown_timeout,
+                sigterm_timeout=self.kill_timeout,
+                sigkill_timeout=self.kill_timeout,
+            )
+            self.last_shutdown_report = report
+            report.stages_completed = stages
+            report.total_duration_seconds = round(
+                time.monotonic() - shutdown_started, 6
+            )
 
-            finally:
-                self.process = None
+            if not report.success:
+                self.last_error = report.error
+                self.set_state(SimulationState.ERROR)
+                self.get_logger().error(self.last_error)
+                self.persist_shutdown_report(report)
+                self.stop_in_progress = False
+                return False, self.last_error
+
+            stages.extend(
+                [
+                    'stop_simulation_controllers',
+                    'stop_gazebo',
+                    'clear_runtime_state',
+                ]
+            )
 
             self.cleanup_remaining_processes()
-            self.set_state(SimulationState.STOPPED)
+            self.reset_runtime_state()
             self.publish_environment_status(
                 state='selected',
                 message=(
@@ -700,11 +852,67 @@ class SimulationManagerNode(Node):
             )
 
             message = 'Simulation stopped successfully'
+            self.stop_in_progress = False
+            self.publish_emergency_stop(False)
+            stages.append('produce_shutdown_report')
+            report.stages_completed = stages
+            report.total_duration_seconds = round(
+                time.monotonic() - shutdown_started, 6
+            )
+            self.persist_shutdown_report(report)
 
             if rclpy.ok(context=self.context):
                 self.get_logger().info(message)
 
             return True, message
+
+    @staticmethod
+    def register_process(registry, process, component):
+        return register_managed_process(registry, process, component)
+
+    @staticmethod
+    def terminate_process_record(registry, record, **kwargs):
+        return terminate_owned_process(registry, record, **kwargs)
+
+    @staticmethod
+    def refresh_process_record(registry, record):
+        return registry.refresh_group_members(record)
+
+    @staticmethod
+    def release_exited_process_record(registry, record):
+        return deregister_exited_process(registry, record)
+
+    def publish_navigation_cancel(self) -> None:
+        if not rclpy.ok(context=self.context):
+            return
+        message = String()
+        message.data = '{"cancel":true}'
+        self.navigation_cancel_publisher.publish(message)
+
+    def publish_emergency_stop(self, enabled: bool) -> None:
+        if not rclpy.ok(context=self.context):
+            return
+        message = Bool()
+        message.data = enabled
+        self.emergency_stop_publisher.publish(message)
+
+    def wait_for_modes_stopped(self, timeout: float) -> bool:
+        deadline = time.monotonic() + timeout
+        while time.monotonic() < deadline:
+            self.process_registry.reconcile_stale_records()
+            active_modes = [
+                record
+                for record in self.process_registry.list_records()
+                if record.component.startswith('mode_')
+            ]
+            if not active_modes:
+                return True
+            time.sleep(0.05)
+        return False
+
+    @staticmethod
+    def persist_shutdown_report(report: ShutdownResult) -> None:
+        persist_shutdown_result(report)
 
     def monitor_process(self) -> None:
         with self.process_lock:
@@ -718,6 +926,33 @@ class SimulationManagerNode(Node):
 
             previous_state = self.state
             self.process = None
+            if self.process_record is not None:
+                if self.release_exited_process_record(
+                    self.process_registry,
+                    self.process_record,
+                ):
+                    self.process_record = None
+
+            if self.process_record is not None:
+                report = self.terminate_process_record(
+                    self.process_registry,
+                    self.process_record,
+                    sigint_timeout=self.shutdown_timeout,
+                    sigterm_timeout=self.kill_timeout,
+                    sigkill_timeout=self.kill_timeout,
+                )
+                self.last_shutdown_report = report
+                self.persist_shutdown_report(report)
+                if report.success:
+                    self.process_record = None
+                else:
+                    self.last_error = report.error
+                    self.set_state(SimulationState.ERROR)
+                    self.publish_environment_status(
+                        state='error', message=self.last_error
+                    )
+                    self.get_logger().error(self.last_error)
+                    return
 
             if previous_state in (
                 SimulationState.STOPPING,
@@ -744,12 +979,34 @@ class SimulationManagerNode(Node):
             and self.process.poll() is None
         )
 
+    def reset_runtime_state(self) -> None:
+        """
+        Restore the next-run baseline without changing the environment.
+
+        ``last_shutdown_report`` remains available as historical diagnostic
+        state, and ``shutdown_prepared`` remains untouched so final node
+        shutdown remains idempotent.  ``selected_environment`` is persistent
+        operator state and is intentionally not assigned here.
+        """
+        self.process = None
+        self.process_record = None
+        self.last_error = ''
+        self.stop_in_progress = False
+        if self.state != SimulationState.STOPPED:
+            self.set_state(SimulationState.STOPPED)
+
     def clear_finished_process(self) -> None:
         if (
             self.process is not None
             and self.process.poll() is not None
         ):
             self.process = None
+            if self.process_record is not None:
+                if self.release_exited_process_record(
+                    self.process_registry,
+                    self.process_record,
+                ):
+                    self.process_record = None
 
     def set_state(
         self,
@@ -782,111 +1039,8 @@ class SimulationManagerNode(Node):
             )
 
     def cleanup_remaining_processes(self) -> None:
-        """
-        Remove known detached simulation processes.
-
-        This is a fallback for processes that escape the managed
-        ROS 2 launch process group after normal process-group
-        shutdown.
-        """
-        process_patterns = [
-            'gz sim',
-            'gzserver',
-            'gzclient',
-            'ros2 launch cpp_robotics_sim_ros '
-            'interactive_control.launch.py',
-        ]
-
-        for pattern in process_patterns:
-            try:
-                result = subprocess.run(
-                    [
-                        'pgrep',
-                        '-f',
-                        pattern,
-                    ],
-                    capture_output=True,
-                    text=True,
-                    check=False,
-                )
-            except OSError as error:
-                self.get_logger().error(
-                    f'Unable to inspect remaining '
-                    f'processes for {pattern}: {error}'
-                )
-                continue
-
-            process_ids = []
-
-            for line in result.stdout.splitlines():
-                try:
-                    process_id = int(line.strip())
-                except ValueError:
-                    continue
-
-                if process_id == os.getpid():
-                    continue
-
-                process_ids.append(process_id)
-
-            for process_id in process_ids:
-                try:
-                    os.kill(process_id, signal.SIGTERM)
-                    self.get_logger().warning(
-                        'Terminated remaining process '
-                        f'{process_id}: {pattern}'
-                    )
-                except ProcessLookupError:
-                    pass
-                except PermissionError as error:
-                    self.get_logger().error(
-                        f'Unable to terminate process '
-                        f'{process_id}: {error}'
-                    )
-
-        time.sleep(1.0)
-
-        for pattern in process_patterns:
-            try:
-                result = subprocess.run(
-                    [
-                        'pgrep',
-                        '-f',
-                        pattern,
-                    ],
-                    capture_output=True,
-                    text=True,
-                    check=False,
-                )
-            except OSError as error:
-                self.get_logger().error(
-                    f'Unable to inspect remaining '
-                    f'processes for {pattern}: {error}'
-                )
-                continue
-
-            for line in result.stdout.splitlines():
-                try:
-                    process_id = int(line.strip())
-                except ValueError:
-                    continue
-
-                if process_id == os.getpid():
-                    continue
-
-                try:
-                    os.kill(process_id, signal.SIGKILL)
-                    self.get_logger().error(
-                        'Force-killed remaining process '
-                        f'{process_id}: {pattern}'
-                    )
-                except ProcessLookupError:
-                    pass
-                except PermissionError as error:
-                    self.get_logger().error(
-                        f'Unable to force-kill process '
-                        f'{process_id}: {error}'
-                    )
+        """Reconcile exited records without process-name-based signaling."""
+        self.process_registry.reconcile_stale_records()
 
     def shutdown(self) -> None:
         if self.shutdown_prepared:
@@ -929,12 +1083,13 @@ def main(args=None) -> None:
         pass
 
     finally:
-        if node is not None:
-            node.shutdown()
-            node.destroy_node()
+        with defer_termination_signals():
+            if node is not None:
+                node.shutdown()
+                node.destroy_node()
 
-        if rclpy.ok():
-            rclpy.shutdown()
+            if rclpy.ok():
+                rclpy.shutdown()
 
 
 if __name__ == '__main__':

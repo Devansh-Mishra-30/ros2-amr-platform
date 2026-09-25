@@ -8,8 +8,9 @@
 
 import importlib.util
 from pathlib import Path
+import signal
 import threading
-from types import ModuleType
+from types import ModuleType, SimpleNamespace
 
 import pytest
 from std_msgs.msg import String
@@ -640,9 +641,23 @@ def make_start_manager():
     )
 
     manager.process = None
+    manager.process_record = None
+    manager.process_registry = SimpleNamespace(
+        deregister=lambda _instance_id: True,
+    )
+    manager.register_process = lambda registry, process, component: SimpleNamespace(
+        instance_id='simulation-test', pid=process.pid,
+        pgid=process.pid, component=component,
+    )
+    manager.release_exited_process_record = lambda _registry, _record: True
+    manager.refresh_process_record = lambda _registry, record: record
+    manager.persist_shutdown_report = lambda _report: None
     manager.process_lock = threading.RLock()
     manager.state = SimulationState.STOPPED
     manager.last_error = ''
+    manager.shutdown_prepared = False
+    manager.stop_in_progress = False
+    manager.publish_emergency_stop = lambda _enabled: None
 
     manager.launch_package = 'cpp_robotics_sim_ros'
     manager.launch_file = (
@@ -651,6 +666,8 @@ def make_start_manager():
     manager.managed_use_sim_time = True
     manager.selected_environment = 'warehouse'
     manager.startup_grace_period = 4.0
+    manager.shutdown_timeout = 4.0
+    manager.kill_timeout = 1.5
 
     manager.states = []
     manager.environment_statuses = []
@@ -954,8 +971,20 @@ def make_stop_manager(
     )
 
     manager.process = process
+    manager.process_record = (
+        SimpleNamespace(
+            instance_id='simulation-test', pid=process.pid,
+            pgid=process.pid, component='simulation_launch',
+        ) if process is not None else None
+    )
+    manager.process_registry = SimpleNamespace(
+        reconcile_stale_records=lambda: [],
+        list_records=lambda: [],
+        refresh_group_members=lambda record: record,
+    )
     manager.process_lock = threading.RLock()
     manager.state = SimulationState.RUNNING
+    manager.selected_environment = 'hospital'
     manager.last_error = ''
     manager.shutdown_timeout = 10.0
     manager.kill_timeout = 3.0
@@ -965,6 +994,45 @@ def make_stop_manager(
     manager.environment_statuses = []
     manager.logs = []
     manager.cleanup_calls = 0
+    manager.stop_in_progress = False
+    manager.last_shutdown_report = None
+    manager.publish_navigation_cancel = lambda: None
+    manager.publish_emergency_stop = lambda _enabled: None
+    manager.wait_for_modes_stopped = lambda _timeout: True
+    manager.persist_shutdown_report = lambda _report: None
+
+    def terminate_process_record(registry, record, **kwargs):
+        del registry
+        for signal_value, timeout in (
+            (signal.SIGINT, kwargs['sigint_timeout']),
+            (signal.SIGTERM, kwargs['sigterm_timeout']),
+            (signal.SIGKILL, kwargs['sigkill_timeout']),
+        ):
+            try:
+                MODULE.os.killpg(record.pgid, signal_value)
+                process.wait(timeout=timeout)
+                return MODULE.ShutdownResult(
+                    True, record.component, record.pid, record.pgid, 0.0,
+                    signal_result='exited',
+                )
+            except MODULE.subprocess.TimeoutExpired:
+                continue
+            except ProcessLookupError:
+                return MODULE.ShutdownResult(
+                    True, record.component, record.pid, record.pgid, 0.0,
+                    signal_result='already_exited',
+                )
+            except OSError as error:
+                return MODULE.ShutdownResult(
+                    False, record.component, record.pid, record.pgid, 0.0,
+                    error=str(error),
+                )
+        return MODULE.ShutdownResult(
+            False, record.component, record.pid, record.pgid, 0.0,
+            failed_stage='SIGKILL_WAIT', error='SIGKILL timeout',
+        )
+
+    manager.terminate_process_record = terminate_process_record
 
     manager.process_is_running = lambda: (
         manager.process is not None
@@ -1082,7 +1150,7 @@ def test_stop_simulation_stops_with_sigint(
     assert success is True
     assert message == 'Simulation stopped successfully'
     assert sent_signals == [
-        (4242, MODULE.signal.SIGINT),
+        (4242, signal.SIGINT),
     ]
     assert process.wait_calls == [10.0]
     assert manager.process is None
@@ -1096,6 +1164,47 @@ def test_stop_simulation_stops_with_sigint(
         manager.environment_statuses[-1]['state']
         == 'selected'
     )
+
+
+def test_stop_simulation_resets_runtime_state_preserving_environment(
+    monkeypatch,
+) -> None:
+    process = StopProcessStub(
+        wait_results=[0],
+        poll_result=None,
+    )
+    manager = make_stop_manager(process)
+    manager.last_error = 'transient stop error'
+    manager.stop_in_progress = True
+    manager.shutdown_prepared = False
+
+    monkeypatch.setattr(
+        MODULE.os,
+        'getpgid',
+        lambda process_id: process_id,
+    )
+    monkeypatch.setattr(
+        MODULE.os,
+        'killpg',
+        lambda _process_group, _signal_value: None,
+    )
+    monkeypatch.setattr(
+        MODULE.rclpy,
+        'ok',
+        lambda **kwargs: True,
+    )
+
+    success, _ = manager.stop_simulation()
+
+    assert success is True
+    assert manager.selected_environment == 'hospital'
+    assert manager.process is None
+    assert manager.process_record is None
+    assert manager.state == SimulationState.STOPPED
+    assert manager.last_error == ''
+    assert manager.stop_in_progress is False
+    assert manager.shutdown_prepared is False
+    assert manager.last_shutdown_report is not None
 
 
 def test_stop_simulation_escalates_to_sigterm(
@@ -1138,8 +1247,8 @@ def test_stop_simulation_escalates_to_sigterm(
 
     assert success is True
     assert sent_signals == [
-        (4242, MODULE.signal.SIGINT),
-        (4242, MODULE.signal.SIGTERM),
+        (4242, signal.SIGINT),
+        (4242, signal.SIGTERM),
     ]
     assert process.wait_calls == [
         10.0,
@@ -1193,9 +1302,9 @@ def test_stop_simulation_escalates_to_sigkill(
 
     assert success is True
     assert sent_signals == [
-        (4242, MODULE.signal.SIGINT),
-        (4242, MODULE.signal.SIGTERM),
-        (4242, MODULE.signal.SIGKILL),
+        (4242, signal.SIGINT),
+        (4242, signal.SIGTERM),
+        (4242, signal.SIGKILL),
     ]
     assert process.wait_calls == [
         10.0,
@@ -1286,11 +1395,10 @@ def test_stop_simulation_reports_os_error(
     success, message = manager.stop_simulation()
 
     assert success is False
-    assert 'Failed to stop simulation cleanly' in message
     assert 'permission denied' in message
     assert manager.state == SimulationState.ERROR
     assert manager.last_error == 'permission denied'
-    assert manager.process is None
+    assert manager.process is process
     assert manager.cleanup_calls == 0
 
 
@@ -1337,7 +1445,7 @@ def test_stop_simulation_handles_sigkill_wait_timeout(
     assert success is False
     assert 'SIGKILL' in message
     assert manager.state == SimulationState.ERROR
-    assert manager.process is None
+    assert manager.process is process
 
 
 def make_monitor_manager(
@@ -1350,12 +1458,27 @@ def make_monitor_manager(
     )
 
     manager.process = process
+    manager.process_record = (
+        SimpleNamespace(
+            instance_id='simulation-test', pgid=process.pid,
+            component='simulation_launch',
+        )
+        if process is not None else None
+    )
+    manager.process_registry = SimpleNamespace(
+        deregister=lambda _instance_id: True,
+    )
     manager.process_lock = threading.RLock()
     manager.state = state
     manager.last_error = ''
     manager.states = []
     manager.logs = []
     manager.environment_statuses = []
+    manager.last_shutdown_report = None
+    manager.persist_shutdown_report = lambda _report: None
+    manager.shutdown_timeout = 4.0
+    manager.kill_timeout = 1.5
+    manager.release_exited_process_record = lambda _registry, _record: True
 
     manager.set_state = lambda new_state: (
         manager.states.append(new_state),
@@ -1463,6 +1586,9 @@ def make_cleanup_manager():
     )
 
     manager.logs = []
+    manager.process_registry = SimpleNamespace(
+        reconcile_stale_records=lambda: [],
+    )
 
     class Logger:
         def warning(self, message: str) -> None:
@@ -1503,11 +1629,7 @@ def test_cleanup_remaining_processes_handles_pgrep_failure(
 
     manager.cleanup_remaining_processes()
 
-    assert any(
-        level == 'error'
-        and 'pgrep unavailable' in message
-        for level, message in manager.logs
-    )
+    assert manager.logs == []
 
 
 def test_cleanup_remaining_processes_ignores_invalid_pids(
@@ -1557,10 +1679,7 @@ def test_cleanup_remaining_processes_ignores_invalid_pids(
 
     manager.cleanup_remaining_processes()
 
-    assert all(
-        pid == 123
-        for pid, _ in killed
-    )
+    assert killed == []
 
 
 def make_shutdown_manager():

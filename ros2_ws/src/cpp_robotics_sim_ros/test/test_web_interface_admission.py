@@ -46,6 +46,9 @@ def isolated_lock_path(monkeypatch, tmp_path):
     monkeypatch.setattr(
         MODULE, 'get_single_instance_lock_path', lambda: lock_path
     )
+    monkeypatch.setattr(
+        MODULE, 'recover_verified_owned_processes', lambda: None
+    )
     MODULE.release_single_instance_lock()
     yield lock_path
     MODULE.release_single_instance_lock()
@@ -82,7 +85,7 @@ def _start_helper(role, lock_path, marker_path=None):
             module.release_single_instance_lock()
         else:
             marker_path = Path(sys.argv[4])
-            module.cleanup_stale_project_processes = (
+            module.recover_verified_owned_processes = (
                 lambda: marker_path.write_text('called')
             )
             try:
@@ -155,38 +158,30 @@ def test_two_processes_contend_without_disturbing_owner(tmp_path) -> None:
 def test_first_instance_acquires_runtime_ownership(
     monkeypatch, isolated_lock_path
 ) -> None:
-    cleanup_calls = []
+    recovery_calls = []
     monkeypatch.setattr(
         MODULE,
-        'cleanup_stale_project_processes',
-        lambda: cleanup_calls.append(True),
+        'recover_verified_owned_processes',
+        lambda: recovery_calls.append(True),
     )
     MODULE.prepare_runtime_admission()
     assert MODULE._LOCK_FILE_HANDLE is not None
-    assert cleanup_calls == [True]
+    assert recovery_calls == [True]
     assert isolated_lock_path.read_text(encoding='utf-8')
 
 
 def test_second_instance_is_rejected_without_cleanup(
     monkeypatch, isolated_lock_path
 ) -> None:
-    cleanup_calls = []
-    termination_calls = []
+    recovery_calls = []
     healthy_owner = isolated_lock_path.open('a+', encoding='utf-8')
     fcntl.flock(
         healthy_owner.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB
     )
     monkeypatch.setattr(
         MODULE,
-        'cleanup_stale_project_processes',
-        lambda: cleanup_calls.append(True),
-    )
-    monkeypatch.setattr(
-        MODULE,
-        'terminate_processes',
-        lambda pids, signal_number: termination_calls.append(
-            (pids, signal_number)
-        ),
+        'recover_verified_owned_processes',
+        lambda: recovery_calls.append(True),
     )
     try:
         with pytest.raises(RuntimeError, match='already running'):
@@ -194,30 +189,29 @@ def test_second_instance_is_rejected_without_cleanup(
     finally:
         fcntl.flock(healthy_owner.fileno(), fcntl.LOCK_UN)
         healthy_owner.close()
-    assert cleanup_calls == []
-    assert termination_calls == []
+    assert recovery_calls == []
     assert MODULE._LOCK_FILE_HANDLE is None
 
 
 def test_stale_recovery_runs_only_after_admission(monkeypatch) -> None:
-    cleanup_calls = []
+    recovery_calls = []
     monkeypatch.setattr(
         MODULE,
-        'cleanup_stale_project_processes',
-        lambda: cleanup_calls.append(True),
+        'recover_verified_owned_processes',
+        lambda: recovery_calls.append(True),
     )
     MODULE.prepare_runtime_admission()
-    assert cleanup_calls == [True]
+    assert recovery_calls == [True]
 
 
 def test_failed_stale_recovery_releases_runtime_ownership(
     monkeypatch, isolated_lock_path
 ) -> None:
-    def fail_cleanup() -> None:
+    def fail_recovery() -> None:
         raise RuntimeError('stale recovery failed')
 
     monkeypatch.setattr(
-        MODULE, 'cleanup_stale_project_processes', fail_cleanup
+        MODULE, 'recover_verified_owned_processes', fail_recovery
     )
     with pytest.raises(RuntimeError, match='stale recovery failed'):
         MODULE.prepare_runtime_admission()
@@ -234,9 +228,6 @@ def test_failed_stale_recovery_releases_runtime_ownership(
 
 
 def test_lock_can_be_reacquired_after_release(monkeypatch) -> None:
-    monkeypatch.setattr(
-        MODULE, 'cleanup_stale_project_processes', lambda: None
-    )
     MODULE.prepare_runtime_admission()
     MODULE.release_single_instance_lock()
     MODULE.prepare_runtime_admission()
@@ -246,10 +237,6 @@ def test_lock_can_be_reacquired_after_release(monkeypatch) -> None:
 def test_launch_build_failure_releases_runtime_ownership(
     monkeypatch, isolated_lock_path
 ) -> None:
-    monkeypatch.setattr(
-        MODULE, 'cleanup_stale_project_processes', lambda: None
-    )
-
     def fail_build():
         raise RuntimeError('launch description failed')
 
@@ -340,9 +327,7 @@ def test_metadata_failure_unlock_failure_still_closes_file(
 def test_atexit_registration_failure_releases_ownership(
     monkeypatch, isolated_lock_path
 ) -> None:
-    monkeypatch.setattr(
-        MODULE, 'cleanup_stale_project_processes', lambda: None
-    )
+    monkeypatch.setattr(MODULE, '_build_launch_description', lambda: object())
     monkeypatch.setattr(
         MODULE.atexit, 'register',
         lambda _callback: (_ for _ in ()).throw(
@@ -361,3 +346,8 @@ def test_atexit_registration_failure_releases_ownership(
     finally:
         fcntl.flock(replacement_owner.fileno(), fcntl.LOCK_UN)
         replacement_owner.close()
+
+
+def test_admission_has_no_process_name_based_signal_path() -> None:
+    assert not hasattr(MODULE, 'cleanup_stale_project_processes')
+    assert not hasattr(MODULE, 'terminate_processes')

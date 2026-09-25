@@ -1243,6 +1243,9 @@ class NavigationGoalManagerNode(Node):
                 'Unable to cancel navigation goal '
                 'during shutdown'
             )
+        finally:
+            with self.state_lock:
+                self.reset_goal_state_locked()
 
 
 def main(args=None) -> None:

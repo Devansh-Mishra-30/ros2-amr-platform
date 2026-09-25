@@ -351,14 +351,17 @@ prevents multiple dashboard launch instances from running simultaneously.
 
 ### 8.2 Stale-process cleanup
 
-Before launching, the web interface searches for stale project-specific
-processes from earlier runs and removes them.
+Before launching, the web interface reconciles the file-backed ownership
+registry under `~/.ros/cpp_robotics_sim/`. It never authorizes cleanup from a
+process-name match. A registered group is signaled only while its saved Linux
+identity still matches, using PID, PGID, session ID, `/proc` start time,
+executable, and command-line fingerprint. Persisted descendant identities
+allow a surviving session to be recovered after its launch leader dies.
 
-The cleanup protects the current launcher and its ancestor processes, sends
-`SIGTERM`, waits, and escalates to `SIGKILL` when required.
-
-This startup cleanup is separate from the simulation manager and mode
-manager process ownership described later.
+Recovery stops mode groups before the simulation group and uses bounded
+`SIGINT`, `SIGTERM`, then `SIGKILL` stages. An ambiguous identity is retained
+and reported instead of being signaled. The same reconciliation runs before
+the single-instance lock is released at launcher shutdown.
 
 ---
 
@@ -493,11 +496,13 @@ The managed simulation launch is started in a new operating-system session.
 The manager:
 
 ```text
-tracks the launch process
-tracks the process-group identifier
-sends SIGTERM to the process group
-waits for graceful exit
-sends SIGKILL if required
+registers the launch leader and stable descendant identities
+verifies PID, process group, session, start time, executable, and command line
+cancels navigation and commands zero velocity
+waits for the active operating mode to stop
+sends SIGINT to the verified simulation process group
+uses bounded SIGTERM and SIGKILL escalation if required
+persists structured shutdown diagnostics outside ROS
 publishes stopped or error state
 detects unexpected process exit
 ```
@@ -605,7 +610,10 @@ Navigation   -> nav2_navigation.launch.py
 
 Mode-specific launches run in their own process groups.
 
-The mode manager sends `SIGTERM`, waits, and escalates cleanup when required.
+The mode manager registers each launch group immediately, verifies its saved
+identity before every signal, and uses bounded `SIGINT`, `SIGTERM`, then
+`SIGKILL` escalation. Registration failure rolls back the newly created group
+so a long-lived child cannot continue unowned.
 
 This process ownership is separate from the simulation manager's core
 simulation process group.

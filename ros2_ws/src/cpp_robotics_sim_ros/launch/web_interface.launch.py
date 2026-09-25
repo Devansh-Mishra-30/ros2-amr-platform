@@ -9,12 +9,10 @@ import fcntl
 import os
 from pathlib import Path
 import shutil
-import signal
-import subprocess
-import time
-from typing import Iterable
+import sys
 
 from ament_index_python.packages import (
+    get_package_prefix,
     get_package_share_directory,
 )
 from launch import LaunchDescription
@@ -35,191 +33,6 @@ from launch_ros.actions import Node
 _LOCK_FILE_HANDLE = None
 
 PROJECT_PACKAGE = 'cpp_robotics_sim_ros'
-
-PROCESS_PATTERNS = (
-    'web_interface.launch.py',
-    'simulation_manager_node.py',
-    'mode_manager_node.py',
-    'mapping_manager_node.py',
-    'localization_manager_node.py',
-    'navigation_goal_manager_node.py',
-    'cmd_vel_twist_bridge.py',
-    'rosbridge_websocket',
-    'python3 -m http.server 8080',
-    'ros2_control.launch.py',
-    'slam_mapping.launch.py',
-    'amcl_localization.launch.py',
-    'nav2_navigation.launch.py',
-    'gz sim',
-)
-
-
-def get_ancestor_pids() -> set[int]:
-    """Return this process and all of its parent process IDs."""
-    protected_pids: set[int] = set()
-
-    current_pid = os.getpid()
-
-    while current_pid > 1:
-        protected_pids.add(current_pid)
-
-        try:
-            parent_text = Path(
-                f'/proc/{current_pid}/stat'
-            ).read_text()
-        except OSError:
-            break
-
-        fields = parent_text.split()
-
-        if len(fields) < 4:
-            break
-
-        parent_pid = int(fields[3])
-
-        if parent_pid == current_pid:
-            break
-
-        current_pid = parent_pid
-
-    protected_pids.add(1)
-
-    return protected_pids
-
-
-def find_matching_pids(
-    pattern: str,
-) -> list[int]:
-    """Find process IDs whose full command contains pattern."""
-    result = subprocess.run(
-        [
-            'pgrep',
-            '-f',
-            pattern,
-        ],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-
-    if result.returncode not in (0, 1):
-        raise RuntimeError(
-            f'Unable to inspect processes for: {pattern}'
-        )
-
-    pids: list[int] = []
-
-    for line in result.stdout.splitlines():
-        line = line.strip()
-
-        if not line:
-            continue
-
-        try:
-            pids.append(int(line))
-        except ValueError:
-            continue
-
-    return pids
-
-
-def terminate_processes(
-    pids: Iterable[int],
-    signal_number: signal.Signals,
-) -> None:
-    for pid in pids:
-        try:
-            os.kill(pid, signal_number)
-        except ProcessLookupError:
-            continue
-        except PermissionError as error:
-            raise RuntimeError(
-                f'Permission denied while stopping PID {pid}'
-            ) from error
-
-
-def remaining_pids(
-    pids: Iterable[int],
-) -> list[int]:
-    alive: list[int] = []
-
-    for pid in pids:
-        try:
-            os.kill(pid, 0)
-        except ProcessLookupError:
-            continue
-        except PermissionError:
-            alive.append(pid)
-        else:
-            alive.append(pid)
-
-    return alive
-
-
-def cleanup_stale_project_processes() -> None:
-    """
-    Remove stale processes from earlier dashboard and simulation runs.
-
-    The current launch process and its ancestors are protected so this
-    launch does not terminate itself.
-    """
-    protected_pids = get_ancestor_pids()
-    targets: set[int] = set()
-
-    for pattern in PROCESS_PATTERNS:
-        for pid in find_matching_pids(pattern):
-            if pid not in protected_pids:
-                targets.add(pid)
-
-    if not targets:
-        return
-
-    ordered_targets = sorted(targets)
-
-    print(
-        '[web_interface] Removing stale project processes: '
-        + ', '.join(str(pid) for pid in ordered_targets),
-        flush=True,
-    )
-
-    terminate_processes(
-        ordered_targets,
-        signal.SIGTERM,
-    )
-
-    deadline = time.monotonic() + 4.0
-
-    while time.monotonic() < deadline:
-        alive = remaining_pids(ordered_targets)
-
-        if not alive:
-            return
-
-        time.sleep(0.2)
-
-    alive = remaining_pids(ordered_targets)
-
-    if alive:
-        print(
-            '[web_interface] Force-stopping remaining PIDs: '
-            + ', '.join(str(pid) for pid in alive),
-            flush=True,
-        )
-
-        terminate_processes(
-            alive,
-            signal.SIGKILL,
-        )
-
-        time.sleep(1.0)
-
-    final_alive = remaining_pids(ordered_targets)
-
-    if final_alive:
-        raise RuntimeError(
-            'Unable to remove stale project processes: '
-            + ', '.join(str(pid) for pid in final_alive)
-        )
 
 
 def get_single_instance_lock_path() -> Path:
@@ -302,15 +115,65 @@ def release_single_instance_lock() -> None:
         _LOCK_FILE_HANDLE = None
 
 
+def cleanup_runtime_admission() -> None:
+    """Recover registered groups before releasing single-instance ownership."""
+    try:
+        recover_verified_owned_processes()
+    except Exception as error:
+        print(
+            '[web_interface] verified process recovery failed during exit: '
+            + str(error),
+            file=sys.stderr,
+            flush=True,
+        )
+    finally:
+        release_single_instance_lock()
+
+
 def prepare_runtime_admission() -> None:
     """Acquire runtime ownership before recovering stale processes."""
     acquire_single_instance_lock()
 
     try:
-        cleanup_stale_project_processes()
+        recover_verified_owned_processes()
     except Exception:
         release_single_instance_lock()
         raise
+
+
+def recover_verified_owned_processes() -> None:
+    """Stop only process groups whose persisted identity is still proven."""
+    source_directory = Path(__file__).resolve().parents[1] / 'scripts'
+    if (source_directory / 'process_registry.py').is_file():
+        module_directory = source_directory
+    else:
+        module_directory = (
+            Path(get_package_prefix(PROJECT_PACKAGE))
+            / 'lib'
+            / PROJECT_PACKAGE
+        )
+    if str(module_directory) not in sys.path:
+        sys.path.insert(0, str(module_directory))
+
+    from process_lifecycle import (
+        persist_shutdown_result,
+        recover_owned_processes,
+    )
+    from process_registry import ProcessRegistry
+
+    registry = ProcessRegistry()
+    reports = recover_owned_processes(registry)
+    failures = []
+    for report in reports:
+        persist_shutdown_result(report)
+        if not report.success:
+            failures.append(report.to_mapping())
+
+    if failures:
+        raise RuntimeError(
+            'Unable to safely recover verified owned processes: '
+            + repr(failures)
+        )
 
 
 def validate_workspace(
@@ -638,8 +501,9 @@ def generate_launch_description():
     prepare_runtime_admission()
 
     try:
-        atexit.register(release_single_instance_lock)
-        return _build_launch_description()
+        description = _build_launch_description()
+        atexit.register(cleanup_runtime_admission)
+        return description
     except Exception:
         release_single_instance_lock()
         raise

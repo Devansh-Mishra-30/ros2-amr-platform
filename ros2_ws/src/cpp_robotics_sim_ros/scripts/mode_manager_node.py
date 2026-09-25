@@ -10,9 +10,9 @@
 from enum import Enum
 import json
 import math
-import os
-import signal
+from pathlib import Path
 import subprocess
+import sys
 import threading
 import time
 from typing import Optional
@@ -30,6 +30,21 @@ from rclpy.qos import (
 from std_msgs.msg import String
 
 from std_srvs.srv import Trigger
+
+SCRIPT_DIRECTORY = str(Path(__file__).resolve().parent)
+if SCRIPT_DIRECTORY not in sys.path:
+    sys.path.insert(0, SCRIPT_DIRECTORY)
+
+from process_lifecycle import (  # noqa: E402,I100,I101
+    defer_termination_signals,
+    deregister_exited_process,
+    persist_shutdown_result,
+    process_group_exists,
+    register_managed_process,
+    ShutdownResult,
+    terminate_owned_process,
+)
+from process_registry import ProcessRecord, ProcessRegistry  # noqa: E402,I100
 
 
 class OperatingMode(str, Enum):
@@ -78,11 +93,11 @@ class ModeManagerNode(Node):
         )
         self.declare_parameter(
             'shutdown_timeout',
-            10.0,
+            4.0,
         )
         self.declare_parameter(
             'kill_timeout',
-            3.0,
+            1.5,
         )
 
         self.launch_package = str(
@@ -184,6 +199,9 @@ class ModeManagerNode(Node):
 
         self.process: Optional[subprocess.Popen] = None
         self.process_group_id: Optional[int] = None
+        self.process_record: Optional[ProcessRecord] = None
+        self.process_registry = ProcessRegistry()
+        self.process_registry.reconcile_stale_records()
         self.process_lock = threading.RLock()
 
         self.mode = OperatingMode.STOPPED
@@ -193,6 +211,7 @@ class ModeManagerNode(Node):
         self.selected_map_path = ''
         self.last_error = ''
         self.shutdown_complete = False
+        self.last_shutdown_report: Optional[ShutdownResult] = None
 
         self.monitor_timer = self.create_timer(
             0.5,
@@ -482,15 +501,20 @@ class ModeManagerNode(Node):
                     command,
                     start_new_session=True,
                 )
-                self.process_group_id = os.getpgid(
-                    self.process.pid
+                self.process_record = self.register_process(
+                    self.process_registry,
+                    self.process,
+                    f'mode_{requested_mode.value}',
                 )
+                self.process_group_id = self.process_record.pgid
             except (
                 OSError,
+                RuntimeError,
                 subprocess.SubprocessError,
             ) as error:
                 self.process = None
                 self.process_group_id = None
+                self.process_record = None
 
                 self.last_error = str(error)
                 self.publish_mode(OperatingMode.ERROR)
@@ -506,22 +530,54 @@ class ModeManagerNode(Node):
 
             if self.process.poll() is not None:
                 return_code = self.process.returncode
-                process_group_id = self.process_group_id
                 self.process = None
-
-                if process_group_id is not None:
-                    self.terminate_process_group(
-                        process_group_id
-                    )
-
-                self.process_group_id = None
+                if self.process_record is not None:
+                    if self.release_exited_process_record(
+                        self.process_registry,
+                        self.process_record,
+                    ):
+                        self.process_record = None
+                        self.process_group_id = None
 
                 self.last_error = (
                     f'{requested_mode.value} launch '
                     'exited during startup with return '
                     f'code {return_code}'
                 )
+                if self.process_record is not None:
+                    self.last_error += (
+                        '; process-group descendants remain and the '
+                        'ownership record was retained'
+                    )
 
+                self.publish_mode(OperatingMode.ERROR)
+                self.get_logger().error(self.last_error)
+                return False, self.last_error
+
+            try:
+                self.process_record = self.refresh_process_record(
+                    self.process_registry, self.process_record
+                )
+                self.process_group_id = self.process_record.pgid
+            except (OSError, RuntimeError, ValueError) as error:
+                report = self.terminate_process_record(
+                    self.process_registry,
+                    self.process_record,
+                    process=self.process,
+                    sigint_timeout=self.shutdown_timeout,
+                    sigterm_timeout=self.kill_timeout,
+                    sigkill_timeout=self.kill_timeout,
+                )
+                self.last_shutdown_report = report
+                self.persist_shutdown_report(report)
+                if report.success:
+                    self.process = None
+                    self.process_record = None
+                    self.process_group_id = None
+                self.last_error = (
+                    'Failed to persist mode descendant identities: '
+                    + str(error)
+                )
                 self.publish_mode(OperatingMode.ERROR)
                 self.get_logger().error(self.last_error)
                 return False, self.last_error
@@ -541,160 +597,35 @@ class ModeManagerNode(Node):
         process_group_id: int,
     ) -> bool:
         """Return whether a managed operating-system process group exists."""
-        try:
-            os.killpg(process_group_id, 0)
-        except ProcessLookupError:
-            return False
-        except PermissionError:
-            return True
-
-        return True
+        return process_group_exists(process_group_id)
 
     def terminate_process_group(
         self,
         process_group_id: int,
     ) -> bool:
-        """Terminate a process group and confirm that it disappeared."""
-        if not self.process_group_exists(
-            process_group_id
-        ):
-            return True
-
-        if rclpy.ok(context=self.context):
-            self.get_logger().warning(
-                'Remaining mode processes detected in '
-                f'group {process_group_id}; sending SIGTERM'
-            )
-
-        try:
-            os.killpg(
-                process_group_id,
-                signal.SIGTERM,
-            )
-        except ProcessLookupError:
-            return True
-        except OSError as error:
-            if rclpy.ok(context=self.context):
-                self.get_logger().error(
-                    'Unable to send SIGTERM to mode '
-                    f'process group {process_group_id}: {error}'
-                )
+        """Terminate only the process group represented by the live record."""
+        if getattr(self, 'process_record', None) is None:
+            return not self.process_group_exists(process_group_id)
+        if self.process_record.pgid != process_group_id:
             return False
-
-        deadline = (
-            time.monotonic() + self.kill_timeout
+        report = self.terminate_process_record(
+            self.process_registry,
+            self.process_record,
+            process=self.process,
+            sigint_timeout=self.shutdown_timeout,
+            sigterm_timeout=self.kill_timeout,
+            sigkill_timeout=self.kill_timeout,
         )
-
-        while time.monotonic() < deadline:
-            if not self.process_group_exists(
-                process_group_id
-            ):
-                return True
-
-            time.sleep(0.1)
-
-        if rclpy.ok(context=self.context):
-            self.get_logger().error(
-                'Mode process group still exists; '
-                f'sending SIGKILL to {process_group_id}'
-            )
-
-        try:
-            os.killpg(
-                process_group_id,
-                signal.SIGKILL,
-            )
-        except ProcessLookupError:
-            return True
-        except OSError as error:
-            if rclpy.ok(context=self.context):
-                self.get_logger().error(
-                    'Unable to send SIGKILL to mode '
-                    f'process group {process_group_id}: {error}'
-                )
-            return False
-
-        deadline = (
-            time.monotonic() + self.kill_timeout
-        )
-
-        while time.monotonic() < deadline:
-            if not self.process_group_exists(
-                process_group_id
-            ):
-                return True
-
-            time.sleep(0.1)
-
-        if rclpy.ok(context=self.context):
-            self.get_logger().error(
-                'Mode process group survived SIGKILL: '
-                f'{process_group_id}'
-            )
-
-        return False
+        self.last_shutdown_report = report
+        if report.success:
+            self.process_record = None
+        return report.success
 
     def cleanup_orphan_scan_frame_bridges(
         self,
     ) -> None:
-        """
-        Remove orphaned scan-frame bridge processes.
-
-        These processes may escape the managed ROS 2 launch
-        process group and become adopted by PID 1. The match is
-        restricted to this project's exact static transform and
-        node name.
-        """
-        pattern = (
-            'static_transform_publisher '
-            '0 0 0 0 0 0 '
-            'lidar_link '
-            'diffbot/base_link/diffbot_lidar '
-            '--ros-args -r __node:=scan_frame_bridge'
-        )
-
-        try:
-            result = subprocess.run(
-                [
-                    'pkill',
-                    '-TERM',
-                    '-f',
-                    pattern,
-                ],
-                check=False,
-                capture_output=True,
-                text=True,
-                timeout=self.kill_timeout,
-            )
-        except (
-            OSError,
-            subprocess.SubprocessError,
-        ) as error:
-            if rclpy.ok(context=self.context):
-                self.get_logger().warning(
-                    'Unable to clean orphan scan-frame '
-                    f'bridge: {error}'
-                )
-            return
-
-        # pkill returns:
-        #   0 when at least one process matched
-        #   1 when nothing matched
-        if (
-            result.returncode == 0
-            and rclpy.ok(context=self.context)
-        ):
-            self.get_logger().info(
-                'Cleaned orphan scan-frame bridge process'
-            )
-        elif (
-            result.returncode not in (0, 1)
-            and rclpy.ok(context=self.context)
-        ):
-            self.get_logger().warning(
-                'Scan-frame bridge cleanup returned code '
-                f'{result.returncode}'
-            )
+        """Reconcile exited records without broad process-name signaling."""
+        self.process_registry.reconcile_stale_records()
 
     def stop_current_mode(
         self,
@@ -704,44 +635,35 @@ class ModeManagerNode(Node):
             if not self.process_is_running():
                 self.clear_finished_process()
                 self.cleanup_orphan_scan_frame_bridges()
-                self.requested_mode = OperatingMode.STOPPED
-                self.publish_mode(OperatingMode.STOPPED)
+                if self.process_record is not None:
+                    report = self.terminate_process_record(
+                        self.process_registry,
+                        self.process_record,
+                        sigint_timeout=self.shutdown_timeout,
+                        sigterm_timeout=self.kill_timeout,
+                        sigkill_timeout=self.kill_timeout,
+                    )
+                    self.last_shutdown_report = report
+                    self.persist_shutdown_report(report)
+                    if not report.success:
+                        self.last_error = report.error
+                        self.requested_mode = OperatingMode.ERROR
+                        self.publish_mode(OperatingMode.ERROR)
+                        return False, self.last_error
+                self.reset_runtime_state()
 
                 return True, 'Operating mode stopped'
 
             assert self.process is not None
-
             process = self.process
-            process_pid = process.pid
-
-            try:
-                process_group_id = (
-                    self.process_group_id
-                    if self.process_group_id is not None
-                    else os.getpgid(process_pid)
+            if self.process_record is None:
+                self.last_error = (
+                    'Operating-mode process has no ownership record; '
+                    'refusing to signal it'
                 )
-            except ProcessLookupError:
-                self.process = None
-                self.process_group_id = None
-                self.cleanup_orphan_scan_frame_bridges()
-                self.requested_mode = OperatingMode.STOPPED
-                self.publish_mode(OperatingMode.STOPPED)
-                return True, 'Operating mode stopped'
-            except OSError as error:
-                self.process = None
-                self.process_group_id = None
-                self.last_error = str(error)
                 self.publish_mode(OperatingMode.ERROR)
-
-                message = (
-                    'Failed to resolve operating-mode '
-                    f'process group: {error}'
-                )
-
-                if rclpy.ok(context=self.context):
-                    self.get_logger().error(message)
-
-                return False, message
+                return False, self.last_error
+            process_group_id = self.process_record.pgid
 
             self.publish_mode(OperatingMode.STOPPING)
 
@@ -751,97 +673,21 @@ class ModeManagerNode(Node):
                     f'{process_group_id}'
                 )
 
-            try:
-                os.killpg(
-                    process_group_id,
-                    signal.SIGINT,
-                )
-
-                process.wait(
-                    timeout=self.shutdown_timeout
-                )
-
-            except subprocess.TimeoutExpired:
-                if rclpy.ok(context=self.context):
-                    self.get_logger().warning(
-                        'Mode did not stop after SIGINT; '
-                        'sending SIGTERM'
-                    )
-
-                try:
-                    os.killpg(
-                        process_group_id,
-                        signal.SIGTERM,
-                    )
-
-                    process.wait(
-                        timeout=self.kill_timeout
-                    )
-
-                except subprocess.TimeoutExpired:
-                    if rclpy.ok(context=self.context):
-                        self.get_logger().error(
-                            'Mode did not stop after SIGTERM; '
-                            'sending SIGKILL'
-                        )
-
-                    try:
-                        os.killpg(
-                            process_group_id,
-                            signal.SIGKILL,
-                        )
-                    except ProcessLookupError:
-                        pass
-
-                    try:
-                        process.wait(
-                            timeout=self.kill_timeout
-                        )
-                    except subprocess.TimeoutExpired:
-                        pass
-
-            except ProcessLookupError:
-                if rclpy.ok(context=self.context):
-                    self.get_logger().warning(
-                        'Operating-mode process group '
-                        'no longer exists'
-                    )
-
-            except (
-                OSError,
-                subprocess.SubprocessError,
-            ) as error:
-                self.last_error = str(error)
-                self.publish_mode(OperatingMode.ERROR)
-
-                message = (
-                    'Failed to stop operating mode: '
-                    f'{error}'
-                )
-
-                if rclpy.ok(context=self.context):
-                    self.get_logger().error(message)
-
-                return False, message
-
-            finally:
-                self.process = None
-
-            termination_confirmed = (
-                self.terminate_process_group(
-                    process_group_id
-                )
+            report = self.terminate_process_record(
+                self.process_registry,
+                self.process_record,
+                process=process,
+                sigint_timeout=self.shutdown_timeout,
+                sigterm_timeout=self.kill_timeout,
+                sigkill_timeout=self.kill_timeout,
             )
-            self.process_group_id = None
+            self.last_shutdown_report = report
+            self.persist_shutdown_report(report)
 
             self.cleanup_orphan_scan_frame_bridges()
 
-            if not termination_confirmed:
-                self.last_error = (
-                    'Unable to confirm termination of '
-                    'operating-mode process group '
-                    f'{process_group_id}'
-                )
+            if not report.success:
+                self.last_error = report.error
                 self.requested_mode = (
                     OperatingMode.ERROR
                 )
@@ -854,8 +700,7 @@ class ModeManagerNode(Node):
 
                 return False, self.last_error
 
-            self.requested_mode = OperatingMode.STOPPED
-            self.publish_mode(OperatingMode.STOPPED)
+            self.reset_runtime_state()
 
             message = 'Operating mode stopped'
 
@@ -863,6 +708,26 @@ class ModeManagerNode(Node):
                 self.get_logger().info(message)
 
             return True, message
+
+    @staticmethod
+    def register_process(registry, process, component):
+        return register_managed_process(registry, process, component)
+
+    @staticmethod
+    def terminate_process_record(registry, record, **kwargs):
+        return terminate_owned_process(registry, record, **kwargs)
+
+    @staticmethod
+    def refresh_process_record(registry, record):
+        return registry.refresh_group_members(record)
+
+    @staticmethod
+    def release_exited_process_record(registry, record):
+        return deregister_exited_process(registry, record)
+
+    @staticmethod
+    def persist_shutdown_report(report):
+        persist_shutdown_result(report)
 
     def monitor_process(self) -> None:
         """Detect and report an unexpected managed-process exit."""
@@ -876,16 +741,34 @@ class ModeManagerNode(Node):
                 return
 
             previous_mode = self.mode
-            process_group_id = self.process_group_id
-
             self.process = None
+            if getattr(self, 'process_record', None) is not None:
+                if self.release_exited_process_record(
+                    self.process_registry,
+                    self.process_record,
+                ):
+                    self.process_record = None
+                    self.process_group_id = None
 
-            if process_group_id is not None:
-                self.terminate_process_group(
-                    process_group_id
+            if self.process_record is not None:
+                report = self.terminate_process_record(
+                    self.process_registry,
+                    self.process_record,
+                    sigint_timeout=self.shutdown_timeout,
+                    sigterm_timeout=self.kill_timeout,
+                    sigkill_timeout=self.kill_timeout,
                 )
-
-            self.process_group_id = None
+                self.last_shutdown_report = report
+                self.persist_shutdown_report(report)
+                if report.success:
+                    self.process_record = None
+                    self.process_group_id = None
+                else:
+                    self.last_error = report.error
+                    self.publish_mode(OperatingMode.ERROR)
+                    if rclpy.ok(context=self.context):
+                        self.get_logger().error(self.last_error)
+                    return
 
             if previous_mode in (
                 OperatingMode.STOPPING,
@@ -923,12 +806,28 @@ class ModeManagerNode(Node):
             and self.process.poll() is not None
         ):
             self.process = None
+            if getattr(self, 'process_record', None) is not None:
+                if self.release_exited_process_record(
+                    self.process_registry,
+                    self.process_record,
+                ):
+                    self.process_record = None
+                    self.process_group_id = None
 
-            if self.process_group_id is not None:
-                self.terminate_process_group(
-                    self.process_group_id
-                )
-                self.process_group_id = None
+    def reset_runtime_state(self) -> None:
+        """
+        Restore stopped mode state without erasing diagnostics.
+
+        ``last_shutdown_report`` and ``shutdown_complete`` remain unchanged;
+        the former is historical diagnostic state and the latter preserves
+        idempotent final node shutdown.
+        """
+        self.process = None
+        self.process_group_id = None
+        self.process_record = None
+        self.requested_mode = OperatingMode.STOPPED
+        self.last_error = ''
+        self.publish_mode(OperatingMode.STOPPED)
 
     def publish_mode(
         self,
@@ -981,12 +880,13 @@ def main(args=None) -> None:
         pass
 
     finally:
-        if node is not None:
-            node.shutdown()
-            node.destroy_node()
+        with defer_termination_signals():
+            if node is not None:
+                node.shutdown()
+                node.destroy_node()
 
-        if rclpy.ok():
-            rclpy.shutdown()
+            if rclpy.ok():
+                rclpy.shutdown()
 
 
 if __name__ == '__main__':

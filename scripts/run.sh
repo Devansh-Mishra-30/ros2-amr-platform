@@ -22,6 +22,8 @@ WORKSPACE_SETUP="${ROS_WS}/install/setup.bash"
 
 PACKAGE_NAME="cpp_robotics_sim_ros"
 LAUNCH_FILE="web_interface.launch.py"
+RECOVERY_HELPER="${ROS_WS}/install/${PACKAGE_NAME}/lib/${PACKAGE_NAME}/process_lifecycle.py"
+RUNTIME_ROOT="${HOME}/.ros/cpp_robotics_sim"
 
 DASHBOARD_PORT="${DASHBOARD_PORT:-8080}"
 ROSBRIDGE_PORT="${ROSBRIDGE_PORT:-9090}"
@@ -140,6 +142,22 @@ stop_browser_helper() {
   BROWSER_PID=""
 }
 
+recover_registered_groups() {
+  local report_path="${RUNTIME_ROOT}/shutdown_reports/run_recovery.json"
+
+  if [[ ! -x "${RECOVERY_HELPER}" ]]; then
+    printf 'ERROR: owned-process recovery helper is unavailable: %s\n' \
+      "${RECOVERY_HELPER}" >&2
+    return 1
+  fi
+
+  if ! "${RECOVERY_HELPER}" --recover --report "${report_path}"; then
+    printf 'ERROR: verified owned-process recovery failed. Report: %s\n' \
+      "${report_path}" >&2
+    return 1
+  fi
+}
+
 stop_launcher() {
   if [[ "${SHUTDOWN_STARTED}" == "true" ]]; then
     return 0
@@ -149,13 +167,15 @@ stop_launcher() {
   stop_browser_helper
 
   if [[ -z "${LAUNCH_PID}" ]]; then
-    return 0
+    recover_registered_groups
+    return
   fi
 
   if ! process_group_exists "${LAUNCH_PID}"; then
     wait "${LAUNCH_PID}" 2>/dev/null || true
     LAUNCH_PID=""
-    return 0
+    recover_registered_groups
+    return
   fi
 
   printf '\nStopping dashboard stack with SIGINT...\n'
@@ -167,7 +187,8 @@ stop_launcher() {
     wait "${LAUNCH_PID}" 2>/dev/null || true
     LAUNCH_PID=""
     printf 'Dashboard stack stopped cleanly.\n'
-    return 0
+    recover_registered_groups
+    return
   fi
 
   printf 'Dashboard stack did not stop after SIGINT; '
@@ -181,7 +202,8 @@ stop_launcher() {
     wait "${LAUNCH_PID}" 2>/dev/null || true
     LAUNCH_PID=""
     printf 'Dashboard stack stopped after SIGTERM.\n'
-    return 0
+    recover_registered_groups
+    return
   fi
 
   printf 'Dashboard stack did not stop after SIGTERM; '
@@ -190,6 +212,8 @@ stop_launcher() {
   kill -KILL -- "-${LAUNCH_PID}" 2>/dev/null || true
   wait "${LAUNCH_PID}" 2>/dev/null || true
   LAUNCH_PID=""
+
+  recover_registered_groups || true
 
   return 1
 }
@@ -290,17 +314,19 @@ os.execvp(sys.argv[1], sys.argv[1:])
   launch_status=$?
   set -e
 
-  LAUNCH_PID=""
-
   if [[ "${SHUTDOWN_STARTED}" == "true" ]]; then
     return 0
   fi
 
   if ((launch_status != 0)); then
+    stop_launcher || true
     printf 'ERROR: dashboard launcher exited with code %s.\n' \
       "${launch_status}" >&2
     return "${launch_status}"
   fi
+
+  LAUNCH_PID=""
+  recover_registered_groups
 
   printf 'Dashboard launcher exited normally.\n'
 }

@@ -8,5 +8,5 @@ simulation_manager:
     managed_use_sim_time: true
 
     startup_grace_period: 4.0
-    shutdown_timeout: 10.0
-    kill_timeout: 3.0
+    shutdown_timeout: 4.0
+    kill_timeout: 1.5

@@ -10,7 +10,7 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import fcntl
 import json
 import os
@@ -53,10 +53,62 @@ class ProcessIdentity:
 
     pid: int
     pgid: int
+    session_id: int
     parent_pid: int
     proc_start_time: int
     exe: str
     cmdline_fingerprint: str
+
+    @classmethod
+    def from_mapping(cls, value: Mapping[str, object]) -> 'ProcessIdentity':
+        required = (
+            'pid', 'pgid', 'session_id', 'parent_pid', 'proc_start_time',
+            'exe', 'cmdline_fingerprint',
+        )
+        missing = [key for key in required if key not in value]
+        if missing:
+            raise RegistryFormatError(
+                'process identity missing fields: ' + ', '.join(missing)
+            )
+        identity = cls(
+            pid=value['pid'],  # type: ignore[arg-type]
+            pgid=value['pgid'],  # type: ignore[arg-type]
+            session_id=value['session_id'],  # type: ignore[arg-type]
+            parent_pid=value['parent_pid'],  # type: ignore[arg-type]
+            proc_start_time=value['proc_start_time'],  # type: ignore[arg-type]
+            exe=value['exe'],  # type: ignore[arg-type]
+            cmdline_fingerprint=value['cmdline_fingerprint'],  # type: ignore[arg-type]
+        )
+        identity.validate()
+        return identity
+
+    def validate(self) -> None:
+        for name in ('pid', 'pgid', 'session_id', 'proc_start_time'):
+            value = getattr(self, name)
+            if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
+                raise RegistryFormatError(name + ' must be a positive integer')
+        if (
+            not isinstance(self.parent_pid, int)
+            or isinstance(self.parent_pid, bool)
+            or self.parent_pid < 0
+        ):
+            raise RegistryFormatError('parent_pid must be a non-negative integer')
+        if not isinstance(self.exe, str) or not self.exe:
+            raise RegistryFormatError('exe must be non-empty')
+        if not isinstance(self.cmdline_fingerprint, str):
+            raise RegistryFormatError('cmdline_fingerprint must be a string')
+
+    def to_mapping(self) -> dict[str, object]:
+        self.validate()
+        return {
+            'pid': self.pid,
+            'pgid': self.pgid,
+            'session_id': self.session_id,
+            'parent_pid': self.parent_pid,
+            'proc_start_time': self.proc_start_time,
+            'exe': self.exe,
+            'cmdline_fingerprint': self.cmdline_fingerprint,
+        }
 
 
 @dataclass(frozen=True)
@@ -68,10 +120,12 @@ class ProcessRecord:
     component: str
     pid: int
     pgid: int
+    session_id: int
     parent_pid: int
     proc_start_time: int
     exe: str
     cmdline_fingerprint: str
+    member_identities: tuple[ProcessIdentity, ...] = ()
     state: str = 'active'
 
     @classmethod
@@ -89,10 +143,12 @@ class ProcessRecord:
             component=component,
             pid=identity.pid,
             pgid=identity.pgid,
+            session_id=identity.session_id,
             parent_pid=identity.parent_pid,
             proc_start_time=identity.proc_start_time,
             exe=identity.exe,
             cmdline_fingerprint=identity.cmdline_fingerprint,
+            member_identities=(),
             state=state,
         )
 
@@ -108,6 +164,7 @@ class ProcessRecord:
             'component',
             'pid',
             'pgid',
+            'session_id',
             'parent_pid',
             'proc_start_time',
             'exe',
@@ -119,6 +176,11 @@ class ProcessRecord:
             raise RegistryFormatError(
                 'record missing fields: ' + ', '.join(missing)
             )
+        raw_members = value.get('member_identities', [])
+        if not isinstance(raw_members, list) or not all(
+            isinstance(item, Mapping) for item in raw_members
+        ):
+            raise RegistryFormatError('member_identities must be a list of objects')
 
         record = cls(
             schema_version=value['schema_version'],  # type: ignore[arg-type]
@@ -126,10 +188,15 @@ class ProcessRecord:
             component=value['component'],  # type: ignore[arg-type]
             pid=value['pid'],  # type: ignore[arg-type]
             pgid=value['pgid'],  # type: ignore[arg-type]
+            session_id=value['session_id'],  # type: ignore[arg-type]
             parent_pid=value['parent_pid'],  # type: ignore[arg-type]
             proc_start_time=value['proc_start_time'],  # type: ignore[arg-type]
             exe=value['exe'],  # type: ignore[arg-type]
             cmdline_fingerprint=value['cmdline_fingerprint'],  # type: ignore[arg-type]
+            member_identities=tuple(
+                ProcessIdentity.from_mapping(item)
+                for item in raw_members
+            ),
             state=value['state'],  # type: ignore[arg-type]
         )
         record.validate()
@@ -152,7 +219,7 @@ class ProcessRecord:
         if not isinstance(self.component, str) or not self.component.strip():
             raise RegistryFormatError('component must be non-empty')
 
-        for name in ('pid', 'pgid', 'proc_start_time'):
+        for name in ('pid', 'pgid', 'session_id', 'proc_start_time'):
             value = getattr(self, name)
             if not isinstance(value, int) or isinstance(value, bool):
                 raise RegistryFormatError(name + ' must be an integer')
@@ -177,6 +244,23 @@ class ProcessRecord:
                 'cmdline_fingerprint must be a string'
             )
 
+        if not isinstance(self.member_identities, tuple):
+            raise RegistryFormatError('member_identities must be a tuple')
+        for identity in self.member_identities:
+            if not isinstance(identity, ProcessIdentity):
+                raise RegistryFormatError(
+                    'member_identities entries must be process identities'
+                )
+            identity.validate()
+            if identity.pid == self.pid:
+                raise RegistryFormatError(
+                    'member_identities must not repeat the launch leader'
+                )
+            if identity.session_id != self.session_id:
+                raise RegistryFormatError(
+                    'member identity is outside the recorded session'
+                )
+
         if self.state not in _ALLOWED_STATES:
             raise RegistryFormatError('unsupported record state')
 
@@ -189,15 +273,19 @@ class ProcessRecord:
             'component': self.component,
             'pid': self.pid,
             'pgid': self.pgid,
+            'session_id': self.session_id,
             'parent_pid': self.parent_pid,
             'proc_start_time': self.proc_start_time,
             'exe': self.exe,
             'cmdline_fingerprint': self.cmdline_fingerprint,
+            'member_identities': [
+                identity.to_mapping() for identity in self.member_identities
+            ],
             'state': self.state,
         }
 
 
-def _parse_proc_stat(pid: int, text: str) -> tuple[int, int, int, int]:
+def _parse_proc_stat(pid: int, text: str) -> tuple[int, int, int, int, int]:
     """Parse /proc/<pid>/stat even when the comm field has spaces or ')'."""
     opening = text.find('(')
     closing = text.rfind(')')
@@ -213,7 +301,8 @@ def _parse_proc_stat(pid: int, text: str) -> tuple[int, int, int, int]:
         raise ValueError('unexpected /proc stat PID')
 
     # fields[0] is field 3 (state), fields[1] is PPID (field 4),
-    # fields[2] is PGRP (field 5), and fields[19] is starttime (field 22).
+    # fields[2] is PGRP (field 5), fields[3] is session (field 6), and
+    # fields[19] is starttime (field 22).
     fields = text[closing + 1:].strip().split()
     if len(fields) <= 19:
         raise ValueError('incomplete /proc stat')
@@ -221,11 +310,12 @@ def _parse_proc_stat(pid: int, text: str) -> tuple[int, int, int, int]:
     try:
         parent_pid = int(fields[1])
         pgid = int(fields[2])
+        session_id = int(fields[3])
         start_time = int(fields[19])
     except ValueError as error:
         raise ValueError('malformed /proc stat fields') from error
 
-    return parsed_pid, pgid, parent_pid, start_time
+    return parsed_pid, pgid, session_id, parent_pid, start_time
 
 
 def _normalize_cmdline(raw: bytes) -> str:
@@ -242,14 +332,16 @@ def _normalize_cmdline(raw: bytes) -> str:
     )
 
 
-def _read_process_snapshot(pid: int) -> tuple[int, int, int, str, str]:
+def _read_process_snapshot(pid: int) -> tuple[int, int, int, int, str, str]:
     """Read one process snapshot from procfs."""
     proc_dir = Path('/proc') / str(pid)
     stat_text = (proc_dir / 'stat').read_text(encoding='utf-8')
-    _, pgid, parent_pid, start_time = _parse_proc_stat(pid, stat_text)
+    _, pgid, session_id, parent_pid, start_time = _parse_proc_stat(
+        pid, stat_text
+    )
     exe = os.path.realpath(os.readlink(proc_dir / 'exe'))
     cmdline = _normalize_cmdline((proc_dir / 'cmdline').read_bytes())
-    return pgid, parent_pid, start_time, exe, cmdline
+    return pgid, session_id, parent_pid, start_time, exe, cmdline
 
 
 def capture_process_identity(pid: int) -> ProcessIdentity:
@@ -271,11 +363,26 @@ def capture_process_identity(pid: int) -> ProcessIdentity:
             'unable to inspect process identity for PID ' + str(pid)
         ) from error
 
-    first_pgid, first_parent, first_start, first_exe, first_cmdline = first
-    second_pgid, _, second_start, second_exe, second_cmdline = second
+    (
+        first_pgid,
+        first_session,
+        first_parent,
+        first_start,
+        first_exe,
+        first_cmdline,
+    ) = first
+    (
+        second_pgid,
+        second_session,
+        _,
+        second_start,
+        second_exe,
+        second_cmdline,
+    ) = second
 
     if (
         first_pgid != second_pgid
+        or first_session != second_session
         or first_start != second_start
         or first_exe != second_exe
         or first_cmdline != second_cmdline
@@ -284,9 +391,15 @@ def capture_process_identity(pid: int) -> ProcessIdentity:
             'process identity changed while being inspected: ' + str(pid)
         )
 
+    if first_cmdline == '[]':
+        raise ProcessLookupError(
+            'process command line is not stable yet: ' + str(pid)
+        )
+
     return ProcessIdentity(
         pid=pid,
         pgid=first_pgid,
+        session_id=first_session,
         parent_pid=first_parent,
         proc_start_time=first_start,
         exe=first_exe,
@@ -301,19 +414,189 @@ def verify_process_identity(
     try:
         if not isinstance(record, ProcessRecord):
             record = ProcessRecord.from_mapping(record)
-        current = capture_process_identity(record.pid)
+        expected = ProcessIdentity(
+            pid=record.pid,
+            pgid=record.pgid,
+            session_id=record.session_id,
+            parent_pid=record.parent_pid,
+            proc_start_time=record.proc_start_time,
+            exe=record.exe,
+            cmdline_fingerprint=record.cmdline_fingerprint,
+        )
+        return verify_captured_identity(expected)
+    except (OSError, RegistryFormatError, ValueError):
+        return False
+
+
+def verify_captured_identity(expected: ProcessIdentity) -> bool:
+    """Verify a leader or descendant identity, excluding mutable PPID."""
+    try:
+        expected.validate()
+        current = capture_process_identity(expected.pid)
     except (OSError, RegistryFormatError, ValueError):
         return False
 
     # PPID is intentionally diagnostic-only: an owned process can be reparented
     # after its manager dies while still being the same process.
     return (
-        current.pid == record.pid
-        and current.pgid == record.pgid
-        and current.proc_start_time == record.proc_start_time
-        and current.exe == record.exe
-        and current.cmdline_fingerprint == record.cmdline_fingerprint
+        current.pid == expected.pid
+        and current.pgid == expected.pgid
+        and current.session_id == expected.session_id
+        and current.proc_start_time == expected.proc_start_time
+        and current.exe == expected.exe
+        and current.cmdline_fingerprint == expected.cmdline_fingerprint
     )
+
+
+def process_group_exists(pgid: int) -> bool:
+    """Return whether a process group exists without sending it a signal."""
+    try:
+        os.killpg(pgid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return True
+
+
+def process_group_session_ids(pgid: int) -> set[int]:
+    """Return session IDs for every currently visible member of a group."""
+    session_ids: set[int] = set()
+    try:
+        proc_entries = Path('/proc').iterdir()
+    except OSError:
+        return session_ids
+
+    for entry in proc_entries:
+        if not entry.name.isdigit():
+            continue
+        pid = int(entry.name)
+        try:
+            stat_text = (entry / 'stat').read_text(encoding='utf-8')
+            _, current_pgid, session_id, _, _ = _parse_proc_stat(
+                pid, stat_text
+            )
+        except (OSError, ValueError):
+            continue
+        state = stat_text[stat_text.rfind(')') + 1:].strip().split()[0]
+        if current_pgid == pgid and state != 'Z':
+            session_ids.add(session_id)
+    return session_ids
+
+
+def capture_process_group_members(
+    pgid: int,
+    session_id: int,
+    *,
+    exclude_pid: int,
+) -> tuple[ProcessIdentity, ...]:
+    """Capture stable descendant identities for persisted crash recovery."""
+    identities = []
+    for entry in Path('/proc').iterdir():
+        if not entry.name.isdigit():
+            continue
+        pid = int(entry.name)
+        if pid == exclude_pid:
+            continue
+        try:
+            identity = capture_process_identity(pid)
+        except (OSError, ValueError):
+            continue
+        if identity.pgid == pgid and identity.session_id == session_id:
+            identities.append(identity)
+    return tuple(sorted(identities, key=lambda item: item.pid))
+
+
+def capture_process_session_members(
+    session_id: int,
+    *,
+    exclude_pid: int,
+) -> tuple[ProcessIdentity, ...]:
+    """Capture stable identities for every non-leader process in a session."""
+    identities = []
+    for entry in Path('/proc').iterdir():
+        if not entry.name.isdigit():
+            continue
+        pid = int(entry.name)
+        if pid == exclude_pid:
+            continue
+        try:
+            identity = capture_process_identity(pid)
+        except (OSError, ValueError):
+            continue
+        if identity.session_id == session_id:
+            identities.append(identity)
+    return tuple(sorted(identities, key=lambda item: item.pid))
+
+
+def _session_process_groups(
+    record: ProcessRecord,
+) -> tuple[str, tuple[int, ...], tuple[ProcessIdentity, ...]]:
+    """Classify and return only groups backed by verified owned identities."""
+    expected = {
+        identity.pid: identity
+        for identity in (
+            ProcessIdentity(
+                pid=record.pid,
+                pgid=record.pgid,
+                session_id=record.session_id,
+                parent_pid=record.parent_pid,
+                proc_start_time=record.proc_start_time,
+                exe=record.exe,
+                cmdline_fingerprint=record.cmdline_fingerprint,
+            ),
+            *record.member_identities,
+        )
+    }
+    current = capture_process_session_members(
+        record.session_id,
+        exclude_pid=-1,
+    )
+    leader_verified = verify_process_identity(record)
+    if leader_verified:
+        current = current + (
+            expected[record.pid],
+        ) if not any(item.pid == record.pid for item in current) else current
+
+    if not current:
+        return (
+            ('ambiguous', (), ())
+            if process_group_exists(record.pgid)
+            else ('absent', (), ())
+        )
+
+    verified: list[ProcessIdentity] = []
+    for identity in current:
+        persisted = expected.get(identity.pid)
+        if persisted is None or not verify_captured_identity(persisted):
+            return 'ambiguous', (), tuple(current)
+        verified.append(persisted)
+
+    if not leader_verified and record.pid in {item.pid for item in current}:
+        return 'ambiguous', (), tuple(current)
+
+    groups = tuple(sorted({identity.pgid for identity in verified}))
+    return (
+        'leader_verified' if leader_verified else 'session_verified',
+        groups,
+        tuple(verified),
+    )
+
+
+def owned_process_group_ids(
+    record: ProcessRecord,
+) -> tuple[str, tuple[int, ...], tuple[ProcessIdentity, ...]]:
+    """Return verified surviving groups and identities for one owned session."""
+    try:
+        return _session_process_groups(record)
+    except (OSError, RegistryFormatError, ValueError):
+        return 'ambiguous', (), ()
+
+
+def owned_process_group_status(record: ProcessRecord) -> str:
+    """Classify a persisted group without authorizing by PID or PGID alone."""
+    status, _, _ = owned_process_group_ids(record)
+    return status
 
 
 def _open_nofollow(path: Path, flags: int, mode: int = 0o600) -> int:
@@ -533,6 +816,103 @@ class ProcessRegistry:
                 }
             )
 
+    def register_unique(self, record: ProcessRecord) -> None:
+        """Register one live component, rejecting an existing live owner."""
+        record.validate()
+        with self._locked():
+            records = self._records_unlocked()
+            active: list[ProcessRecord] = []
+
+            for existing in records:
+                if owned_process_group_status(existing) != 'absent':
+                    active.append(existing)
+
+            duplicates = [
+                existing
+                for existing in active
+                if existing.component == record.component
+                and existing.instance_id != record.instance_id
+            ]
+            if duplicates:
+                owner = duplicates[0]
+                raise RuntimeError(
+                    f'component {record.component!r} already has an active '
+                    'or ambiguous owner '
+                    f'(PID {owner.pid}, instance {owner.instance_id})'
+                )
+
+            active = [
+                existing
+                for existing in active
+                if existing.instance_id != record.instance_id
+            ]
+            active.append(record)
+            active.sort(key=lambda item: item.instance_id)
+            self._atomic_write_unlocked(
+                {
+                    'schema_version': SCHEMA_VERSION,
+                    'records': active,
+                }
+            )
+
+    def refresh_group_members(self, record: ProcessRecord) -> ProcessRecord:
+        """Persist verified descendants without weakening leader ownership."""
+        if not verify_process_identity(record):
+            raise RuntimeError(
+                'cannot refresh descendants for an unverified launch leader'
+            )
+        members = capture_process_session_members(
+            record.session_id,
+            exclude_pid=record.pid,
+        )
+        if not members:
+            raise RuntimeError(
+                'managed launch group has no stable descendant identity'
+            )
+        if not verify_process_identity(record):
+            raise RuntimeError(
+                'launch leader identity changed while descendants were captured'
+            )
+        updated = replace(record, member_identities=members)
+        updated.validate()
+        with self._locked():
+            records = self._records_unlocked()
+            matching = [
+                existing
+                for existing in records
+                if existing.instance_id == record.instance_id
+            ]
+            if matching != [record]:
+                raise RuntimeError('ownership record changed during refresh')
+            records = [
+                updated if existing.instance_id == record.instance_id else existing
+                for existing in records
+            ]
+            self._atomic_write_unlocked(
+                {'schema_version': SCHEMA_VERSION, 'records': records}
+            )
+        return updated
+
+    def duplicate_components(self) -> dict[str, list[ProcessRecord]]:
+        """Return verified live ownership duplicates grouped by component."""
+        with self._locked():
+            records = self._records_unlocked()
+            active = [
+                record
+                for record in records
+                if owned_process_group_status(record)
+                in ('leader_verified', 'session_verified')
+            ]
+
+        grouped: dict[str, list[ProcessRecord]] = {}
+        for record in active:
+            grouped.setdefault(record.component, []).append(record)
+        return {
+            component: items
+            for component, items in grouped.items()
+            if len(items) > 1
+        }
+
     def deregister(self, instance_id: str) -> bool:
         """Remove one record and return whether it existed."""
         if not isinstance(instance_id, str) or not instance_id.strip():
@@ -556,14 +936,14 @@ class ProcessRegistry:
             return removed
 
     def reconcile_stale_records(self) -> list[ProcessRecord]:
-        """Remove records whose current process identity no longer matches."""
+        """Remove records only when identity and process group are both gone."""
         with self._locked():
             records = self._records_unlocked()
             active: list[ProcessRecord] = []
             stale: list[ProcessRecord] = []
 
             for record in records:
-                if verify_process_identity(record):
+                if owned_process_group_status(record) != 'absent':
                     active.append(record)
                 else:
                     stale.append(record)

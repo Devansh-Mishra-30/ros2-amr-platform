@@ -1039,6 +1039,12 @@ def test_prepare_shutdown_handles_cancellation_failure() -> None:
         'exception',
         'Unable to cancel navigation goal during shutdown',
     ) in node.test_logger.messages
+    assert node.goal_request_in_progress is False
+    assert node.active_goal_handle is None
+    assert node.cancel_requested is False
+    assert node.current_request_id is None
+    assert node.current_goal is None
+    assert node.last_feedback == {}
 
 
 def test_prepare_shutdown_is_idempotent() -> None:
@@ -1050,3 +1056,23 @@ def test_prepare_shutdown_is_idempotent() -> None:
     node.prepare_shutdown()
 
     assert goal_handle.cancel_call_count == 1
+
+
+def test_prepare_shutdown_resets_goal_runtime_state() -> None:
+    node = make_shutdown_node()
+    goal_handle = ShutdownGoalHandle()
+    node.active_goal_handle = goal_handle
+    node.cancel_requested = True
+    node.current_request_id = 7
+    node.current_goal = {'x': 1.0, 'y': 2.0, 'yaw': 0.5}
+    node.last_feedback = {'distance_remaining': 1.25}
+
+    node.prepare_shutdown()
+
+    assert node.shutdown_prepared is True
+    assert node.goal_request_in_progress is False
+    assert node.active_goal_handle is None
+    assert node.cancel_requested is False
+    assert node.current_request_id is None
+    assert node.current_goal is None
+    assert node.last_feedback == {}
