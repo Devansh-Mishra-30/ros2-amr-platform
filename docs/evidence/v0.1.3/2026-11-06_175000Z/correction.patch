@@ -1,0 +1,14 @@
+diff --git a/.dockerignore b/.dockerignore
+index 841f47a..f4d3108 100644
+--- a/.dockerignore
++++ b/.dockerignore
+@@ -52,7 +52,8 @@ Makefile
+ Thumbs.db
+ 
+ # Documentation/source files not required for container build
+-docs
++docs/*
++!docs/readiness_contracts.md
+ 
+ # Keep files required by the image
+ !scripts
