@@ -8,7 +8,6 @@ from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
-    TimerAction,
 )
 from launch.launch_description_sources import (
     PythonLaunchDescriptionSource,
@@ -64,13 +63,6 @@ def generate_launch_description():
         ],
     )
 
-    delayed_command_mux = TimerAction(
-        period=10.0,
-        actions=[
-            command_mux,
-        ],
-    )
-
     return LaunchDescription(
         [
             DeclareLaunchArgument(
@@ -90,6 +82,6 @@ def generate_launch_description():
                 description='Use Gazebo simulation time',
             ),
             simulation,
-            delayed_command_mux,
+            command_mux,
         ]
     )

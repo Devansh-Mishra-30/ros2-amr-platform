@@ -84,7 +84,11 @@ def make_manager(
     manager.process_group_id = None
 
     manager.managed_use_sim_time = True
-    manager.startup_grace_period = 0.0
+    manager.readiness_timeout = 45.0
+    manager.descendant_identity_timeout = 4.0
+    manager.shutdown_timeout = 4.0
+    manager.kill_timeout = 1.5
+    manager.wait_for_mode_readiness = lambda _mode: SimpleNamespace(ready=True)
 
     manager.launch_package = (
         'cpp_robotics_sim_ros'
@@ -234,6 +238,52 @@ def test_failed_stop_prevents_mode_change() -> None:
     assert published_modes == []
 
 
+def test_mode_launch_with_missing_readiness_dependency_never_becomes_active(
+    monkeypatch,
+) -> None:
+    manager, _, published_modes, _ = make_manager()
+    process = SimpleNamespace(pid=4242, poll=lambda: None)
+    record = SimpleNamespace(pgid=4242)
+    manager.process_registry = object()
+    manager.register_process = lambda *_args: record
+    identity_waits = []
+
+    def wait_for_process_record(_registry, _record, **kwargs):
+        identity_waits.append({
+            'timeout': kwargs['timeout'],
+            'should_continue': kwargs['should_continue'](),
+        })
+        return record
+
+    manager.wait_for_process_record = wait_for_process_record
+    manager.terminate_process_record = lambda *_args, **_kwargs: SimpleNamespace(
+        success=True, error=''
+    )
+    manager.persist_shutdown_report = lambda _report: None
+    manager.wait_for_mode_readiness = lambda _mode: SimpleNamespace(
+        ready=False,
+        to_mapping=lambda: {
+            'ready': False,
+            'blocked_dependencies': ['/scan'],
+            'checks': [{'name': '/scan', 'reason': 'no recent messages'}],
+        },
+    )
+    monkeypatch.setattr(MODULE.subprocess, 'Popen',
+                        lambda *_args, **_kwargs: process)
+
+    success, message = manager.activate_mode(OperatingMode.MAPPING)
+
+    assert not success
+    assert 'no recent messages' in message
+    assert process is not None
+    assert manager.process is None
+    assert OperatingMode.MAPPING not in published_modes
+    assert published_modes == [OperatingMode.STARTING, OperatingMode.ERROR]
+    assert len(identity_waits) == 1
+    assert identity_waits[0]['timeout'] == 4.0
+    assert identity_waits[0]['should_continue']
+
+
 def test_parameter_validation_accepts_valid_values() -> None:
     manager = object.__new__(ModeManagerNode)
 
@@ -246,7 +296,8 @@ def test_parameter_validation_accepts_valid_values() -> None:
         OperatingMode.NAVIGATION:
             ' nav2_navigation.launch.py ',
     }
-    manager.startup_grace_period = 0.0
+    manager.readiness_timeout = 45.0
+    manager.descendant_identity_timeout = 4.0
     manager.shutdown_timeout = 10.0
     manager.kill_timeout = 3.0
 
@@ -281,9 +332,10 @@ def test_parameter_validation_rejects_non_finite_values() -> None:
             OperatingMode.NAVIGATION:
                 'nav2_navigation.launch.py',
         }
-        manager.startup_grace_period = (
+        manager.readiness_timeout = (
             invalid_value
         )
+        manager.descendant_identity_timeout = 4.0
         manager.shutdown_timeout = 10.0
         manager.kill_timeout = 3.0
 
@@ -309,7 +361,8 @@ def test_parameter_validation_rejects_empty_launch_values() -> None:
         OperatingMode.NAVIGATION:
             'nav2_navigation.launch.py',
     }
-    manager.startup_grace_period = 0.0
+    manager.readiness_timeout = 45.0
+    manager.descendant_identity_timeout = 4.0
     manager.shutdown_timeout = 10.0
     manager.kill_timeout = 3.0
 
@@ -322,6 +375,28 @@ def test_parameter_validation_rejects_empty_launch_values() -> None:
     raise AssertionError(
         'Expected empty launch_package to fail'
     )
+
+
+def test_parameter_validation_rejects_nonpositive_identity_timeout() -> None:
+    manager = object.__new__(ModeManagerNode)
+    manager.launch_package = 'cpp_robotics_sim_ros'
+    manager.launch_files = {
+        OperatingMode.MAPPING: 'slam_mapping.launch.py',
+        OperatingMode.LOCALIZATION: 'amcl_localization.launch.py',
+        OperatingMode.NAVIGATION: 'nav2_navigation.launch.py',
+    }
+    manager.readiness_timeout = 45.0
+    manager.descendant_identity_timeout = 0.0
+    manager.shutdown_timeout = 4.0
+    manager.kill_timeout = 1.5
+
+    try:
+        manager.validate_parameters()
+    except ValueError as error:
+        assert 'descendant_identity_timeout' in str(error)
+        return
+
+    raise AssertionError('Expected nonpositive identity timeout to fail')
 
 
 def test_selected_map_callback_accepts_object_payload() -> None:
@@ -667,6 +742,129 @@ def test_reset_runtime_state_restores_stopped_baseline() -> None:
     assert manager.mode == OperatingMode.STOPPED
     assert manager.last_error == ''
     assert published_modes == [OperatingMode.STOPPED]
+
+
+def test_stop_current_mode_refreshes_descendants_before_termination(
+    monkeypatch,
+) -> None:
+    """Persist late same-session children before signaling a live mode."""
+    manager = object.__new__(ModeManagerNode)
+    process = FakeProcess(return_code=None)
+    original = SimpleNamespace(
+        instance_id='mode-test',
+        pgid=6789,
+        component='mode_navigation',
+    )
+    refreshed = SimpleNamespace(
+        instance_id='mode-test',
+        pgid=6789,
+        component='mode_navigation',
+        member_identities=('late-nav2-child',),
+    )
+    manager.process_lock = threading.RLock()
+    manager.process = process
+    manager.process_group_id = 6789
+    manager.process_record = original
+    manager.process_registry = object()
+    manager.process_is_running = lambda: True
+    manager.shutdown_timeout = 4.0
+    manager.kill_timeout = 1.5
+    manager._context = object()
+    manager.requested_mode = OperatingMode.NAVIGATION
+    manager.last_error = ''
+    manager.last_shutdown_report = None
+    manager.get_logger = lambda: FakeLogger()
+    manager.cleanup_orphan_scan_frame_bridges = lambda: None
+    manager.persist_shutdown_report = lambda _report: None
+
+    published_modes = []
+    manager.publish_mode = lambda mode: published_modes.append(mode)
+    refresh_calls = []
+    terminate_calls = []
+
+    def refresh_process_record(registry, record):
+        refresh_calls.append((registry, record))
+        return refreshed
+
+    def terminate_process_record(registry, record, **kwargs):
+        terminate_calls.append((registry, record, kwargs))
+        return SimpleNamespace(success=True, error='')
+
+    manager.refresh_process_record = refresh_process_record
+    manager.terminate_process_record = terminate_process_record
+
+    monkeypatch.setattr(
+        MODULE.rclpy,
+        'ok',
+        lambda context=None: True,
+    )
+
+    success, message = manager.stop_current_mode()
+
+    assert success is True
+    assert message == 'Operating mode stopped'
+    assert refresh_calls == [(manager.process_registry, original)]
+    assert terminate_calls[0][0:2] == (
+        manager.process_registry,
+        refreshed,
+    )
+    assert terminate_calls[0][2]['process'] is process
+    assert manager.process is None
+    assert manager.process_record is None
+    assert published_modes == [
+        OperatingMode.STOPPING,
+        OperatingMode.STOPPED,
+    ]
+
+
+def test_stop_current_mode_refuses_signal_when_refresh_fails(
+    monkeypatch,
+) -> None:
+    """Keep the live owner intact when descendant persistence is unsafe."""
+    manager = object.__new__(ModeManagerNode)
+    original = SimpleNamespace(
+        instance_id='mode-test',
+        pgid=6789,
+        component='mode_navigation',
+    )
+    manager.process_lock = threading.RLock()
+    manager.process = FakeProcess(return_code=None)
+    manager.process_group_id = 6789
+    manager.process_record = original
+    manager.process_registry = object()
+    manager.process_is_running = lambda: True
+    manager.shutdown_timeout = 4.0
+    manager.kill_timeout = 1.5
+    manager._context = object()
+    manager.requested_mode = OperatingMode.NAVIGATION
+    manager.last_error = ''
+    manager.get_logger = lambda: FakeLogger()
+    manager.publish_mode = lambda mode: setattr(manager, 'mode', mode)
+    manager.refresh_process_record = lambda *_args: (
+        (_ for _ in ()).throw(RuntimeError('leader changed'))
+    )
+    terminate_calls = []
+    manager.terminate_process_record = lambda *_args, **_kwargs: (
+        terminate_calls.append(True)
+    )
+
+    monkeypatch.setattr(
+        MODULE.rclpy,
+        'ok',
+        lambda context=None: True,
+    )
+
+    success, message = manager.stop_current_mode()
+
+    assert success is False
+    assert message == (
+        'Failed to refresh mode descendant identities: leader changed'
+    )
+    assert terminate_calls == []
+    assert manager.process_record is original
+    assert manager.process is not None
+    assert manager.requested_mode == OperatingMode.ERROR
+    assert manager.mode == OperatingMode.ERROR
 
 
 def test_terminate_process_group_returns_true_when_absent() -> None:

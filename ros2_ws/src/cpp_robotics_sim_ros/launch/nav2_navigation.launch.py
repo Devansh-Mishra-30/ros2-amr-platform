@@ -13,7 +13,6 @@ from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
-    TimerAction,
 )
 from launch.launch_description_sources import (
     PythonLaunchDescriptionSource,
@@ -214,22 +213,6 @@ def generate_launch_description():
         ],
     )
 
-    delayed_navigation_stack = TimerAction(
-        period=4.0,
-        actions=[
-            scan_frame_bridge,
-            cmd_vel_bridge,
-            localization_stack,
-            controller_server,
-            planner_server,
-            behavior_server,
-            bt_navigator,
-            waypoint_follower,
-            velocity_smoother,
-            lifecycle_manager_navigation,
-        ],
-    )
-
     return LaunchDescription(
         [
             DeclareLaunchArgument(
@@ -243,6 +226,15 @@ def generate_launch_description():
                     'Absolute path to saved map YAML'
                 ),
             ),
-            delayed_navigation_stack,
+            scan_frame_bridge,
+            cmd_vel_bridge,
+            localization_stack,
+            controller_server,
+            planner_server,
+            behavior_server,
+            bt_navigator,
+            waypoint_follower,
+            velocity_smoother,
+            lifecycle_manager_navigation,
         ]
     )

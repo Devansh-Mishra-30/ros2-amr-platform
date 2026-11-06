@@ -138,6 +138,7 @@ class ManagedComponent:
         self.__state = LifecycleState.UNCONFIGURED
         self._lock = Lock()
         self._last_transition_id = ''
+        self._last_transition = ''
 
     @property
     def state(self) -> LifecycleState:
@@ -146,6 +147,10 @@ class ManagedComponent:
     @property
     def last_transition_id(self) -> str:
         return self._last_transition_id
+
+    @property
+    def last_transition(self) -> str:
+        return self._last_transition
 
     def transition(self, operation: LifecycleTransition,
                    *, reason: str = '', failed_dependency: str = '',
@@ -204,6 +209,7 @@ class ManagedComponent:
             if operation == LifecycleTransition.ERROR:
                 self.__state = LifecycleState.ERROR
                 self._last_transition_id = transition_id
+                self._last_transition = operation.value
                 try:
                     self._hooks.on_error()
                 except Exception as error:
@@ -257,6 +263,7 @@ class ManagedComponent:
 
                 self.__state = destination
                 self._last_transition_id = transition_id
+                self._last_transition = operation.value
                 return result(True, source, 'SUCCESS', reason or 'transition completed',
                               rollback_performed=rollback_performed,
                               rollback_result=rollback_result, attempts=attempt)
@@ -271,6 +278,7 @@ class ManagedComponent:
                      attempt: int) -> TransitionResult:
         self.__state = LifecycleState.ERROR
         self._last_transition_id = transition_id
+        self._last_transition = LifecycleTransition.ERROR.value
         try:
             self._hooks.on_error()
         except Exception as error:

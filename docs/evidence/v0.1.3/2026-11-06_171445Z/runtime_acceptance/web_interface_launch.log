@@ -1,0 +1,1297 @@
+[INFO] [launch]: All log files can be found below /tmp/v013-mission1-runtime/.ros/log/2026-11-06-09-14-46-156184-Devansh-34402
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [launch.user]: Dashboard safety preflight passed.
+[INFO] [launch.user]: Package share: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros
+[INFO] [launch.user]: Dashboard URL: http://localhost:8080
+[INFO] [simulation_manager_node.py-1]: process started with pid [34405]
+[INFO] [mode_manager_node.py-2]: process started with pid [34406]
+[INFO] [mapping_manager_node.py-3]: process started with pid [34407]
+[INFO] [localization_manager_node.py-4]: process started with pid [34408]
+[INFO] [navigation_goal_manager_node.py-5]: process started with pid [34409]
+[INFO] [platform_lifecycle_orchestrator_node.py-6]: process started with pid [34410]
+[INFO] [rosbridge_websocket-7]: process started with pid [34411]
+[INFO] [python3-8]: process started with pid [34412]
+[mapping_manager_node.py-3] [INFO] [1793985287.274054127] [mapping_manager]: Mapping manager ready: /tmp/v013-mission1-runtime/.ros/cpp_robotics_sim/maps
+[mode_manager_node.py-2] [INFO] [1793985287.282117578] [mode_manager]: Operating-mode manager ready
+[simulation_manager_node.py-1] [INFO] [1793985287.298079715] [simulation_manager]: Simulation manager ready
+[simulation_manager_node.py-1] [INFO] [1793985287.299013701] [simulation_manager]: Managed launch: cpp_robotics_sim_ros interactive_control.launch.py
+[localization_manager_node.py-4] [INFO] [1793985287.340470076] [localization_manager]: Localization manager ready
+[rosbridge_websocket-7] [INFO] [1793985287.513443443] [rosbridge_websocket]: Rosbridge WebSocket server started on port 9090
+[navigation_goal_manager_node.py-5] [INFO] [1793985287.683391883] [navigation_goal_manager]: Navigation goal manager ready: action=/navigate_to_pose, frame=map
+[simulation_manager_node.py-1] [INFO] [1793985290.498455651] [simulation_manager]: Simulation state: starting
+[simulation_manager_node.py-1] [INFO] [1793985290.499141080] [simulation_manager]: Starting simulation: ros2 launch cpp_robotics_sim_ros interactive_control.launch.py world:=/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/worlds/warehouse_world.sdf use_sim_time:=true
+[simulation_manager_node.py-1] [INFO] [launch]: All log files can be found below /tmp/v013-mission1-runtime/.ros/log/2026-11-06-09-14-50-960471-Devansh-34523
+[simulation_manager_node.py-1] [INFO] [launch]: Default logging verbosity is set to INFO
+[simulation_manager_node.py-1] [INFO] [gazebo-1]: process started with pid [34527]
+[simulation_manager_node.py-1] [INFO] [parameter_bridge-2]: process started with pid [34529]
+[simulation_manager_node.py-1] [INFO] [parameter_bridge-3]: process started with pid [34530]
+[simulation_manager_node.py-1] [INFO] [parameter_bridge-4]: process started with pid [34531]
+[simulation_manager_node.py-1] [INFO] [robot_state_publisher-5]: process started with pid [34532]
+[simulation_manager_node.py-1] [INFO] [joint_state_publisher-6]: process started with pid [34533]
+[simulation_manager_node.py-1] [INFO] [create-7]: process started with pid [34534]
+[simulation_manager_node.py-1] [INFO] [spawner-8]: process started with pid [34535]
+[simulation_manager_node.py-1] [INFO] [spawner-9]: process started with pid [34540]
+[simulation_manager_node.py-1] [INFO] [command_mux_node.py-10]: process started with pid [34541]
+[simulation_manager_node.py-1] [robot_state_publisher-5] [WARN] [1793985292.124046718] [kdl_parser]: The root link base_link has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+[simulation_manager_node.py-1] [robot_state_publisher-5] [INFO] [1793985292.124295380] [robot_state_publisher]: Robot initialized
+[simulation_manager_node.py-1] [create-7] [INFO] [1793985292.180352558] [spawn_diffbot]: Requesting list of world names.
+[simulation_manager_node.py-1] [parameter_bridge-3] [INFO] [1793985292.603090201] [scan_bridge]: Creating GZ->ROS Bridge: [/scan (gz.msgs.LaserScan) -> /scan (sensor_msgs/msg/LaserScan)] (Lazy 0)
+[simulation_manager_node.py-1] [parameter_bridge-2] [INFO] [1793985292.612933585] [clock_bridge]: Creating GZ->ROS Bridge: [/clock (gz.msgs.Clock) -> /clock (rosgraph_msgs/msg/Clock)] (Lazy 0)
+[simulation_manager_node.py-1] [parameter_bridge-4] [INFO] [1793985292.680016600] [imu_bridge]: Creating GZ->ROS Bridge: [/imu/data (gz.msgs.IMU) -> /imu/data (sensor_msgs/msg/Imu)] (Lazy 0)
+[simulation_manager_node.py-1] [joint_state_publisher-6] [INFO] [1793985292.779456864] [joint_state_publisher]: Waiting for robot_description to be published on the robot_description topic...
+[simulation_manager_node.py-1] [spawner-8] [INFO] [1793985292.784648024] [joint_state_broadcaster_spawner]: waiting for service /controller_manager/list_controllers to become available...
+[simulation_manager_node.py-1] [command_mux_node.py-10] [INFO] [1793985292.838649590] [command_mux]: Command multiplexer started
+[simulation_manager_node.py-1] [command_mux_node.py-10] [INFO] [1793985292.839275637] [command_mux]: Output topic: /diff_drive_controller/cmd_vel
+[simulation_manager_node.py-1] [command_mux_node.py-10] [INFO] [1793985292.839732802] [command_mux]: Velocity limits: linear=0.300 m/s, angular=1.000 rad/s
+[simulation_manager_node.py-1] [command_mux_node.py-10] [INFO] [1793985292.840186786] [command_mux]: Source 'keyboard': topic=/cmd_vel/keyboard, priority=90, timeout=0.500 s
+[simulation_manager_node.py-1] [command_mux_node.py-10] [INFO] [1793985292.840592079] [command_mux]: Source 'gamepad': topic=/cmd_vel/gamepad, priority=100, timeout=0.500 s
+[simulation_manager_node.py-1] [command_mux_node.py-10] [INFO] [1793985292.841281797] [command_mux]: Source 'gui': topic=/cmd_vel/gui, priority=80, timeout=0.750 s
+[simulation_manager_node.py-1] [command_mux_node.py-10] [INFO] [1793985292.842040996] [command_mux]: Source 'navigation': topic=/cmd_vel/navigation, priority=50, timeout=0.500 s
+[simulation_manager_node.py-1] [joint_state_publisher-6] [INFO] [1793985292.887351152] [joint_state_publisher]: Got description, configuring robot
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [gz.cc:166] [0m[1;36mSubscribing to [[0m[1;36m/gazebo/starting_world[0m[1;36m].[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [gz.cc:168] [0m[1;36mWaiting for a world to be set from the GUI...[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mReceived world [[0m[1;32m/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/worlds/warehouse_world.sdf[0m[1;32m] from the GUI.[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [gz.cc:172] [0m[1;36mUnsubscribing from [[0m[1;36m/gazebo/starting_world[0m[1;36m].[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mGazebo Sim Server v[0m[1;32m8.11.0[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mLoading SDF world file[[0m[1;32m/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/worlds/warehouse_world.sdf[0m[1;32m].[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServing entity system service on [[0m[1;32m/[0m[1;32mentity/system/add[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Physics.cc:906] [0m[1;36mLoaded [[0m[1;36mgz::physics::dartsim::Plugin[0m[1;36m] from library [[0m[1;36m/opt/ros/jazzy/opt/gz_physics_vendor/lib/gz-physics-7/engine-plugins/libgz-physics-dartsim-plugin.so[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::Physics[0m[1;36m] for entity [[0m[1;36m1[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mCreate[0m[1;32m service on [[0m[1;32m/world/warehouse_world/create_multiple[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mCreate[0m[1;32m service on [[0m[1;32m/world/warehouse_world/create_multiple/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mRemove[0m[1;32m service on [[0m[1;32m/world/warehouse_world/remove[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mRemove[0m[1;32m service on [[0m[1;32m/world/warehouse_world/remove/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPose[0m[1;32m service on [[0m[1;32m/world/warehouse_world/set_pose[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPose[0m[1;32m service on [[0m[1;32m/world/warehouse_world/set_pose/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPose[0m[1;32m service on [[0m[1;32m/world/warehouse_world/set_pose_vector[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPose[0m[1;32m service on [[0m[1;32m/world/warehouse_world/set_pose_vector/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mLight configuration[0m[1;32m service on [[0m[1;32m/world/warehouse_world/light_config[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mLight configuration[0m[1;32m service on [[0m[1;32m/world/warehouse_world/light_config/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPhysics[0m[1;32m service on [[0m[1;32m/world/warehouse_world/set_physics[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPhysics[0m[1;32m service on [[0m[1;32m/world/warehouse_world/set_physics/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mSphericalCoordinates[0m[1;32m service on [[0m[1;32m/world/warehouse_world/set_spherical_coordinates[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mSphericalCoordinates[0m[1;32m service on [[0m[1;32m/world/warehouse_world/set_spherical_coordinates/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mEnable collision[0m[1;32m service on [[0m[1;32m/world/warehouse_world/enable_collision[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mEnable collision[0m[1;32m service on [[0m[1;32m/world/warehouse_world/enable_collision/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mDisable collision[0m[1;32m service on [[0m[1;32m/world/warehouse_world/disable_collision[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mDisable collision[0m[1;32m service on [[0m[1;32m/world/warehouse_world/disable_collision/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [create-7] [INFO] [1793985293.604996722] [spawn_diffbot]: Waiting messages on topic [robot_description].
+[simulation_manager_node.py-1] [create-7] [INFO] [1793985293.706545835] [spawn_diffbot]: Entity creation successful.
+[simulation_manager_node.py-1] [INFO] [create-7]: process has finished cleanly [pid 34534]
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mMate[1;32m[Msg] [0m[1;32mGazebo Sim GUI    v[0m[1;32m8.11.0[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mCopied installed config [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/share/gz/gz-sim8/gui/gui.config[0m[1;32m] to default config [[0m[1;32m/tmp/v013-mission1-runtime/.gz/sim/8/gui.config[0m[1;32m].[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Gui.cc:275] [0m[1;36mWaiting for subscribers to [[0m[1;36m/gazebo/starting_world[0m[1;36m]...[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Application.cc:96] [0m[1;36mInitializing application.[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Application.cc:170] [0m[1;36mQt using OpenGL graphics interface[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:657] [0m[1;36mCreate main window[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [PathManager.cc:68] [0m[1;36mRequesting resource paths through [[0m[1;36m/gazebo/resource_paths/get[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Gui.cc:355] [0m[1;36mGUI requesting list of world names. The server may be busy [0m[1;36mdownloading resources. Please be patient.[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [PathManager.cc:57] [0m[1;36mReceived resource paths.[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Gui.cc:413] [0m[1;36mRequesting GUI from [[0m[1;36m/world/warehouse_world/gui/info[0m[1;36m]...[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [GuiRunner.cc:149] [0m[1;36mRequesting initial state from [[0m[1;36m/world/warehouse_world/state[0m[1;36m]...[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoading config [[0m[1;32m/tmp/v013-mission1-runtime/.gz/sim/8/gui.config[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mMinimalScene[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:986] [0m[1;36mCreating render thread interface for OpenGL[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:986] [0m[1;36mCreating render thread interface for OpenGL[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32m3D View[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mMinimalScene[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libMinimalScene.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mEntityContextMenuPlugin[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCurrently tracking topic on [[0m[1;32m/gui/currently_tracked[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mEntity Context Menu[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mEntityContextMenuPlugin[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libEntityContextMenuPlugin.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mGzSceneManager[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mScene Manager[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mGzSceneManager[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libGzSceneManager.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mInteractiveViewControl[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera view controller topic advertised on [[0m[1;32m/gui/camera/view_control[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera reference visual topic advertised on [[0m[1;32m/gui/camera/view_control/reference_visual[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera view control sensitivity advertised on [[0m[1;32m/gui/camera/view_control/sensitivity[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mInteractive view control[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mInteractiveViewControl[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libInteractiveViewControl.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mCameraTracking[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mCamera tracking[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mCameraTracking[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libCameraTracking.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mMarkerManager[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mListening to stats on [[0m[1;32m/world/warehouse_world/stats[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mMarker Manager[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mMarkerManager[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libMarkerManager.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mSelectEntities[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mSelect entities[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mSelectEntities[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libSelectEntities.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mSpawn[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mSpawn[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mSpawn[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libSpawn.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mVisualizationCapabilities[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView as transparent service on [[0m[1;32m/gui/view/transparent[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView as wireframes service on [[0m[1;32m/gui/view/wireframes[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView center of mass service on [[0m[1;32m/gui/view/com[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView inertia service on [[0m[1;32m/gui/view/inertia[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView collisions service on [[0m[1;32m/gui/view/collisions[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView joints service on [[0m[1;32m/gui/view/joints[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView frames service on [[0m[1;32m/gui/view/frames[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mVisualization capabilities[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mVisualizationCapabilities[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libVisualizationCapabilities.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mWorldControl[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mUsing world control service [[0m[1;32m/world/warehouse_world/control[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mListening to stats on [[0m[1;32m/world/warehouse_world/stats[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [WorldControl.cc:237] [0m[1;36mUsing an event to share WorldControl msgs with the server[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mWorld control[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mWorldControl[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libWorldControl.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mWorldStats[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mListening to stats on [[0m[1;32m/world/warehouse_world/stats[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mWorld stats[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mWorldStats[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libWorldStats.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mShapes[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mShapes[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mShapes[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libShapes.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mLights[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mLights[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mLights[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libLights.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mTransformControl[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mTransform control[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mTransformControl[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libTransformControl.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mScreenshot[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mScreenshot service on [[0m[1;32m/gui/screenshot[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mScreenshot[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mScreenshot[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libScreenshot.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mCopyPaste[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mCopy/Paste[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mCopyPaste[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libCopyPaste.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mComponentInspector[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mComponent inspector[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mComponentInspector[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libComponentInspector.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/WorldStats/WorldStats.qml:53:3: QML RowLayout: Binding loop detected for property "x"[0m[1;33m[0m
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985294.994990624] [gz_ros_control]: Loading controller_manager
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.059158596] [controller_manager]: Using ROS clock for triggering controller manager cycles.
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.414934011] [controller_manager]: Subscribing to '/robot_description' topic for robot description.
+[simulation_manager_node.py-1] [gazebo-1] [WARN] [1793985295.768148387] [gz_ros_control]: Waiting RM to load and initialize hardware...
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.956742524] [controller_manager]: Received robot description from topic.
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.957099145] [controller_manager]: Enforcing command limits is disabled. Command limits from URDF will be ignored.
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969009572] [gz_ros_control]: The position_proportional_gain has been set to: 0.1
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969122233] [gz_ros_control]: Loading joint: left_wheel_joint
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969132082] [gz_ros_control]: 	State:
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969138847] [gz_ros_control]: 		 position
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969143062] [gz_ros_control]: 		 velocity
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969149952] [gz_ros_control]: 	Command:
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969153185] [gz_ros_control]: 		 velocity
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969168015] [gz_ros_control]: Loading joint: right_wheel_joint
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969171795] [gz_ros_control]: 	State:
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969174851] [gz_ros_control]: 		 position
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969178968] [gz_ros_control]: 		 velocity
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969186444] [gz_ros_control]: 	Command:
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969189701] [gz_ros_control]: 		 velocity
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969247645] [gz_ros_control]: Loading sensor: diffbot_imu
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969254942] [gz_ros_control]: 	State:
+[simulation_manager_node.py-1] [gazebo-1] [WARN] [1793985295.969258754] [gz_ros_control]: IMU sensor 'diffbot_imu' not found in hardware_info, skipping.
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969406723] [controller_manager]: Initialize hardware 'DiffBotSystem' 
+[simulation_manager_node.py-1] [gazebo-1] [WARN] [1793985295.969429856] [controller_manager.hardware_component.system.DiffBotSystem]: Executor is not available during hardware component initialization for 'DiffBotSystem'. Skipping node creation!
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969492811] [controller_manager]: Successful initialization of hardware 'DiffBotSystem'
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969762461] [controller_manager]: Activating component 'DiffBotSystem'.
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969805345] [resource_manager]: 'configure' hardware 'DiffBotSystem' 
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969814209] [gz_ros_control]: System Successfully configured!
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969823474] [resource_manager]: Successful 'configure' of hardware 'DiffBotSystem'
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969833621] [resource_manager]: 'activate' hardware 'DiffBotSystem' 
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969853535] [resource_manager]: Successful 'activate' of hardware 'DiffBotSystem'
+[simulation_manager_node.py-1] [gazebo-1] [WARN] [1793985295.969948593] [controller_manager]: Component 'DiffBotSystem' does not have read or write statistics initialized, skipping registration.
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985295.969960298] [controller_manager]: Resource Manager has been successfully initialized. Starting Controller Manager services...
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985296.055646981] [controller_manager]: Loading controller : 'joint_state_broadcaster' of type 'joint_state_broadcaster/JointStateBroadcaster'
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985296.055727250] [controller_manager]: Loading controller 'joint_state_broadcaster'
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985296.076038175] [controller_manager]: Controller 'joint_state_broadcaster' node arguments: --ros-args --params-file /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/ros2_control.yaml -p use_sim_time:=true --param use_sim_time:=true 
+[simulation_manager_node.py-1] [spawner-8] [INFO] [1793985296.126271967] [joint_state_broadcaster_spawner]: Loaded joint_state_broadcaster
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985296.128878707] [controller_manager]: Configuring controller: 'joint_state_broadcaster'
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985296.129775521] [joint_state_broadcaster]: 'joints' or 'interfaces' parameter is empty. All available state interfaces will be published
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985296.266701710] [controller_manager]: Activating controllers: [ joint_state_broadcaster ]
+[simulation_manager_node.py-1] [gazebo-1] [1;33m[GUI] [Wrn] [Ogre2RenderTarget.cc:668] [0m[1;33mAnti-aliasing level of '[0m[1;33m[0m[1;33m' [0m[1;33mis not supported; valid FSAA levels are: [0m[1;33m[ 0 4 ][0m[1;33m. Setting to 1[0m[1;33m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mEntityTree[rial[0m[1;32m service on [[0m[1;32m/world/warehouse_world/visual_config[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mMaterial[0m[1;32m service on [[0m[1;32m/world/warehouse_world/visual_config/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mMaterial[0m[1;32m service on [[0m[1;32m/world/warehouse_world/wheel_slip[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mMaterial[0m[1;32m service on [[0m[1;32m/world/warehouse_world/wheel_slip/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::UserCommands[0m[1;36m] for entity [[0m[1;36m1[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::SceneBroadcaster[0m[1;36m] for entity [[0m[1;36m1[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:697] [0m[1;36mConfiguring Sensors system[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:557] [0m[1;36mSensorsPrivate::Run[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::Sensors[0m[1;36m] for entity [[0m[1;36m1[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:532] [0m[1;36mSensorsPrivate::RenderThread started[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:337] [0m[1;36mWaiting for init[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::Imu[0m[1;36m] for entity [[0m[1;36m1[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mLoaded level [[0m[1;32mdefault[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServing world controls on [[0m[1;32m/world/warehouse_world[0m[1;32m/control], [[0m[1;32m/world/warehouse_world[0m[1;32m/control/state] and [[0m[1;32m/world/warehouse_world[0m[1;32m/playback/control][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServing GUI information on [[0m[1;32m/world/warehouse_world[0m[1;32m/[0m[1;32mgui/info[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mWorld [[0m[1;32mwarehouse_world[0m[1;32m] initialized with [[0m[1;32mdefault_physics[0m[1;32m] physics profile.[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServing world SDF generation service on [[0m[1;32m/world/warehouse_world[0m[1;32m/[0m[1;32mgenerate_world_sdf[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServing world names on [[0m[1;32m/gazebo/worlds[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mResource path add service on [[0m[1;32m/gazebo/resource_paths/add[0m[1;32m].[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mResource path get service on [[0m[1;32m/gazebo/resource_paths/get[0m[1;32m].[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mResource path resolve service on [[0m[1;32m/gazebo/resource_paths/resolve[0m[1;32m].[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mResource paths published on [[0m[1;32m/gazebo/resource_paths[0m[1;32m].[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServer control service on [[0m[1;32m/server_control[0m[1;32m].[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mFound no publishers on /stats, adding root stats topic[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mFound no publishers on /clock, adding root clock topic[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:551] [0m[1;36mCreating PostUpdate worker threads: [0m[1;36m4[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:562] [0m[1;36mCreating postupdate worker thread ([0m[1;36m0[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:562] [0m[1;36mCreating postupdate worker thread ([0m[1;36m1[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:562] [0m[1;36mCreating postupdate worker thread ([0m[1;36m2[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz_ros2_control::GazeboSimROS2ControlPlugin[0m[1;36m] for entity [[0m[1;36m93[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [UserCommands.cc:1094] [0m[1;36mCreated entity [[0m[1;36m93[0m[1;36m] named [[0m[1;36mdiffbot[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [WARN] [1793985297.826139939] [gz_ros_control]:  Desired controller update period (0.01 s) is slower than the gazebo simulation period (0.001 s).
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985299.110330680] [controller_manager]: Successfully switched controllers!
+[simulation_manager_node.py-1] [spawner-8] [INFO] [1793985299.124725031] [joint_state_broadcaster_spawner]: Configured and activated joint_state_broadcaster
+[simulation_manager_node.py-1] [command_mux_node.py-10] [INFO] [1793985299.160094883] [command_mux]: Control source changed: uninitialized -> none
+[simulation_manager_node.py-1] [spawner-9] [INFO] [1793985299.317745916] [diff_drive_controller_spawner]: waiting for service /controller_manager/list_controllers to become available...
+[simulation_manager_node.py-1] [INFO] [spawner-8]: process has finished cleanly [pid 34535]
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:953] [0m[1;36mInitialization needed[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:349] [0m[1;36mInitializing render context[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mLoading plugin [[0m[1;32mgz-rendering-ogre2[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [ImuSensor.cc:150] [0m[1;36mIMU data for [[0m[1;36mdiffbot::base_link::diffbot_imu[0m[1;36m] advertised on [[0m[1;36m/imu/data[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServing scene information on [[0m[1;32m/world/warehouse_world[0m[1;32m/[0m[1;32mscene/info[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServing graph information on [[0m[1;32m/world/warehouse_world[0m[1;32m/[0m[1;32mscene/graph[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServing full state on [[0m[1;32m/world/warehouse_world[0m[1;32m/[0m[1;32mstate[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServing full state (async) on [[0m[1;32m/world/warehouse_world[0m[1;32m/[0m[1;32mstate_async[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPublishing scene information on [[0m[1;32m/world/warehouse_world/scene/info[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPublishing entity deletions on [[0m[1;32m/world/warehouse_world/scene/deletion[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPublishing state changes on [[0m[1;32m/world/warehouse_world/state[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPublishing pose messages on [[0m[1;32m/world/warehouse_world[0m[1;32m/[0m[1;32mpose/info[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPublishing dynamic pose messages on [[0m[1;32m/world/warehouse_world[0m[1;32m/[0m[1;32mdynamic_pose/info[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:578] [0m[1;36mExiting postupdate worker thread ([Dbg] [SimulationRunner.cc:578] [0m[1;36mExiting postupdate worker thread ([0m[1;36mExiting postupdate worker thread ([0m[1;36m0[Dbg] [SimulationRunner.cc:578] 1[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m0[Dbg] [SimulationRunner.cc:578] [0m[1;36mExiting postupdate worker thread ([0m[1;36m2[0m[1;36m)[0m[1;36m0[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:551] [0m[1;36mCreating PostUpdate worker threads: [0m[1;36m5[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:562] [0m[1;36mCreating postupdate worker thread ([0m[1;36m0[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:562] [0m[1;36mCreating postupdate worker thread ([0m[1;36m1[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:562] [0m[1;36mCreating postupdate worker thread ([0m[1;36m2[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:562] [0m[1;36mCreating postupdate worker thread ([0m[1;36m3[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [EntityComponentManager.cc:1656] [0m[1;36mUpdated state thread iterators: [0m[1;36m16[0m[1;36m threads processing around [0m[1;36m7[0m[1;36m entities each.[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [RenderUtil.cc:2646] [0m[1;36mCreate scene [[0m[1;36mscene[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:953] [0m[1;36mInitialization needed[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:391] [0m[1;36mRendering Thread initialized[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Lidar.cc:139] [0m[1;36mLaser scans for [[0m[1;36mdiffbot::base_link::diffbot_lidar[0m[1;36m] advertised on [[0m[1;36m/scan[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [GpuLidarSensor.cc:164] [0m[1;36mLidar points for [[0m[1;36mdiffbot::base_link::diffbot_lidar[0m[1;36m] advertised on [[0m[1;36m/scan/points[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985302.583915538] [controller_manager]: Loading controller : 'diff_drive_controller' of type 'diff_drive_controller/DiffDriveController'
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985302.583995289] [controller_manager]: Loading controller 'diff_drive_controller'
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985302.595195595] [controller_manager]: Controller 'diff_drive_controller' node arguments: --ros-args --params-file /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/ros2_control.yaml -p use_sim_time:=true --param use_sim_time:=true 
+[simulation_manager_node.py-1] [spawner-9] [INFO] [1793985302.653269596] [diff_drive_controller_spawner]: Loaded diff_drive_controller
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985302.741043847] [controller_manager]: Configuring controller: 'diff_drive_controller'
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985302.773060098] [controller_manager]: Activating controllers: [ diff_drive_controller ]
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985302.783613527] [controller_manager]: Successfully switched controllers!
+[simulation_manager_node.py-1] [spawner-9] [INFO] [1793985302.795707868] [diff_drive_controller_spawner]: Configured and activated diff_drive_controller
+[simulation_manager_node.py-1] [INFO] [spawner-9]: process has finished cleanly [pid 34540]
+[simulation_manager_node.py-1] [INFO] [1793985303.673321039] [simulation_manager]: Simulation state: running
+[simulation_manager_node.py-1] [INFO] [1793985303.674695226] [simulation_manager]: Simulation started with PID 34523
+[simulation_manager_node.py-1] [INFO] [1793985303.686192122] [simulation_manager]: Simulation state: stopping
+[simulation_manager_node.py-1] [command_mux_node.py-10] [WARN] [1793985303.687545493] [command_mux]: Emergency stop activated
+[simulation_manager_node.py-1] [command_mux_node.py-10] [INFO] [1793985303.688456068] [command_mux]: Control source changed: none -> emergency_stop
+[simulation_manager_node.py-1] [INFO] [1793985303.732034334] [simulation_manager]: Stopping verified simulation process group 34523
+[simulation_manager_node.py-1] [WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[simulation_manager_node.py-1] [parameter_bridge-2] [INFO] [1793985303.767813321] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[simulation_manager_node.py-1] [parameter_bridge-3] [INFO] [1793985303.769672447] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[simulation_manager_node.py-1] [INFO] [command_mux_node.py-10]: sending signal 'SIGINT' to process[command_mux_node.py-10]
+[simulation_manager_node.py-1] [INFO] [joint_state_publisher-6]: sending signal 'SIGINT' to process[joint_state_publisher-6]
+[simulation_manager_node.py-1] [INFO] [robot_state_publisher-5]: sending signal 'SIGINT' to process[robot_state_publisher-5]
+[simulation_manager_node.py-1] [INFO] [parameter_bridge-4]: sending signal 'SIGINT' to process[parameter_bridge-4]
+[simulation_manager_node.py-1] [INFO] [parameter_bridge-3]: sending signal 'SIGINT' to process[parameter_bridge-3]
+[simulation_manager_node.py-1] [INFO] [parameter_bridge-2]: sending signal 'SIGINT' to process[parameter_bridge-2]
+[simulation_manager_node.py-1] [INFO] [gazebo-1]: sending signal 'SIGINT' to process[gazebo-1]
+[simulation_manager_node.py-1] [parameter_bridge-4] [INFO] [1793985303.773669747] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[simulation_manager_node.py-1] [robot_state_publisher-5] [INFO] [1793985303.773732303] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[simulation_manager_node.py-1] [joint_state_publisher-6] Traceback (most recent call last):
+[simulation_manager_node.py-1] [joint_state_publisher-6]   File "/opt/ros/jazzy/lib/joint_state_publisher/joint_state_publisher", line 33, in <module>
+[simulation_manager_node.py-1] [joint_state_publisher-6]     sys.exit(load_entry_point('joint-state-publisher==2.4.1', 'console_scripts', 'joint_state_publisher')())
+[simulation_manager_node.py-1] [joint_state_publisher-6]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[simulation_manager_node.py-1] [joint_state_publisher-6]   File "/opt/ros/jazzy/lib/python3.12/site-packages/joint_state_publisher/joint_state_publisher.py", line 572, in main
+[simulation_manager_node.py-1] [joint_state_publisher-6]     jsp.destroy_node()
+[simulation_manager_node.py-1] [joint_state_publisher-6]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1962, in destroy_node
+[simulation_manager_node.py-1] [joint_state_publisher-6]     self.destroy_service(self._services[0])
+[simulation_manager_node.py-1] [joint_state_publisher-6]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1886, in destroy_service
+[simulation_manager_node.py-1] [joint_state_publisher-6]     service.destroy()
+[simulation_manager_node.py-1] [joint_state_publisher-6]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/service.py", line 123, in destroy
+[simulation_manager_node.py-1] [joint_state_publisher-6]     self.__service.destroy_when_not_in_use()
+[simulation_manager_node.py-1] [joint_state_publisher-6] KeyboardInterrupt
+[simulation_manager_node.py-1] [command_mux_node.py-10] Traceback (most recent call last):
+[simulation_manager_node.py-1] [command_mux_node.py-10]   File "/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/command_mux_node.py", line 474, in <module>
+[simulation_manager_node.py-1] [command_mux_node.py-10]     main()
+[simulation_manager_node.py-1] [command_mux_node.py-10]   File "/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/command_mux_node.py", line 467, in main
+[simulation_manager_node.py-1] [command_mux_node.py-10]     node.destroy_node()
+[simulation_manager_node.py-1] [command_mux_node.py-10]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1958, in destroy_node
+[simulation_manager_node.py-1] [command_mux_node.py-10]     self.destroy_subscription(self._subscriptions[0])
+[simulation_manager_node.py-1] [command_mux_node.py-10]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1854, in destroy_subscription
+[simulation_manager_node.py-1] [command_mux_node.py-10]     subscription.destroy()
+[simulation_manager_node.py-1] [command_mux_node.py-10]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/subscription.py", line 101, in destroy
+[simulation_manager_node.py-1] [command_mux_node.py-10]     self.handle.destroy_when_not_in_use()
+[simulation_manager_node.py-1] [command_mux_node.py-10] KeyboardInterrupt
+[simulation_manager_node.py-1] [parameter_bridge-4] [INFO] [1793985303.803347359] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[simulation_manager_node.py-1] [parameter_bridge-3] [INFO] [1793985303.804678983] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[simulation_manager_node.py-1] [robot_state_publisher-5] [INFO] [1793985303.805685962] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[simulation_manager_node.py-1] [parameter_bridge-2] [INFO] [1793985303.809987353] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SignalHandler.cc:142] [0m[1;36mReceived signal[[0m[1;36m2[0m[1;36m].[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [ServerPrivate.cc:122] [0m[1;36mServer received signal[[0m[1;36m2[0m[1;36m][0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:565] [0m[1;36mSensorsPrivate::Stop[0m[1;36m[0m
+[simulation_manager_node.py-1] [ERROR] [command_mux_node.py-10]: process has died [pid 34541, exit code -2, cmd '/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/command_mux_node.py --ros-args -r __node:=command_mux --params-file /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/command_mux.yaml --params-file /tmp/launch_params_4uw35b4l'].
+[simulation_manager_node.py-1] [ERROR] [joint_state_publisher-6]: process has died [pid 34533, exit code -2, cmd '/opt/ros/jazzy/lib/joint_state_publisher/joint_state_publisher --ros-args -r __node:=joint_state_publisher --params-file /tmp/launch_params__u8p1z88 --params-file /tmp/launch_params_gu0qms8h'].
+[simulation_manager_node.py-1] [INFO] [parameter_bridge-2]: process has finished cleanly [pid 34529]
+[simulation_manager_node.py-1] [INFO] [parameter_bridge-4]: process has finished cleanly [pid 34531]
+[simulation_manager_node.py-1] [INFO] [parameter_bridge-3]: process has finished cleanly [pid 34530]
+[simulation_manager_node.py-1] [INFO] [robot_state_publisher-5]: process has finished cleanly [pid 34532]
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985303.945415899] [controller_manager.pal_statistics]: Async messages lost 0
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985303.945503288] [controller_manager.pal_statistics]: publish_async_failures_ 0
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985303.948934373] [controller_manager.pal_statistics]: Async messages lost 0
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985303.949010133] [controller_manager.pal_statistics]: publish_async_failures_ 0
+[simulation_manager_node.py-1] [gazebo-1] 0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCurrently tracking topic on [[0m[1;32m/gui/currently_tracked[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mEntity tree[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mEntityTree[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libEntityTree.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:398] [0m[1;36mLoading window config[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mUsing server control service [[0m[1;32m/server_control[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:671] [0m[1;36mApplying config[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:986] [0m[1;36mCreating render thread interface for OpenGL[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoading plugin [[0m[1;32mgz-rendering-ogre2[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:749] [0m[1;36mCreate scene [[0m[1;36mscene[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:1037] [0m[1;36mCreating texture node render interface for OpenGL[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [TransformControl.cc:453] [0m[1;36mTransformControl plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Spawn.cc:308] [0m[1;36mSpawn plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [SelectEntities.cc:452] [0m[1;36mSelectEntities plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MarkerManager.cc:169] [0m[1;36mAdvertise [0m[1;36m/marker[0m[1;36m/list service.[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MarkerManager.cc:179] [0m[1;36mAdvertise [0m[1;36m/marker[0m[1;36m/list.[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MarkerManager.cc:189] [0m[1;36mAdvertise [0m[1;36m/marker[0m[1;36m_array.[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [CameraTracking.cc:205] [0m[1;36mCameraTrackingPrivate plugin is moving camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mMove to service on [[0m[1;32m/gui/move_to[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mFollow service on [[0m[1;32m/gui/follow[0m[1;32m] (deprecated)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mTracking topic on [[0m[1;32m/gui/track[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mTracking status topic on [[0m[1;32m/gui/currently_tracked[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mMove to pose service on [[0m[1;32m/gui/move_to/pose[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera pose topic advertised on [[0m[1;32m/gui/camera/pose[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mFollow offset service on [[0m[1;32m/gui/follow/offset[0m[1;32m] (deprecated)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [InteractiveViewControl.cc:176] [0m[1;36mInteractiveViewControl plugin is moving camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [EntityContextMenuPlugin.cc:79] [0m[1;36mEntity context menu plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [SignalHandler.cc:142] [0m[1;36mReceived signal[[0m[1;36m2[0m[1;36m].[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [SignalHandler.cc:142] [0m[1;36mReceived signal[[0m[1;36m2[0m[1;36m].[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Gui.cc:535] [0m[1;36mShutting down gz-sim-gui[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:237] [0m[1;36mTerminating application.[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:841] [0m[1;36mDestroy scene [[0m[1;36mscene[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:551] [0m[1;36mSensorsPrivate::RenderThread stopped[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [gz.cc:434] [0m[1;36mShutting down gz-sim-server[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:578] [Dbg] [SimulationRunner.cc:578] [0m[1;36m[Dbg] [SimulationRunner.cc:578] Exiting postupdate worker thread ([0m[1;36m1[0m[1;36m1[Dbg] [SimulationRunner.cc:578] [0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36mExiting postupdate worker thread ([0m[1;36m0[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m1[0m[1;36mExiting postupdate worker thread ([0m[1;36m3[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:578] [0m[1;36mExiting postupdate worker thread ([0m[1;36m2[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:565] [0m[1;36mSensorsPrivate::Stop[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] /opt/ros/jazzy/opt/gz_sim_vendor/lib/ruby/gz/cmdsim8.rb:201:in `kill': No such process (Errno::ESRCH)
+[simulation_manager_node.py-1] [gazebo-1] 	from /opt/ros/jazzy/opt/gz_sim_vendor/lib/ruby/gz/cmdsim8.rb:201:in `killProcess'
+[simulation_manager_node.py-1] [gazebo-1] 	from /opt/ros/jazzy/opt/gz_sim_vendor/lib/ruby/gz/cmdsim8.rb:570:in `handle_signal'
+[simulation_manager_node.py-1] [gazebo-1] 	from /opt/ros/jazzy/opt/gz_sim_vendor/lib/ruby/gz/cmdsim8.rb:574:in `block in execute'
+[simulation_manager_node.py-1] [gazebo-1] 	from /opt/ros/jazzy/opt/gz_sim_vendor/lib/ruby/gz/cmdsim8.rb:584:in `wait2'
+[simulation_manager_node.py-1] [gazebo-1] 	from /opt/ros/jazzy/opt/gz_sim_vendor/lib/ruby/gz/cmdsim8.rb:584:in `execute'
+[simulation_manager_node.py-1] [gazebo-1] 	from /opt/ros/jazzy/opt/gz_tools_vendor/bin/gz:316:in `<main>'
+[simulation_manager_node.py-1] [ERROR] [gazebo-1]: process has died [pid 34527, exit code -2, cmd 'ruby /opt/ros/jazzy/opt/gz_tools_vendor/bin/gz sim -r -v 4 "/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/worlds/warehouse_world.sdf" --force-version 8'].
+[simulation_manager_node.py-1] [INFO] [launch]: process[gazebo-1] was required: shutting down launched system
+[simulation_manager_node.py-1] [INFO] [1793985304.399620341] [simulation_manager]: Simulation state: stopped
+[simulation_manager_node.py-1] [INFO] [1793985304.407528528] [simulation_manager]: Simulation stopped successfully
+[simulation_manager_node.py-1] [INFO] [1793985304.446791700] [simulation_manager]: Simulation state: starting
+[simulation_manager_node.py-1] [INFO] [1793985304.447508880] [simulation_manager]: Starting simulation: ros2 launch cpp_robotics_sim_ros interactive_control.launch.py world:=/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/worlds/warehouse_world.sdf use_sim_time:=true
+[simulation_manager_node.py-1] [INFO] [launch]: All log files can be found below /tmp/v013-mission1-runtime/.ros/log/2026-11-06-09-15-04-901924-Devansh-34959
+[simulation_manager_node.py-1] [INFO] [launch]: Default logging verbosity is set to INFO
+[simulation_manager_node.py-1] [WARN] [1793985305.477266638] [rcl.logging_rosout]: Publisher already registered for node name: 'simulation_readiness_probe'. If this is due to multiple nodes with the same name then all logs for the logger named 'simulation_readiness_probe' will go out over the existing publisher. As soon as any node with that name is destructed it will unregister the publisher, preventing any further logs for that name from being published on the rosout topic.
+[simulation_manager_node.py-1] [INFO] [gazebo-1]: process started with pid [34964]
+[simulation_manager_node.py-1] [INFO] [parameter_bridge-2]: process started with pid [34965]
+[simulation_manager_node.py-1] [INFO] [parameter_bridge-3]: process started with pid [34967]
+[simulation_manager_node.py-1] [INFO] [parameter_bridge-4]: process started with pid [34968]
+[simulation_manager_node.py-1] [INFO] [robot_state_publisher-5]: process started with pid [34969]
+[simulation_manager_node.py-1] [INFO] [joint_state_publisher-6]: process started with pid [34970]
+[simulation_manager_node.py-1] [INFO] [create-7]: process started with pid [34971]
+[simulation_manager_node.py-1] [INFO] [spawner-8]: process started with pid [34972]
+[simulation_manager_node.py-1] [INFO] [spawner-9]: process started with pid [34977]
+[simulation_manager_node.py-1] [INFO] [command_mux_node.py-10]: process started with pid [34978]
+[simulation_manager_node.py-1] [robot_state_publisher-5] [WARN] [1793985305.693650193] [kdl_parser]: The root link base_link has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+[simulation_manager_node.py-1] [robot_state_publisher-5] [INFO] [1793985305.693835702] [robot_state_publisher]: Robot initialized
+[simulation_manager_node.py-1] [create-7] [INFO] [1793985305.704718661] [spawn_diffbot]: Requesting list of world names.
+[simulation_manager_node.py-1] [parameter_bridge-3] [INFO] [1793985305.716153993] [scan_bridge]: Creating GZ->ROS Bridge: [/scan (gz.msgs.LaserScan) -> /scan (sensor_msgs/msg/LaserScan)] (Lazy 0)
+[simulation_manager_node.py-1] [parameter_bridge-4] [INFO] [1793985305.725819071] [imu_bridge]: Creating GZ->ROS Bridge: [/imu/data (gz.msgs.IMU) -> /imu/data (sensor_msgs/msg/Imu)] (Lazy 0)
+[simulation_manager_node.py-1] [parameter_bridge-2] [INFO] [1793985305.741685500] [clock_bridge]: Creating GZ->ROS Bridge: [/clock (gz.msgs.Clock) -> /clock (rosgraph_msgs/msg/Clock)] (Lazy 0)
+[simulation_manager_node.py-1] [spawner-8] [INFO] [1793985306.307142159] [joint_state_broadcaster_spawner]: waiting for service /controller_manager/list_controllers to become available...
+[simulation_manager_node.py-1] [joint_state_publisher-6] [INFO] [1793985306.339808444] [joint_state_publisher]: Waiting for robot_description to be published on the robot_description topic...
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [gz.cc:166] [0m[1;36mSubscribing to [[0m[1;36m/gazebo/starting_world[0m[1;36m].[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [gz.cc:168] [0m[1;36mWaiting for a world to be set from the GUI...[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mReceived world [[0m[1;32m/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/worlds/warehouse_world.sdf[0m[1;32m] from the GUI.[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [gz.cc:172] [0m[1;36mUnsubscribing from [[0m[1;36m/gazebo/starting_world[0m[1;36m].[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mGazebo Sim Server v[0m[1;32m8.11.0[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mLoading SDF world file[[0m[1;32m/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/worlds/warehouse_world.sdf[0m[1;32m].[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServing entity system service on [[0m[1;32m/[0m[1;32mentity/system/add[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Physics.cc:906] [0m[1;36mLoaded [[0m[1;36mgz::physics::dartsim::Plugin[0m[1;36m] from library [[0m[1;36m/opt/ros/jazzy/opt/gz_physics_vendor/lib/gz-physics-7/engine-plugins/libgz-physics-dartsim-plugin.so[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::Physics[0m[1;36m] for entity [[0m[1;36m1[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mCreate[0m[1;32m service on [[0m[1;32m/world/warehouse_world/create_multiple[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mCreate[0m[1;32m service on [[0m[1;32m/world/warehouse_world/create_multiple/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mRemove[0m[1;32m service on [[0m[1;32m/world/warehouse_world/remove[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mRemove[0m[1;32m service on [[0m[1;32m/world/warehouse_world/remove/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPose[0m[1;32m service on [[0m[1;32m/world/warehouse_world/set_pose[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPose[0m[1;32m service on [[0m[1;32m/world/warehouse_world/set_pose/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPose[0m[1;32m service on [[0m[1;32m/world/warehouse_world/set_pose_vector[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPose[0m[1;32m service on [[0m[1;32m/world/warehouse_world/set_pose_vector/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mLight configuration[0m[1;32m service on [[0m[1;32m/world/warehouse_world/light_config[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mLight configuration[0m[1;32m service on [[0m[1;32m/world/warehouse_world/light_config/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPhysics[0m[1;32m service on [[0m[1;32m/world/warehouse_world/set_physics[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPhysics[0m[1;32m service on [[0m[1;32m/world/warehouse_world/set_physics/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mSphericalCoordinates[0m[1;32m service on [[0m[1;32m/world/warehouse_world/set_spherical_coordinates[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mSphericalCoordinates[0m[1;32m service on [[0m[1;32m/world/warehouse_world/set_spherical_coordinates/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mEnable collision[0m[1;32m service on [[0m[1;32m/world/warehouse_world/enable_collision[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mEnable collision[0m[1;32m service on [[0m[1;32m/world/warehouse_world/enable_collision/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mDisable collision[0m[1;32m service on [[0m[1;32m/world/warehouse_world/disable_collision[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mDisable collision[0m[1;32m service on [[0m[1;32m/world/warehouse_world/disable_collision/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [joint_state_publisher-6] [INFO] [1793985306.541882043] [joint_state_publisher]: Got description, configuring robot
+[simulation_manager_node.py-1] [command_mux_node.py-10] [INFO] [1793985306.622288470] [command_mux]: Command multiplexer started
+[simulation_manager_node.py-1] [command_mux_node.py-10] [INFO] [1793985306.622946533] [command_mux]: Output topic: /diff_drive_controller/cmd_vel
+[simulation_manager_node.py-1] [command_mux_node.py-10] [INFO] [1793985306.623469404] [command_mux]: Velocity limits: linear=0.300 m/s, angular=1.000 rad/s
+[simulation_manager_node.py-1] [command_mux_node.py-10] [INFO] [1793985306.624220543] [command_mux]: Source 'keyboard': topic=/cmd_vel/keyboard, priority=90, timeout=0.500 s
+[simulation_manager_node.py-1] [command_mux_node.py-10] [INFO] [1793985306.624928025] [command_mux]: Source 'gamepad': topic=/cmd_vel/gamepad, priority=100, timeout=0.500 s
+[simulation_manager_node.py-1] [command_mux_node.py-10] [INFO] [1793985306.625625286] [command_mux]: Source 'gui': topic=/cmd_vel/gui, priority=80, timeout=0.750 s
+[simulation_manager_node.py-1] [command_mux_node.py-10] [INFO] [1793985306.626297606] [command_mux]: Source 'navigation': topic=/cmd_vel/navigation, priority=50, timeout=0.500 s
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mMate[1;32m[Msg] [0m[1;32mGazebo Sim GUI    v[0m[1;32m8.11.0[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Gui.cc:275] [0m[1;36mWaiting for subscribers to [[0m[1;36m/gazebo/starting_world[0m[1;36m]...[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Application.cc:96] [0m[1;36mInitializing application.[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Application.cc:170] [0m[1;36mQt using OpenGL graphics interface[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:657] [0m[1;36mCreate main window[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [PathManager.cc:68] [0m[1;36mRequesting resource paths through [[0m[1;36m/gazebo/resource_paths/get[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Gui.cc:355] [0m[1;36mGUI requesting list of world names. The server may be busy [0m[1;36mdownloading resources. Please be patient.[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [PathManager.cc:57] [0m[1;36mReceived resource paths.[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Gui.cc:413] [0m[1;36mRequesting GUI from [[0m[1;36m/world/warehouse_world/gui/info[0m[1;36m]...[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [GuiRunner.cc:149] [0m[1;36mRequesting initial state from [[0m[1;36m/world/warehouse_world/state[0m[1;36m]...[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoading config [[0m[1;32m/tmp/v013-mission1-runtime/.gz/sim/8/gui.config[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mMinimalScene[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:986] [0m[1;36mCreating render thread interface for OpenGL[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:986] [0m[1;36mCreating render thread interface for OpenGL[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32m3D View[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mMinimalScene[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libMinimalScene.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mEntityContextMenuPlugin[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCurrently tracking topic on [[0m[1;32m/gui/currently_tracked[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mEntity Context Menu[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mEntityContextMenuPlugin[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libEntityContextMenuPlugin.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mGzSceneManager[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mScene Manager[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mGzSceneManager[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libGzSceneManager.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mInteractiveViewControl[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera view controller topic advertised on [[0m[1;32m/gui/camera/view_control[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera reference visual topic advertised on [[0m[1;32m/gui/camera/view_control/reference_visual[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera view control sensitivity advertised on [[0m[1;32m/gui/camera/view_control/sensitivity[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mInteractive view control[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mInteractiveViewControl[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libInteractiveViewControl.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mCameraTracking[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mCamera tracking[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mCameraTracking[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libCameraTracking.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mMarkerManager[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mListening to stats on [[0m[1;32m/world/warehouse_world/stats[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mMarker Manager[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mMarkerManager[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libMarkerManager.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mSelectEntities[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mSelect entities[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mSelectEntities[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libSelectEntities.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mSpawn[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mSpawn[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mSpawn[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libSpawn.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mVisualizationCapabilities[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView as transparent service on [[0m[1;32m/gui/view/transparent[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView as wireframes service on [[0m[1;32m/gui/view/wireframes[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView center of mass service on [[0m[1;32m/gui/view/com[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView inertia service on [[0m[1;32m/gui/view/inertia[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView collisions service on [[0m[1;32m/gui/view/collisions[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView joints service on [[0m[1;32m/gui/view/joints[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mView frames service on [[0m[1;32m/gui/view/frames[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mVisualization capabilities[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mVisualizationCapabilities[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libVisualizationCapabilities.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mWorldControl[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mUsing world control service [[0m[1;32m/world/warehouse_world/control[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mListening to stats on [[0m[1;32m/world/warehouse_world/stats[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [WorldControl.cc:237] [0m[1;36mUsing an event to share WorldControl msgs with the server[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mWorld control[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mWorldControl[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libWorldControl.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mWorldStats[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mListening to stats on [[0m[1;32m/world/warehouse_world/stats[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mWorld stats[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mWorldStats[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libWorldStats.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mShapes[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mShapes[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mShapes[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libShapes.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mLights[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mLights[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mLights[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libLights.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mTransformControl[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mTransform control[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mTransformControl[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libTransformControl.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mScreenshot[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mScreenshot service on [[0m[1;32m/gui/screenshot[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mScreenshot[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mScreenshot[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_gui_vendor/lib/gz-gui-8/plugins/libScreenshot.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mCopyPaste[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mCopy/Paste[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mCopyPaste[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libCopyPaste.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mComponentInspector[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mComponent inspector[0m[1;32m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mComponentInspector[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libComponentInspector.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:528] [0m[1;36mLoading plugin [[0m[1;36mEntityTree[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCurrently tracking topic on [[0m[1;32m/gui/currently_tracked[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;33m[GUI] [Wrn] [Application.cc:908] [0m[1;33m[QT] file::/WorldStats/WorldStats.qml:53:3: QML RowLayout: Binding loop detected for property "x"[0m[1;33m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mAdded plugin [[0m[1;32mEntity tree[0m[1;3rial[0m[1;32m service on [[0m[1;32m/world/warehouse_world/visual_config[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mMaterial[0m[1;32m service on [[0m[1;32m/world/warehouse_world/visual_config/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mMaterial[0m[1;32m service on [[0m[1;32m/world/warehouse_world/wheel_slip[0m[1;32m] (async)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mMaterial[0m[1;32m service on [[0m[1;32m/world/warehouse_world/wheel_slip/blocking[0m[1;32m] (blocking)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::UserCommands[0m[1;36m] for entity [[0m[1;36m1[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::SceneBroadcaster[0m[1;36m] for entity [[0m[1;36m1[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:697] [0m[1;36mConfiguring Sensors system[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:557] [0m[1;36mSensorsPrivate::Run[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::Sensors[0m[1;36m] for entity [[0m[1;36m1[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:532] [0m[1;36mSensorsPrivate::RenderThread started[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:337] [0m[1;36mWaiting for init[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz::sim::systems::Imu[0m[1;36m] for entity [[0m[1;36m1[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mLoaded level [[0m[1;32mdefault[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServing world controls on [[0m[1;32m/world/warehouse_world[0m[1;32m/control], [[0m[1;32m/world/warehouse_world[0m[1;32m/control/state] and [[0m[1;32m/world/warehouse_world[0m[1;32m/playback/control][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServing GUI information on [[0m[1;32m/world/warehouse_world[0m[1;32m/[0m[1;32mgui/info[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mWorld [[0m[1;32mwarehouse_world[0m[1;32m] initialized with [[0m[1;32mdefault_physics[0m[1;32m] physics profile.[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServing world SDF generation service on [[0m[1;32m/world/warehouse_world[0m[1;32m/[0m[1;32mgenerate_world_sdf[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServing world names on [[0m[1;32m/gazebo/worlds[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mResource path add service on [[0m[1;32m/gazebo/resource_paths/add[0m[1;32m].[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mResource path get service on [[0m[1;32m/gazebo/resource_paths/get[0m[1;32m].[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mResource path resolve service on [[0m[1;32m/gazebo/resource_paths/resolve[0m[1;32m].[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mResource paths published on [[0m[1;32m/gazebo/resource_paths[0m[1;32m].[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServer control service on [[0m[1;32m/server_control[0m[1;32m].[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mFound no publishers on /stats, adding root stats topic[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mFound no publishers on /clock, adding root clock topic[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:551] [0m[1;36mCreating PostUpdate worker threads: [0m[1;36m4[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:562] [0m[1;36mCreating postupdate worker thread ([0m[1;36m0[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:562] [0m[1;36mCreating postupdate worker thread ([0m[1;36m1[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:562] [0m[1;36mCreating postupdate worker thread ([0m[1;36m2[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServing scene information on [[0m[1;32m/world/warehouse_world[0m[1;32m/[0m[1;32mscene/info[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServing graph information on [[0m[1;32m/world/warehouse_world[0m[1;32m/[0m[1;32mscene/graph[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [command_mux_node.py-10] [INFO] [1793985307.983773974] [command_mux]: Control source changed: uninitialized -> none
+[simulation_manager_node.py-1] [gazebo-1] [1;33m[GUI] [Wrn] [Ogre2RenderTarget.cc:668] [0m[1;33mAnti-aliasing level of '[0m[1;33m[0m[1;33m' [0m[1;33mis not supported; valid FSAA levels are: [0m[1;33m[ 0 4 ][0m[1;33m. Setting to 1[0m[1;33m[0m
+[simulation_manager_node.py-1] [create-7] [INFO] [1793985310.705614906] [spawn_diffbot]: Requesting list of world names.
+[simulation_manager_node.py-1] [create-7] [INFO] [1793985310.813710066] [spawn_diffbot]: Waiting messages on topic [robot_description].
+[simulation_manager_node.py-1] [create-7] [INFO] [1793985310.829791659] [spawn_diffbot]: Entity creation successful.
+[simulation_manager_node.py-1] [INFO] [create-7]: process has finished cleanly [pid 34971]
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985311.264422197] [gz_ros_control]: Loading controller_manager
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985311.307391384] [controller_manager]: Using ROS clock for triggering controller manager cycles.
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985311.320175571] [controller_manager]: Subscribing to '/robot_description' topic for robot description.
+[simulation_manager_node.py-1] [gazebo-1] [WARN] [1793985311.338963487] [gz_ros_control]: Waiting RM to load and initialize hardware...
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.041410544] [controller_manager]: Received robot description from topic.
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.041537442] [controller_manager]: Enforcing command limits is disabled. Command limits from URDF will be ignored.
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.048933162] [gz_ros_control]: The position_proportional_gain has been set to: 0.1
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.049323594] [gz_ros_control]: Loading joint: left_wheel_joint
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.049380709] [gz_ros_control]: 	State:
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.049456123] [gz_ros_control]: 		 position
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.049590698] [gz_ros_control]: 		 velocity
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.049793460] [gz_ros_control]: 	Command:
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.049899630] [gz_ros_control]: 		 velocity
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.049991832] [gz_ros_control]: Loading joint: right_wheel_joint
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.050006668] [gz_ros_control]: 	State:
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.050017603] [gz_ros_control]: 		 position
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.050032083] [gz_ros_control]: 		 velocity
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.050042504] [gz_ros_control]: 	Command:
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.050052051] [gz_ros_control]: 		 velocity
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.050294380] [gz_ros_control]: Loading sensor: diffbot_imu
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.050354744] [gz_ros_control]: 	State:
+[simulation_manager_node.py-1] [gazebo-1] [WARN] [1793985312.050378557] [gz_ros_control]: IMU sensor 'diffbot_imu' not found in hardware_info, skipping.
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.050750866] [controller_manager]: Initialize hardware 'DiffBotSystem' 
+[simulation_manager_node.py-1] [gazebo-1] [WARN] [1793985312.050804172] [controller_manager.hardware_component.system.DiffBotSystem]: Executor is not available during hardware component initialization for 'DiffBotSystem'. Skipping node creation!
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.050963021] [controller_manager]: Successful initialization of hardware 'DiffBotSystem'
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.051187149] [controller_manager]: Activating component 'DiffBotSystem'.
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.051239267] [resource_manager]: 'configure' hardware 'DiffBotSystem' 
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.051248309] [gz_ros_control]: System Successfully configured!
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.051258280] [resource_manager]: Successful 'configure' of hardware 'DiffBotSystem'
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.051268318] [resource_manager]: 'activate' hardware 'DiffBotSystem' 
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.051289166] [resource_manager]: Successful 'activate' of hardware 'DiffBotSystem'
+[simulation_manager_node.py-1] [gazebo-1] [WARN] [1793985312.051389215] [controller_manager]: Component 'DiffBotSystem' does not have read or write statistics initialized, skipping registration.
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985312.051422028] [controller_manager]: Resource Manager has been successfully initialized. Starting Controller Manager services...
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985313.183598995] [controller_manager]: Loading controller : 'joint_state_broadcaster' of type 'joint_state_broadcaster/JointStateBroadcaster'
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985313.183805872] [controller_manager]: Loading controller 'joint_state_broadcaster'
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985313.196189690] [controller_manager]: Controller 'joint_state_broadcaster' node arguments: --ros-args --params-file /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/ros2_control.yaml -p use_sim_time:=true --param use_sim_time:=true 
+[simulation_manager_node.py-1] [spawner-8] [INFO] [1793985313.240548481] [joint_state_broadcaster_spawner]: Loaded joint_state_broadcaster
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985313.245244692] [controller_manager]: Configuring controller: 'joint_state_broadcaster'
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985313.245655987] [joint_state_broadcaster]: 'joints' or 'interfaces' parameter is empty. All available state interfaces will be published
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985313.271301853] [controller_manager]: Activating controllers: [ joint_state_broadcaster ]
+[simulation_manager_node.py-1] [gazebo-1] [WARN] [1793985313.375920461] [gz_ros_control]:  Desired controller update period (0.01 s) is slower than the gazebo simulation period (0.001 s).
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985313.378011516] [controller_manager]: Successfully switched controllers!
+[simulation_manager_node.py-1] [spawner-8] [INFO] [1793985314.386135511] [joint_state_broadcaster_spawner]: Configured and activated joint_state_broadcaster
+[simulation_manager_node.py-1] [INFO] [spawner-8]: process has finished cleanly [pid 34972]
+[simulation_manager_node.py-1] [spawner-9] [INFO] [1793985314.629495605] [diff_drive_controller_spawner]: waiting for service /controller_manager/list_controllers to become available...
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985315.637373172] [controller_manager]: Loading controller : 'diff_drive_controller' of type 'diff_drive_controller/DiffDriveController'
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985315.637507864] [controller_manager]: Loading controller 'diff_drive_controller'
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985315.645499812] [controller_manager]: Controller 'diff_drive_controller' node arguments: --ros-args --params-file /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/ros2_control.yaml -p use_sim_time:=true --param use_sim_time:=true 
+[simulation_manager_node.py-1] [spawner-9] [INFO] [1793985315.709809692] [diff_drive_controller_spawner]: Loaded diff_drive_controller
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985315.718164571] [controller_manager]: Configuring controller: 'diff_drive_controller'
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985315.766602792] [controller_manager]: Activating controllers: [ diff_drive_controller ]
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985315.774702172] [controller_manager]: Successfully switched controllers!
+[simulation_manager_node.py-1] [spawner-9] [INFO] [1793985315.794487176] [diff_drive_controller_spawner]: Configured and activated diff_drive_controller
+[simulation_manager_node.py-1] [INFO] [spawner-9]: process has finished cleanly [pid 34977]
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServing full state on [[0m[1;32m/world/warehouse_world[0m[1;32m/[0m[1;32mstate[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mServing full state (async) on [[0m[1;32m/world/warehouse_world[0m[1;32m/[0m[1;32mstate_async[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPublishing scene information on [[0m[1;32m/world/warehouse_world/scene/info[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPublishing entity deletions on [[0m[1;32m/world/warehouse_world/scene/deletion[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPublishing state changes on [[0m[1;32m/world/warehouse_world/state[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPublishing pose messages on [[0m[1;32m/world/warehouse_world[0m[1;32m/[0m[1;32mpose/info[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mPublishing dynamic pose messages on [[0m[1;32m/world/warehouse_world[0m[1;32m/[0m[1;32mdynamic_pose/info[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [EntityComponentManager.cc:1656] [0m[1;36mUpdated state thread iterators: [0m[1;36m16[0m[1;36m threads processing around [0m[1;36m6[0m[1;36m entities each.[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SystemManager.cc:80] [0m[1;36mLoaded system [[0m[1;36mgz_ros2_control::GazeboSimROS2ControlPlugin[0m[1;36m] for entity [[0m[1;36m93[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [UserCommands.cc:1094] [0m[1;36mCreated entity [[0m[1;36m93[0m[1;36m] named [[0m[1;36mdiffbot[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:953] [0m[1;36mInitialization needed[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:349] [0m[1;36mInitializing render context[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[Msg] [0m[1;32mLoading plugin [[0m[1;32mgz-rendering-ogre2[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [ImuSensor.cc:150] [0m[1;36mIMU data for [[0m[1;36mdiffbot::base_link::diffbot_imu[0m[1;36m] advertised on [[0m[1;36m/imu/data[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:578] [0m[1;36mExiting postupdate worker thread ([0m[1;36m2[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:578] [0m[1;36mExiting postupdate worker thread ([0m[1;36m0[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:578] [0m[1;36mExiting postupdate worker thread ([0m[1;36m1[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:551] [0m[1;36mCreating PostUpdate worker threads: [0m[1;36m5[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:562] [0m[1;36mCreating postupdate worker thread ([0m[1;36m0[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:562] [0m[1;36mCreating postupdate worker thread ([0m[1;36m1[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:562] [0m[1;36mCreating postupdate worker thread ([0m[1;36m2[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:562] [0m[1;36mCreating postupdate worker thread ([0m[1;36m3[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [RenderUtil.cc:2646] [0m[1;36mCreate scene [[0m[1;36mscene[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:391] [0m[1;36mRendering Thread initialized[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:953] [0m[1;36mInitialization needed[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Lidar.cc:139] [0m[1;36mLaser scans for [[0m[1;36mdiffbot::base_link::diffbot_lidar[0m[1;36m] advertised on [[0m[1;36m/scan[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [GpuLidarSensor.cc:164] [0m[1;36mLidar points for [[0m[1;36mdiffbot::base_link::diffbot_lidar[0m[1;36m] advertised on [[0m[1;36m/scan/points[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [INFO] [1793985316.769161518] [simulation_manager]: Simulation state: running
+[simulation_manager_node.py-1] [INFO] [1793985316.772259238] [simulation_manager]: Simulation started with PID 34959
+[mode_manager_node.py-2] [INFO] [1793985316.875859485] [mode_manager]: Starting operating mode: ros2 launch cpp_robotics_sim_ros slam_mapping.launch.py use_sim_time:=true
+[mode_manager_node.py-2] [INFO] [launch]: All log files can be found below /tmp/v013-mission1-runtime/.ros/log/2026-11-06-09-15-17-487832-Devansh-35392
+[mode_manager_node.py-2] [INFO] [launch]: Default logging verbosity is set to INFO
+[mode_manager_node.py-2] [INFO] [static_transform_publisher-1]: process started with pid [35395]
+[mode_manager_node.py-2] [INFO] [async_slam_toolbox_node-2]: process started with pid [35396]
+[mode_manager_node.py-2] [INFO] [lifecycle_manager-3]: process started with pid [35397]
+[mode_manager_node.py-2] [static_transform_publisher-1] [WARN] [1793985317.647803564] []: Old-style arguments are deprecated; see --help for new-style arguments
+[mode_manager_node.py-2] [static_transform_publisher-1] [INFO] [1793985317.710078602] [scan_frame_bridge]: Spinning until stopped - publishing transform
+[mode_manager_node.py-2] [static_transform_publisher-1] translation: ('0.000000', '0.000000', '0.000000')
+[mode_manager_node.py-2] [static_transform_publisher-1] rotation: ('0.000000', '0.000000', '0.000000', '1.000000')
+[mode_manager_node.py-2] [static_transform_publisher-1] from 'lidar_link' to 'diffbot/base_link/diffbot_lidar'
+[mode_manager_node.py-2] [lifecycle_manager-3] [INFO] [1793985317.747906299] [lifecycle_manager_slam]: Creating
+[mode_manager_node.py-2] [lifecycle_manager-3] [INFO] [1793985317.798101589] [lifecycle_manager_slam]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[mode_manager_node.py-2] [async_slam_toolbox_node-2] [INFO] [1793985317.810623733] [slam_toolbox]: Node using stack size 40000000
+[mode_manager_node.py-2] [lifecycle_manager-3] [INFO] [1793985317.961719820] [lifecycle_manager_slam]: [34m[1mStarting managed nodes bringup...[0m[0m
+[mode_manager_node.py-2] [lifecycle_manager-3] [INFO] [1793985317.961786042] [lifecycle_manager_slam]: [34m[1mConfiguring slam_toolbox[0m[0m
+[mode_manager_node.py-2] [async_slam_toolbox_node-2] [INFO] [1793985318.073250558] [slam_toolbox]: Configuring
+[mode_manager_node.py-2] [async_slam_toolbox_node-2] [INFO] [1793985318.113698559] [slam_toolbox]: Using solver plugin solver_plugins::CeresSolver
+[mode_manager_node.py-2] [async_slam_toolbox_node-2] [INFO] [1793985318.204826954] [slam_toolbox]: CeresSolver: Using SCHUR_JACOBI preconditioner.
+[mode_manager_node.py-2] [lifecycle_manager-3] [INFO] [1793985318.294288732] [lifecycle_manager_slam]: [34m[1mActivating slam_toolbox[0m[0m
+[mode_manager_node.py-2] [async_slam_toolbox_node-2] [INFO] [1793985318.294669835] [slam_toolbox]: Activating
+[mode_manager_node.py-2] [lifecycle_manager-3] [INFO] [1793985318.319560530] [lifecycle_manager_slam]: [34m[1mManaged nodes are active[0m[0m
+[mode_manager_node.py-2] [async_slam_toolbox_node-2] [INFO] [1793985318.415941396] [slam_toolbox]: Message Filter dropping message: frame 'diffbot/base_link/diffbot_lidar' at time 4.200 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[mode_manager_node.py-2] [async_slam_toolbox_node-2] Info: clipped range threshold to be within minimum and maximum range!
+[mode_manager_node.py-2] [async_slam_toolbox_node-2] Registering sensor: [Custom Described Lidar]
+[mode_manager_node.py-2] [INFO] [1793985319.530453281] [mode_manager]: Mapping mode started with PID 35392
+[mode_manager_node.py-2] [INFO] [1793985327.248030584] [mode_manager]: Stopping operating-mode process group 35392
+[mode_manager_node.py-2] [WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[mode_manager_node.py-2] [INFO] [lifecycle_manager-3]: sending signal 'SIGINT' to process[lifecycle_manager-3]
+[mode_manager_node.py-2] [INFO] [async_slam_toolbox_node-2]: sending signal 'SIGINT' to process[async_slam_toolbox_node-2]
+[mode_manager_node.py-2] [INFO] [static_transform_publisher-1]: sending signal 'SIGINT' to process[static_transform_publisher-1]
+[mode_manager_node.py-2] [lifecycle_manager-3] [INFO] [1793985327.312000040] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [lifecycle_manager-3] [INFO] [1793985327.312114564] [lifecycle_manager_slam]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_slam)
+[mode_manager_node.py-2] [async_slam_toolbox_node-2] [INFO] [1793985327.312034466] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [static_transform_publisher-1] [INFO] [1793985327.313034652] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [async_slam_toolbox_node-2] [INFO] [1793985327.321969372] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [async_slam_toolbox_node-2] Unregistering sensor: Custom Described Lidar
+[mode_manager_node.py-2] [ERROR] [static_transform_publisher-1]: process has died [pid 35395, exit code -2, cmd '/opt/ros/jazzy/lib/tf2_ros/static_transform_publisher 0 0 0 0 0 0 lidar_link diffbot/base_link/diffbot_lidar --ros-args -r __node:=scan_frame_bridge'].
+[mode_manager_node.py-2] [lifecycle_manager-3] [INFO] [1793985328.339669580] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [lifecycle_manager-3] [INFO] [1793985328.340684619] [lifecycle_manager_slam]: Destroying lifecycle_manager_slam
+[mode_manager_node.py-2] [INFO] [lifecycle_manager-3]: process has finished cleanly [pid 35397]
+[mode_manager_node.py-2] [INFO] [async_slam_toolbox_node-2]: process has finished cleanly [pid 35396]
+[mode_manager_node.py-2] [INFO] [1793985328.752497809] [mode_manager]: Operating mode stopped
+[localization_manager_node.py-4] [INFO] [1793985329.008183841] [localization_manager]: Selected map: /tmp/v013-mission1-runtime/.ros/cpp_robotics_sim/maps/warehouse/v012_fixture_20261106_171445609773.yaml
+[mode_manager_node.py-2] [INFO] [1793985329.048435878] [mode_manager]: Starting operating mode: ros2 launch cpp_robotics_sim_ros amcl_localization.launch.py use_sim_time:=true map:=/tmp/v013-mission1-runtime/.ros/cpp_robotics_sim/maps/warehouse/v012_fixture_20261106_171445609773.yaml
+[mode_manager_node.py-2] [INFO] [launch]: All log files can be found below /tmp/v013-mission1-runtime/.ros/log/2026-11-06-09-15-29-576108-Devansh-35517
+[mode_manager_node.py-2] [INFO] [launch]: Default logging verbosity is set to INFO
+[mode_manager_node.py-2] [INFO] [static_transform_publisher-1]: process started with pid [35520]
+[mode_manager_node.py-2] [INFO] [map_server-2]: process started with pid [35521]
+[mode_manager_node.py-2] [INFO] [amcl-3]: process started with pid [35522]
+[mode_manager_node.py-2] [INFO] [lifecycle_manager-4]: process started with pid [35523]
+[mode_manager_node.py-2] [static_transform_publisher-1] [WARN] [1793985329.725381563] []: Old-style arguments are deprecated; see --help for new-style arguments
+[mode_manager_node.py-2] [static_transform_publisher-1] [INFO] [1793985329.764928141] [scan_frame_bridge]: Spinning until stopped - publishing transform
+[mode_manager_node.py-2] [static_transform_publisher-1] translation: ('0.000000', '0.000000', '0.000000')
+[mode_manager_node.py-2] [static_transform_publisher-1] rotation: ('0.000000', '0.000000', '0.000000', '1.000000')
+[mode_manager_node.py-2] [static_transform_publisher-1] from 'lidar_link' to 'diffbot/base_link/diffbot_lidar'
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985329.808069568] [map_server]: 
+[mode_manager_node.py-2] [map_server-2] 	map_server lifecycle node launched. 
+[mode_manager_node.py-2] [map_server-2] 	Waiting on external lifecycle transitions to activate
+[mode_manager_node.py-2] [map_server-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985329.808876805] [map_server]: Creating
+[mode_manager_node.py-2] [lifecycle_manager-4] [INFO] [1793985329.832960770] [lifecycle_manager_localization]: Creating
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985329.836508054] [amcl]: 
+[mode_manager_node.py-2] [amcl-3] 	amcl lifecycle node launched. 
+[mode_manager_node.py-2] [amcl-3] 	Waiting on external lifecycle transitions to activate
+[mode_manager_node.py-2] [amcl-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[mode_manager_node.py-2] [lifecycle_manager-4] [INFO] [1793985329.840600918] [lifecycle_manager_localization]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985329.841008278] [amcl]: Creating
+[mode_manager_node.py-2] [WARN] [1793985329.852557591] [rcl.logging_rosout]: Publisher already registered for node name: 'simulation_readiness_probe'. If this is due to multiple nodes with the same name then all logs for the logger named 'simulation_readiness_probe' will go out over the existing publisher. As soon as any node with that name is destructed it will unregister the publisher, preventing any further logs for that name from being published on the rosout topic.
+[mode_manager_node.py-2] [lifecycle_manager-4] [INFO] [1793985330.067931449] [lifecycle_manager_localization]: [34m[1mStarting managed nodes bringup...[0m[0m
+[mode_manager_node.py-2] [lifecycle_manager-4] [INFO] [1793985330.068005484] [lifecycle_manager_localization]: [34m[1mConfiguring map_server[0m[0m
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985330.068576900] [map_server]: Configuring
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985330.068698107] [map_io]: Loading yaml file: /tmp/v013-mission1-runtime/.ros/cpp_robotics_sim/maps/warehouse/v012_fixture_20261106_171445609773.yaml
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985330.070047106] [map_io]: resolution: 0.05
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985330.070105495] [map_io]: origin[0]: -0.5
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985330.070168293] [map_io]: origin[1]: -0.496
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985330.070176693] [map_io]: origin[2]: 0
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985330.070182244] [map_io]: free_thresh: 0.196
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985330.070187162] [map_io]: occupied_thresh: 0.65
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985330.070193695] [map_io]: mode: trinary
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985330.070201440] [map_io]: negate: 0
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985330.070500793] [map_io]: Loading image_file: /tmp/v013-mission1-runtime/.ros/cpp_robotics_sim/maps/warehouse/v012_fixture_20261106_171445609773.pgm
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985330.070959941] [map_io]: Read map /tmp/v013-mission1-runtime/.ros/cpp_robotics_sim/maps/warehouse/v012_fixture_20261106_171445609773.pgm: 46 X 48 map @ 0.05 m/cell
+[mode_manager_node.py-2] [lifecycle_manager-4] [INFO] [1793985330.085785795] [lifecycle_manager_localization]: [34m[1mConfiguring amcl[0m[0m
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985330.086206529] [amcl]: Configuring
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985330.086315012] [amcl]: initTransforms
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985330.103617040] [amcl]: initPubSub
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985330.131731534] [amcl]: Subscribed to map topic.
+[mode_manager_node.py-2] [lifecycle_manager-4] [INFO] [1793985330.140345336] [lifecycle_manager_localization]: [34m[1mActivating map_server[0m[0m
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985330.140808341] [map_server]: Activating
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985330.141155775] [map_server]: Creating bond (map_server) to lifecycle manager.
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985330.143770330] [amcl]: Received a 46 X 48 map @ 0.050 m/pix
+[mode_manager_node.py-2] [lifecycle_manager-4] [INFO] [1793985330.149939927] [lifecycle_manager_localization]: [34m[1mActivating amcl[0m[0m
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985330.150300975] [amcl]: Activating
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985330.150336643] [amcl]: initialPoseReceived
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985330.151247321] [amcl]: Setting pose (11.699000): 0.000 0.000 0.000
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985330.151831272] [amcl]: Creating bond (amcl) to lifecycle manager.
+[mode_manager_node.py-2] [lifecycle_manager-4] [INFO] [1793985330.162371366] [lifecycle_manager_localization]: [34m[1mManaged nodes are active[0m[0m
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985330.519234693] [amcl]: Message Filter dropping message: frame 'diffbot/base_link/diffbot_lidar' at time 11.900 for reason 'the timestamp on the message is earlier than all the data in the transform cache'
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985330.699316628] [amcl]: createLaserObject
+[mode_manager_node.py-2] [INFO] [1793985333.757482242] [mode_manager]: Localization mode started with PID 35517
+[localization_manager_node.py-4] [INFO] [1793985333.789637661] [localization_manager]: Published AMCL initial pose: x=0.000, y=0.000, yaw=0.000
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985333.788634235] [amcl]: initialPoseReceived
+[mode_manager_node.py-2] [amcl-3] [WARN] [1793985333.788742514] [amcl]: Failed to transform initial pose in time (Lookup would require extrapolation into the future.  Requested time 14.000000 but the latest data is at time 13.983000, when looking up transform from frame [base_link] to frame [odom])
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985333.788756748] [amcl]: Setting pose (14.000000): 0.000 0.000 0.000
+[mode_manager_node.py-2] [INFO] [1793985333.830328825] [mode_manager]: Stopping operating-mode process group 35517
+[mode_manager_node.py-2] [WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[mode_manager_node.py-2] [static_transform_publisher-1] [INFO] [1793985333.886798863] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985333.887458391] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985333.887536306] [amcl]: Running Nav2 LifecycleNode rcl preshutdown (amcl)
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985333.887589294] [amcl]: Deactivating
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985333.887608332] [amcl]: Destroying bond (amcl) to lifecycle manager.
+[mode_manager_node.py-2] [INFO] [lifecycle_manager-4]: sending signal 'SIGINT' to process[lifecycle_manager-4]
+[mode_manager_node.py-2] [INFO] [amcl-3]: sending signal 'SIGINT' to process[amcl-3]
+[mode_manager_node.py-2] [INFO] [map_server-2]: sending signal 'SIGINT' to process[map_server-2]
+[mode_manager_node.py-2] [INFO] [static_transform_publisher-1]: sending signal 'SIGINT' to process[static_transform_publisher-1]
+[mode_manager_node.py-2] [lifecycle_manager-4] [INFO] [1793985333.888929688] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [lifecycle_manager-4] [INFO] [1793985333.889027832] [lifecycle_manager_localization]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_localization)
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985333.888970461] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985333.889060904] [map_server]: Running Nav2 LifecycleNode rcl preshutdown (map_server)
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985333.889108918] [map_server]: Deactivating
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985333.889120779] [map_server]: Destroying bond (map_server) to lifecycle manager.
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985333.899444795] [map_server]: Cleaning up
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985333.899531913] [map_server]: Destroying bond (map_server) to lifecycle manager.
+[mode_manager_node.py-2] [ERROR] [static_transform_publisher-1]: process has died [pid 35520, exit code -2, cmd '/opt/ros/jazzy/lib/tf2_ros/static_transform_publisher 0 0 0 0 0 0 lidar_link diffbot/base_link/diffbot_lidar --ros-args -r __node:=scan_frame_bridge'].
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985333.900750570] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985333.901630690] [amcl]: Cleaning up
+[mode_manager_node.py-2] [lifecycle_manager-4] [INFO] [1793985333.904864309] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [lifecycle_manager-4] [INFO] [1793985333.905692569] [lifecycle_manager_localization]: Destroying lifecycle_manager_localization
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985333.914275309] [amcl]: Destroying bond (amcl) to lifecycle manager.
+[mode_manager_node.py-2] [map_server-2] [INFO] [1793985333.915086672] [map_server]: Destroying
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985333.919335976] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [amcl-3] [INFO] [1793985333.931155463] [amcl]: Destroying
+[mode_manager_node.py-2] [INFO] [lifecycle_manager-4]: process has finished cleanly [pid 35523]
+[mode_manager_node.py-2] [INFO] [map_server-2]: process has finished cleanly [pid 35521]
+[mode_manager_node.py-2] [INFO] [amcl-3]: process has finished cleanly [pid 35522]
+[mode_manager_node.py-2] [INFO] [1793985334.270278915] [mode_manager]: Operating mode stopped
+[mode_manager_node.py-2] [INFO] [1793985334.504750135] [mode_manager]: Starting operating mode: ros2 launch cpp_robotics_sim_ros nav2_navigation.launch.py use_sim_time:=true map:=/tmp/v013-mission1-runtime/.ros/cpp_robotics_sim/maps/warehouse/v012_fixture_20261106_171445609773.yaml
+[mode_manager_node.py-2] [INFO] [launch]: All log files can be found below /tmp/v013-mission1-runtime/.ros/log/2026-11-06-09-15-35-035831-Devansh-35588
+[mode_manager_node.py-2] [INFO] [launch]: Default logging verbosity is set to INFO
+[mode_manager_node.py-2] [INFO] [static_transform_publisher-1]: process started with pid [35591]
+[mode_manager_node.py-2] [INFO] [cmd_vel_twist_bridge.py-2]: process started with pid [35592]
+[mode_manager_node.py-2] [INFO] [map_server-3]: process started with pid [35593]
+[mode_manager_node.py-2] [INFO] [amcl-4]: process started with pid [35594]
+[mode_manager_node.py-2] [INFO] [lifecycle_manager-5]: process started with pid [35595]
+[mode_manager_node.py-2] [INFO] [controller_server-6]: process started with pid [35596]
+[mode_manager_node.py-2] [INFO] [planner_server-7]: process started with pid [35597]
+[mode_manager_node.py-2] [INFO] [behavior_server-8]: process started with pid [35598]
+[mode_manager_node.py-2] [INFO] [bt_navigator-9]: process started with pid [35607]
+[mode_manager_node.py-2] [INFO] [waypoint_follower-10]: process started with pid [35608]
+[mode_manager_node.py-2] [INFO] [velocity_smoother-11]: process started with pid [35610]
+[mode_manager_node.py-2] [INFO] [lifecycle_manager-12]: process started with pid [35612]
+[mode_manager_node.py-2] [static_transform_publisher-1] [WARN] [1793985335.405982934] []: Old-style arguments are deprecated; see --help for new-style arguments
+[mode_manager_node.py-2] [WARN] [1793985335.583356398] [rcl.logging_rosout]: Publisher already registered for node name: 'simulation_readiness_probe'. If this is due to multiple nodes with the same name then all logs for the logger named 'simulation_readiness_probe' will go out over the existing publisher. As soon as any node with that name is destructed it will unregister the publisher, preventing any further logs for that name from being published on the rosout topic.
+[mode_manager_node.py-2] [static_transform_publisher-1] [INFO] [1793985335.907852484] [scan_frame_bridge]: Spinning until stopped - publishing transform
+[mode_manager_node.py-2] [static_transform_publisher-1] translation: ('0.000000', '0.000000', '0.000000')
+[mode_manager_node.py-2] [static_transform_publisher-1] rotation: ('0.000000', '0.000000', '0.000000', '1.000000')
+[mode_manager_node.py-2] [static_transform_publisher-1] from 'lidar_link' to 'diffbot/base_link/diffbot_lidar'
+[mode_manager_node.py-2] [lifecycle_manager-5] [INFO] [1793985335.921576262] [lifecycle_manager_localization]: Creating
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985335.926673455] [lifecycle_manager_navigation]: Creating
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985335.974639927] [lifecycle_manager_navigation]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985336.018267787] [behavior_server]: 
+[mode_manager_node.py-2] [behavior_server-8] 	behavior_server lifecycle node launched. 
+[mode_manager_node.py-2] [behavior_server-8] 	Waiting on external lifecycle transitions to activate
+[mode_manager_node.py-2] [behavior_server-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[mode_manager_node.py-2] [lifecycle_manager-5] [INFO] [1793985336.040100362] [lifecycle_manager_localization]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985336.045301108] [controller_server]: 
+[mode_manager_node.py-2] [controller_server-6] 	controller_server lifecycle node launched. 
+[mode_manager_node.py-2] [controller_server-6] 	Waiting on external lifecycle transitions to activate
+[mode_manager_node.py-2] [controller_server-6] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985336.050431722] [map_server]: 
+[mode_manager_node.py-2] [map_server-3] 	map_server lifecycle node launched. 
+[mode_manager_node.py-2] [map_server-3] 	Waiting on external lifecycle transitions to activate
+[mode_manager_node.py-2] [map_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985336.051266470] [map_server]: Creating
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985336.056105287] [amcl]: 
+[mode_manager_node.py-2] [amcl-4] 	amcl lifecycle node launched. 
+[mode_manager_node.py-2] [amcl-4] 	Waiting on external lifecycle transitions to activate
+[mode_manager_node.py-2] [amcl-4] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[mode_manager_node.py-2] [velocity_smoother-11] [INFO] [1793985336.056800385] [velocity_smoother]: 
+[mode_manager_node.py-2] [velocity_smoother-11] 	velocity_smoother lifecycle node launched. 
+[mode_manager_node.py-2] [velocity_smoother-11] 	Waiting on external lifecycle transitions to activate
+[mode_manager_node.py-2] [velocity_smoother-11] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985336.056861335] [amcl]: Creating
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985336.062840213] [planner_server]: 
+[mode_manager_node.py-2] [planner_server-7] 	planner_server lifecycle node launched. 
+[mode_manager_node.py-2] [planner_server-7] 	Waiting on external lifecycle transitions to activate
+[mode_manager_node.py-2] [planner_server-7] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985336.066498414] [controller_server]: Creating controller server
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985336.067011336] [planner_server]: Creating
+[mode_manager_node.py-2] [waypoint_follower-10] [INFO] [1793985336.104310927] [waypoint_follower]: 
+[mode_manager_node.py-2] [waypoint_follower-10] 	waypoint_follower lifecycle node launched. 
+[mode_manager_node.py-2] [waypoint_follower-10] 	Waiting on external lifecycle transitions to activate
+[mode_manager_node.py-2] [waypoint_follower-10] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[mode_manager_node.py-2] [waypoint_follower-10] [INFO] [1793985336.107418146] [waypoint_follower]: Creating
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985336.210908695] [global_costmap.global_costmap]: 
+[mode_manager_node.py-2] [planner_server-7] 	global_costmap lifecycle node launched. 
+[mode_manager_node.py-2] [planner_server-7] 	Waiting on external lifecycle transitions to activate
+[mode_manager_node.py-2] [planner_server-7] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985336.212589666] [bt_navigator]: 
+[mode_manager_node.py-2] [bt_navigator-9] 	bt_navigator lifecycle node launched. 
+[mode_manager_node.py-2] [bt_navigator-9] 	Waiting on external lifecycle transitions to activate
+[mode_manager_node.py-2] [bt_navigator-9] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985336.217078568] [bt_navigator]: Creating
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985336.219491924] [local_costmap.local_costmap]: 
+[mode_manager_node.py-2] [controller_server-6] 	local_costmap lifecycle node launched. 
+[mode_manager_node.py-2] [controller_server-6] 	Waiting on external lifecycle transitions to activate
+[mode_manager_node.py-2] [controller_server-6] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985336.223763720] [local_costmap.local_costmap]: Creating Costmap
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985336.226881250] [global_costmap.global_costmap]: Creating Costmap
+[mode_manager_node.py-2] [cmd_vel_twist_bridge.py-2] [INFO] [1793985336.630883164] [cmd_vel_twist_bridge]: Velocity bridge started: /cmd_vel Twist -> /cmd_vel/navigation TwistStamped
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985336.744086918] [lifecycle_manager_navigation]: [34m[1mStarting managed nodes bringup...[0m[0m
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985336.744233905] [lifecycle_manager_navigation]: [34m[1mConfiguring controller_server[0m[0m
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985336.911010758] [controller_server]: Configuring controller interface
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985336.911072447] [controller_server]: getting progress checker plugins..
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985336.911692861] [controller_server]: getting goal checker plugins..
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985336.912048660] [controller_server]: Controller frequency set to 10.0000Hz
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985336.912126159] [local_costmap.local_costmap]: Configuring
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985336.959637875] [local_costmap.local_costmap]: Using plugin "obstacle_layer"
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985336.992781893] [local_costmap.local_costmap]: Subscribed to Topics: scan
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.002488483] [local_costmap.local_costmap]: Initialized plugin "obstacle_layer"
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.002537928] [local_costmap.local_costmap]: Using plugin "inflation_layer"
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.003072473] [local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.108883836] [controller_server]: Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.110090692] [controller_server]: Controller Server has progress_checker  progress checkers available.
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.112604028] [controller_server]: Created goal checker : general_goal_checker of type nav2_controller::SimpleGoalChecker
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.114269551] [controller_server]: Controller Server has general_goal_checker  goal checkers available.
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.137098534] [controller_server]: Created controller : FollowPath of type dwb_core::DWBLocalPlanner
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.138516026] [controller_server]: Setting transform_tolerance to 0.300000
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.253177977] [controller_server]: Using critic "RotateToGoal" (dwb_critics::RotateToGoalCritic)
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.258248942] [controller_server]: Critic plugin initialized
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.258444476] [controller_server]: Using critic "Oscillation" (dwb_critics::OscillationCritic)
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.258848512] [controller_server]: Critic plugin initialized
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.259019436] [controller_server]: Using critic "BaseObstacle" (dwb_critics::BaseObstacleCritic)
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.259250291] [controller_server]: Critic plugin initialized
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.259518634] [controller_server]: Using critic "GoalAlign" (dwb_critics::GoalAlignCritic)
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.260182330] [controller_server]: Critic plugin initialized
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.260523120] [controller_server]: Using critic "PathAlign" (dwb_critics::PathAlignCritic)
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.263770741] [controller_server]: Critic plugin initialized
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.264128123] [controller_server]: Using critic "PathDist" (dwb_critics::PathDistCritic)
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.264868708] [controller_server]: Critic plugin initialized
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.269716959] [controller_server]: Using critic "GoalDist" (dwb_critics::GoalDistCritic)
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.282382244] [controller_server]: Critic plugin initialized
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985337.282445679] [controller_server]: Controller Server has FollowPath  controllers available.
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985337.338420225] [lifecycle_manager_navigation]: [34m[1mConfiguring planner_server[0m[0m
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985337.338922819] [planner_server]: Configuring
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985337.338962915] [global_costmap.global_costmap]: Configuring
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985337.403164533] [global_costmap.global_costmap]: Using plugin "obstacle_layer"
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985337.414273359] [global_costmap.global_costmap]: Subscribed to Topics: scan
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985337.427178336] [global_costmap.global_costmap]: Initialized plugin "obstacle_layer"
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985337.427228694] [global_costmap.global_costmap]: Using plugin "inflation_layer"
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985337.427714073] [global_costmap.global_costmap]: Initialized plugin "inflation_layer"
+[mode_manager_node.py-2] [lifecycle_manager-5] [INFO] [1793985337.476375477] [lifecycle_manager_localization]: [34m[1mStarting managed nodes bringup...[0m[0m
+[mode_manager_node.py-2] [lifecycle_manager-5] [INFO] [1793985337.476438315] [lifecycle_manager_localization]: [34m[1mConfiguring map_server[0m[0m
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985337.478073136] [map_server]: Configuring
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985337.478174452] [map_io]: Loading yaml file: /tmp/v013-mission1-runtime/.ros/cpp_robotics_sim/maps/warehouse/v012_fixture_20261106_171445609773.yaml
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985337.478643807] [map_io]: resolution: 0.05
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985337.478661886] [map_io]: origin[0]: -0.5
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985337.478667837] [map_io]: origin[1]: -0.496
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985337.478672073] [map_io]: origin[2]: 0
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985337.478676023] [map_io]: free_thresh: 0.196
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985337.478679595] [map_io]: occupied_thresh: 0.65
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985337.478684872] [map_io]: mode: trinary
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985337.478690012] [map_io]: negate: 0
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985337.480102517] [map_io]: Loading image_file: /tmp/v013-mission1-runtime/.ros/cpp_robotics_sim/maps/warehouse/v012_fixture_20261106_171445609773.pgm
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985337.480678150] [map_io]: Read map /tmp/v013-mission1-runtime/.ros/cpp_robotics_sim/maps/warehouse/v012_fixture_20261106_171445609773.pgm: 46 X 48 map @ 0.05 m/cell
+[mode_manager_node.py-2] [lifecycle_manager-5] [INFO] [1793985337.523812844] [lifecycle_manager_localization]: [34m[1mConfiguring amcl[0m[0m
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985337.524342918] [amcl]: Configuring
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985337.524445633] [amcl]: initTransforms
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985337.542108831] [planner_server]: Created global planner plugin GridBased of type nav2_navfn_planner::NavfnPlanner
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985337.542165415] [planner_server]: Configuring plugin GridBased of type NavfnPlanner
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985337.547618783] [planner_server]: Planner Server has GridBased  planners available.
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985337.572199078] [amcl]: initPubSub
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985337.601370466] [lifecycle_manager_navigation]: [34m[1mConfiguring behavior_server[0m[0m
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985337.601972379] [behavior_server]: Configuring
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985337.604347242] [amcl]: Subscribed to map topic.
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985337.626782483] [behavior_server]: Creating behavior plugin spin of type nav2_behaviors::Spin
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985337.631489159] [behavior_server]: Creating behavior plugin backup of type nav2_behaviors::BackUp
+[mode_manager_node.py-2] [lifecycle_manager-5] [INFO] [1793985337.634685049] [lifecycle_manager_localization]: [34m[1mActivating map_server[0m[0m
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985337.635239318] [map_server]: Activating
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985337.636017657] [map_server]: Creating bond (map_server) to lifecycle manager.
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985337.636395151] [amcl]: Received a 46 X 48 map @ 0.050 m/pix
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985337.637463365] [behavior_server]: Creating behavior plugin drive_on_heading of type nav2_behaviors::DriveOnHeading
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985337.645066797] [behavior_server]: Creating behavior plugin wait of type nav2_behaviors::Wait
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985337.685575177] [behavior_server]: Configuring spin
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985337.729807106] [behavior_server]: Configuring backup
+[mode_manager_node.py-2] [lifecycle_manager-5] [INFO] [1793985337.757338413] [lifecycle_manager_localization]: Server map_server connected with bond.
+[mode_manager_node.py-2] [lifecycle_manager-5] [INFO] [1793985337.757396585] [lifecycle_manager_localization]: [34m[1mActivating amcl[0m[0m
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985337.757970371] [amcl]: Activating
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985337.758019270] [amcl]: initialPoseReceived
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985337.758132919] [amcl]: Setting pose (16.369000): 0.000 0.000 0.000
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985337.758695125] [amcl]: Creating bond (amcl) to lifecycle manager.
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985337.774631520] [behavior_server]: Configuring drive_on_heading
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985337.823583973] [behavior_server]: Configuring wait
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985337.842994233] [amcl]: createLaserObject
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985337.851769399] [lifecycle_manager_navigation]: [34m[1mConfiguring bt_navigator[0m[0m
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985337.853825553] [bt_navigator]: Configuring
+[mode_manager_node.py-2] [lifecycle_manager-5] [INFO] [1793985337.881483085] [lifecycle_manager_localization]: Server amcl connected with bond.
+[mode_manager_node.py-2] [lifecycle_manager-5] [INFO] [1793985337.881570953] [lifecycle_manager_localization]: [34m[1mManaged nodes are active[0m[0m
+[mode_manager_node.py-2] [lifecycle_manager-5] [INFO] [1793985337.881587405] [lifecycle_manager_localization]: [34m[1mCreating bond timer...[0m[0m
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985337.889629703] [bt_navigator]: Creating navigator id navigate_to_pose of type nav2_bt_navigator::NavigateToPoseNavigator
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985338.407905389] [bt_navigator]: Creating navigator id navigate_through_poses of type nav2_bt_navigator::NavigateThroughPosesNavigator
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985338.536384321] [lifecycle_manager_navigation]: [34m[1mConfiguring waypoint_follower[0m[0m
+[mode_manager_node.py-2] [waypoint_follower-10] [INFO] [1793985338.537343823] [waypoint_follower]: Configuring
+[mode_manager_node.py-2] [waypoint_follower-10] [INFO] [1793985338.691635077] [waypoint_follower]: Created waypoint_task_executor : wait_at_waypoint of type nav2_waypoint_follower::WaitAtWaypoint
+[mode_manager_node.py-2] [waypoint_follower-10] [INFO] [1793985338.697973763] [waypoint_follower]: Waypoint pause duration is set to zero, disabling task executor plugin.
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985338.699511558] [lifecycle_manager_navigation]: [34m[1mConfiguring velocity_smoother[0m[0m
+[mode_manager_node.py-2] [velocity_smoother-11] [INFO] [1793985338.701954693] [velocity_smoother]: Configuring velocity smoother
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985338.717067722] [lifecycle_manager_navigation]: [34m[1mActivating controller_server[0m[0m
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985338.717960939] [controller_server]: Activating
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985338.718091200] [local_costmap.local_costmap]: Activating
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985338.718129087] [local_costmap.local_costmap]: Checking transform
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985338.718383745] [local_costmap.local_costmap]: start
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985338.927888895] [controller_server]: Creating bond (controller_server) to lifecycle manager.
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985338.940739855] [lifecycle_manager_navigation]: [34m[1mActivating planner_server[0m[0m
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985338.942831180] [planner_server]: Activating
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985338.942948029] [global_costmap.global_costmap]: Activating
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985338.942973861] [global_costmap.global_costmap]: Checking transform
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985338.943475908] [global_costmap.global_costmap]: start
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985339.445622199] [planner_server]: Activating plugin GridBased of type NavfnPlanner
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985339.454634303] [planner_server]: Creating bond (planner_server) to lifecycle manager.
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985339.474145790] [lifecycle_manager_navigation]: [34m[1mActivating behavior_server[0m[0m
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985339.475775376] [behavior_server]: Activating
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985339.475844236] [behavior_server]: Activating spin
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985339.475921071] [behavior_server]: Activating backup
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985339.475998272] [behavior_server]: Activating drive_on_heading
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985339.476028558] [behavior_server]: Activating wait
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985339.476048884] [behavior_server]: Creating bond (behavior_server) to lifecycle manager.
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985339.494212712] [lifecycle_manager_navigation]: [34m[1mActivating bt_navigator[0m[0m
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985339.494563968] [bt_navigator]: Activating
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985339.790009493] [bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985339.801687756] [lifecycle_manager_navigation]: [34m[1mActivating waypoint_follower[0m[0m
+[mode_manager_node.py-2] [waypoint_follower-10] [INFO] [1793985339.802405739] [waypoint_follower]: Activating
+[mode_manager_node.py-2] [waypoint_follower-10] [INFO] [1793985339.802457325] [waypoint_follower]: Creating bond (waypoint_follower) to lifecycle manager.
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985339.819375677] [lifecycle_manager_navigation]: [34m[1mActivating velocity_smoother[0m[0m
+[mode_manager_node.py-2] [velocity_smoother-11] [INFO] [1793985339.819858087] [velocity_smoother]: Activating
+[mode_manager_node.py-2] [velocity_smoother-11] [INFO] [1793985339.819916802] [velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985339.835494088] [lifecycle_manager_navigation]: [34m[1mManaged nodes are active[0m[0m
+[mode_manager_node.py-2] [INFO] [1793985339.927814225] [mode_manager]: Navigation mode started with PID 35588
+[localization_manager_node.py-4] [INFO] [1793985339.996303138] [localization_manager]: Published AMCL initial pose: x=0.000, y=0.000, yaw=0.000
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985339.997021292] [amcl]: initialPoseReceived
+[mode_manager_node.py-2] [amcl-4] [WARN] [1793985339.998037250] [amcl]: Failed to transform initial pose in time (Lookup would require extrapolation into the future.  Requested time 17.560000 but the latest data is at time 17.545000, when looking up transform from frame [base_link] to frame [odom])
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985339.998077783] [amcl]: Setting pose (17.560000): 0.000 0.000 0.000
+[navigation_goal_manager_node.py-5] [INFO] [1793985340.217542116] [navigation_goal_manager]: NavigateToPose goal accepted
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985340.321428296] [bt_navigator]: Begin navigating from current location (-0.00, -0.00) to (1.01, -0.02)
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985340.322602639] [bt_navigator]: [navigate_to_pose] [ActionServer] Client requested to cancel the goal. Cancelling.
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985340.323797007] [bt_navigator]: Goal canceled
+[navigation_goal_manager_node.py-5] [WARN] [1793985340.336301662] [navigation_goal_manager]: NavigateToPose finished: canceled; Nav2 error code=0
+[mode_manager_node.py-2] [INFO] [1793985340.460616519] [mode_manager]: Stopping operating-mode process group 35588
+[mode_manager_node.py-2] [WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[mode_manager_node.py-2] [INFO] [lifecycle_manager-12]: sending signal 'SIGINT' to process[lifecycle_manager-12]
+[mode_manager_node.py-2] [INFO] [velocity_smoother-11]: sending signal 'SIGINT' to process[velocity_smoother-11]
+[mode_manager_node.py-2] [INFO] [waypoint_follower-10]: sending signal 'SIGINT' to process[waypoint_follower-10]
+[mode_manager_node.py-2] [INFO] [bt_navigator-9]: sending signal 'SIGINT' to process[bt_navigator-9]
+[mode_manager_node.py-2] [INFO] [behavior_server-8]: sending signal 'SIGINT' to process[behavior_server-8]
+[mode_manager_node.py-2] [INFO] [planner_server-7]: sending signal 'SIGINT' to process[planner_server-7]
+[mode_manager_node.py-2] [INFO] [controller_server-6]: sending signal 'SIGINT' to process[controller_server-6]
+[mode_manager_node.py-2] [INFO] [lifecycle_manager-5]: sending signal 'SIGINT' to process[lifecycle_manager-5]
+[mode_manager_node.py-2] [INFO] [amcl-4]: sending signal 'SIGINT' to process[amcl-4]
+[mode_manager_node.py-2] [INFO] [map_server-3]: sending signal 'SIGINT' to process[map_server-3]
+[mode_manager_node.py-2] [INFO] [cmd_vel_twist_bridge.py-2]: sending signal 'SIGINT' to process[cmd_vel_twist_bridge.py-2]
+[mode_manager_node.py-2] [INFO] [static_transform_publisher-1]: sending signal 'SIGINT' to process[static_transform_publisher-1]
+[mode_manager_node.py-2] [lifecycle_manager-5] [INFO] [1793985340.570310617] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [lifecycle_manager-5] [INFO] [1793985340.570441923] [lifecycle_manager_localization]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_localization)
+[mode_manager_node.py-2] [lifecycle_manager-5] [INFO] [1793985340.570481111] [lifecycle_manager_localization]: [34m[1mTerminating bond timer...[0m[0m
+[mode_manager_node.py-2] [ERROR] [map_server-3]: process has died [pid 35593, exit code -2, cmd '/opt/ros/jazzy/lib/nav2_map_server/map_server --ros-args --log-level info --ros-args -r __node:=map_server -p use_sim_time:=True --params-file /tmp/launch_params_h4ovi_ml --params-file /tmp/launch_params_3apq5u6f -r /tf:=tf -r /tf_static:=tf_static'].
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985340.570322695] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985340.570443269] [behavior_server]: Running Nav2 LifecycleNode rcl preshutdown (behavior_server)
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985340.570506053] [behavior_server]: Deactivating
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985340.570586614] [behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985340.570438255] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985340.570521375] [controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985340.570577734] [controller_server]: Deactivating
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985340.570613493] [local_costmap.local_costmap]: Deactivating
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985340.570917038] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985340.571027386] [lifecycle_manager_navigation]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_navigation)
+[mode_manager_node.py-2] [velocity_smoother-11] [INFO] [1793985340.571211591] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [velocity_smoother-11] [INFO] [1793985340.571290239] [velocity_smoother]: Running Nav2 LifecycleNode rcl preshutdown (velocity_smoother)
+[mode_manager_node.py-2] [velocity_smoother-11] [INFO] [1793985340.571337065] [velocity_smoother]: Deactivating
+[mode_manager_node.py-2] [velocity_smoother-11] [INFO] [1793985340.571359376] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[mode_manager_node.py-2] [velocity_smoother-11] [INFO] [1793985340.583792486] [velocity_smoother]: Cleaning up
+[mode_manager_node.py-2] [velocity_smoother-11] [INFO] [1793985340.583835082] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985340.571382907] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985340.571466341] [bt_navigator]: Running Nav2 LifecycleNode rcl preshutdown (bt_navigator)
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985340.571644324] [bt_navigator]: Deactivating
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985340.571712022] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985340.585768200] [bt_navigator]: Cleaning up
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985340.571998254] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985340.572110443] [amcl]: Running Nav2 LifecycleNode rcl preshutdown (amcl)
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985340.572192120] [amcl]: Deactivating
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985340.572238093] [amcl]: Destroying bond (amcl) to lifecycle manager.
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985340.582888290] [amcl]: Cleaning up
+[mode_manager_node.py-2] [static_transform_publisher-1] [INFO] [1793985340.571879471] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [waypoint_follower-10] [INFO] [1793985340.572238184] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [waypoint_follower-10] [INFO] [1793985340.572350323] [waypoint_follower]: Running Nav2 LifecycleNode rcl preshutdown (waypoint_follower)
+[mode_manager_node.py-2] [waypoint_follower-10] [INFO] [1793985340.572434930] [waypoint_follower]: Deactivating
+[mode_manager_node.py-2] [waypoint_follower-10] [INFO] [1793985340.572484130] [waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
+[mode_manager_node.py-2] [waypoint_follower-10] [INFO] [1793985340.585935400] [waypoint_follower]: Cleaning up
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985340.573590937] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985340.573707046] [map_server]: Running Nav2 LifecycleNode rcl preshutdown (map_server)
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985340.573780483] [map_server]: Deactivating
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985340.573841107] [map_server]: Destroying bond (map_server) to lifecycle manager.
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985340.584170652] [map_server]: Cleaning up
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985340.584208421] [map_server]: Destroying bond (map_server) to lifecycle manager.
+[mode_manager_node.py-2] [ERROR] [static_transform_publisher-1]: process has died [pid 35591, exit code -2, cmd '/opt/ros/jazzy/lib/tf2_ros/static_transform_publisher 0 0 0 0 0 0 lidar_link diffbot/base_link/diffbot_lidar --ros-args -r __node:=scan_frame_bridge'].
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985340.574096676] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985340.574214367] [planner_server]: Running Nav2 LifecycleNode rcl preshutdown (planner_server)
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985340.574280475] [planner_server]: Deactivating
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985340.574309754] [global_costmap.global_costmap]: Deactivating
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985340.581338970] [behavior_server]: Cleaning up
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985340.600411775] [behavior_server]: Destroying bond (behavior_server) to lifecycle manager.
+[mode_manager_node.py-2] [velocity_smoother-11] [INFO] [1793985340.606319038] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [map_server-3] [INFO] [1793985340.614640941] [map_server]: Destroying
+[mode_manager_node.py-2] [waypoint_follower-10] [INFO] [1793985340.617683211] [waypoint_follower]: Destroying bond (waypoint_follower) to lifecycle manager.
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985340.618607878] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [waypoint_follower-10] [INFO] [1793985340.618916128] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985340.622802091] [amcl]: Destroying bond (amcl) to lifecycle manager.
+[mode_manager_node.py-2] [velocity_smoother-11] [INFO] [1793985340.625252002] [velocity_smoother]: Destroying
+[mode_manager_node.py-2] [lifecycle_manager-5] [INFO] [1793985340.638536339] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [lifecycle_manager-5] [INFO] [1793985340.641735798] [lifecycle_manager_localization]: Destroying lifecycle_manager_localization
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985340.663273054] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985340.676685016] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [lifecycle_manager-12] [INFO] [1793985340.677930739] [lifecycle_manager_navigation]: Destroying lifecycle_manager_navigation
+[mode_manager_node.py-2] [cmd_vel_twist_bridge.py-2] Traceback (most recent call last):
+[mode_manager_node.py-2] [cmd_vel_twist_bridge.py-2]   File "/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/cmd_vel_twist_bridge.py", line 147, in <module>
+[mode_manager_node.py-2] [cmd_vel_twist_bridge.py-2]     main()
+[mode_manager_node.py-2] [cmd_vel_twist_bridge.py-2]   File "/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/cmd_vel_twist_bridge.py", line 140, in main
+[mode_manager_node.py-2] [cmd_vel_twist_bridge.py-2]     node.destroy_node()
+[mode_manager_node.py-2] [cmd_vel_twist_bridge.py-2]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1968, in destroy_node
+[mode_manager_node.py-2] [cmd_vel_twist_bridge.py-2]     self.__node.destroy_when_not_in_use()
+[mode_manager_node.py-2] [cmd_vel_twist_bridge.py-2] KeyboardInterrupt
+[mode_manager_node.py-2] [amcl-4] [INFO] [1793985340.702967862] [amcl]: Destroying
+[mode_manager_node.py-2] [waypoint_follower-10] [INFO] [1793985340.705867950] [waypoint_follower]: Destroying
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985340.718766041] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985340.731248188] [controller_server]: Cleaning up
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985340.731758335] [local_costmap.local_costmap]: Cleaning up
+[mode_manager_node.py-2] [behavior_server-8] [INFO] [1793985340.788634730] [behavior_server]: Destroying
+[mode_manager_node.py-2] [ERROR] [cmd_vel_twist_bridge.py-2]: process has died [pid 35592, exit code -2, cmd '/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/cmd_vel_twist_bridge.py --ros-args -r __node:=cmd_vel_twist_bridge --params-file /tmp/launch_params_z1y06xlw'].
+[mode_manager_node.py-2] [INFO] [velocity_smoother-11]: process has finished cleanly [pid 35610]
+[mode_manager_node.py-2] [INFO] [lifecycle_manager-5]: process has finished cleanly [pid 35595]
+[mode_manager_node.py-2] [INFO] [lifecycle_manager-12]: process has finished cleanly [pid 35612]
+[mode_manager_node.py-2] [INFO] [waypoint_follower-10]: process has finished cleanly [pid 35608]
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985340.901251246] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985340.910706219] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985340.925846300] [local_costmap.local_costmap]: Destroying
+[mode_manager_node.py-2] [INFO] [amcl-4]: process has finished cleanly [pid 35594]
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985340.943913939] [planner_server]: Deactivating plugin GridBased of type NavfnPlanner
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985340.944135892] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985340.955387703] [planner_server]: Cleaning up
+[mode_manager_node.py-2] [INFO] [behavior_server-8]: process has finished cleanly [pid 35598]
+[mode_manager_node.py-2] [controller_server-6] [INFO] [1793985340.984216620] [controller_server]: Destroying
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985341.010906245] [global_costmap.global_costmap]: Cleaning up
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985341.041863119] [planner_server]: Cleaning up plugin GridBased of type NavfnPlanner
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985341.042195199] [planner_server]: Destroying plugin GridBased of type NavfnPlanner
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985341.085328304] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985341.101009451] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985341.101644874] [bt_navigator]: Completed Cleaning up
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985341.101706550] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985341.107251594] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[mode_manager_node.py-2] [bt_navigator-9] [INFO] [1793985341.108995081] [bt_navigator]: Destroying
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985341.119409348] [global_costmap.global_costmap]: Destroying
+[mode_manager_node.py-2] [INFO] [controller_server-6]: process has finished cleanly [pid 35596]
+[mode_manager_node.py-2] [planner_server-7] [INFO] [1793985341.182049090] [planner_server]: Destroying
+[mode_manager_node.py-2] [INFO] [bt_navigator-9]: process has finished cleanly [pid 35607]
+[mode_manager_node.py-2] [INFO] [planner_server-7]: process has finished cleanly [pid 35597]
+[mode_manager_node.py-2] [INFO] [1793985341.490666500] [mode_manager]: Operating mode stopped
+[simulation_manager_node.py-1] [INFO] [1793985341.526948642] [simulation_manager]: Simulation state: stopping
+[simulation_manager_node.py-1] [command_mux_node.py-10] [WARN] [1793985341.531724276] [command_mux]: Emergency stop activated
+[simulation_manager_node.py-1] [command_mux_node.py-10] [INFO] [1793985341.533089188] [command_mux]: Control source changed: none -> emergency_stop
+[simulation_manager_node.py-1] [INFO] [1793985341.570483217] [simulation_manager]: Stopping verified simulation process group 34959
+[simulation_manager_node.py-1] [WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[simulation_manager_node.py-1] [INFO] [command_mux_node.py-10]: sending signal 'SIGINT' to process[command_mux_node.py-10]
+[simulation_manager_node.py-1] [INFO] [joint_state_publisher-6]: sending signal 'SIGINT' to process[joint_state_publisher-6]
+[simulation_manager_node.py-1] [INFO] [robot_state_publisher-5]: sending signal 'SIGINT' to process[robot_state_publisher-5]
+[simulation_manager_node.py-1] [INFO] [parameter_bridge-4]: sending signal 'SIGINT' to process[parameter_bridge-4]
+[simulation_manager_node.py-1] [INFO] [parameter_bridge-3]: sending signal 'SIGINT' to process[parameter_bridge-3]
+[simulation_manager_node.py-1] [INFO] [parameter_bridge-2]: sending signal 'SIGINT' to process[parameter_bridge-2]
+[simulation_manager_node.py-1] [INFO] [gazebo-1]: sending signal 'SIGINT' to process[gazebo-1]
+[simulation_manager_node.py-1] [parameter_bridge-2] [INFO] [1793985341.600035460] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[simulation_manager_node.py-1] [parameter_bridge-4] [INFO] [1793985341.600156953] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[simulation_manager_node.py-1] [robot_state_publisher-5] [INFO] [1793985341.600290273] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[simulation_manager_node.py-1] [parameter_bridge-3] [INFO] [1793985341.601040857] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[simulation_manager_node.py-1] [command_mux_node.py-10] Traceback (most recent call last):
+[simulation_manager_node.py-1] [command_mux_node.py-10]   File "/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/command_mux_node.py", line 474, in <module>
+[simulation_manager_node.py-1] [command_mux_node.py-10]     main()
+[simulation_manager_node.py-1] [command_mux_node.py-10]   File "/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/command_mux_node.py", line 467, in main
+[simulation_manager_node.py-1] [command_mux_node.py-10]     node.destroy_node()
+[simulation_manager_node.py-1] [command_mux_node.py-10]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1962, in destroy_node
+[simulation_manager_node.py-1] [command_mux_node.py-10]     self.destroy_service(self._services[0])
+[simulation_manager_node.py-1] [command_mux_node.py-10]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1886, in destroy_service
+[simulation_manager_node.py-1] [command_mux_node.py-10]     service.destroy()
+[simulation_manager_node.py-1] [command_mux_node.py-10]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/service.py", line 123, in destroy
+[simulation_manager_node.py-1] [command_mux_node.py-10]     self.__service.destroy_when_not_in_use()
+[simulation_manager_node.py-1] [command_mux_node.py-10] KeyboardInterrupt
+[simulation_manager_node.py-1] [robot_state_publisher-5] [INFO] [1793985341.633888292] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[simulation_manager_node.py-1] [parameter_bridge-4] [INFO] [1793985341.635738890] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[simulation_manager_node.py-1] [parameter_bridge-3] [INFO] [1793985341.636699454] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[simulation_manager_node.py-1] [joint_state_publisher-6] Traceback (most recent call last):
+[simulation_manager_node.py-1] [joint_state_publisher-6]   File "/opt/ros/jazzy/lib/joint_state_publisher/joint_state_publisher", line 33, in <module>
+[simulation_manager_node.py-1] [joint_state_publisher-6]     sys.exit(load_entry_point('joint-state-publisher==2.4.1', 'console_scripts', 'joint_state_publisher')())
+[simulation_manager_node.py-1] [joint_state_publisher-6]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[simulation_manager_node.py-1] [joint_state_publisher-6]   File "/opt/ros/jazzy/lib/python3.12/site-packages/joint_state_publisher/joint_state_publisher.py", line 572, in main
+[simulation_manager_node.py-1] [joint_state_publisher-6]     jsp.destroy_node()
+[simulation_manager_node.py-1] [joint_state_publisher-6]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1968, in destroy_node
+[simulation_manager_node.py-1] [joint_state_publisher-6]     self.__node.destroy_when_not_in_use()
+[simulation_manager_node.py-1] [joint_state_publisher-6] KeyboardInterrupt
+[simulation_manager_node.py-1] [parameter_bridge-2] [INFO] [1793985341.645918465] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SignalHandler.cc:142] [0m[1;36mReceived signal[[0m[1;36m2[0m[1;36m].[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [ServerPrivate.cc:122] [0m[1;36mServer received signal[[0m[1;36m2[0m[1;36m][0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:565] [0m[1;36mSensorsPrivate::Stop[0m[1;36m[0m
+[simulation_manager_node.py-1] [ERROR] [command_mux_node.py-10]: process has died [pid 34978, exit code -2, cmd '/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/command_mux_node.py --ros-args -r __node:=command_mux --params-file /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/command_mux.yaml --params-file /tmp/launch_params_ejavmca0'].
+[simulation_manager_node.py-1] [ERROR] [joint_state_publisher-6]: process has died [pid 34970, exit code -2, cmd '/opt/ros/jazzy/lib/joint_state_publisher/joint_state_publisher --ros-args -r __node:=joint_state_publisher --params-file /tmp/launch_params_guegqpm1 --params-file /tmp/launch_params_3nlmjw1y'].
+[simulation_manager_node.py-1] [INFO] [parameter_bridge-2]: process has finished cleanly [pid 34965]
+[simulation_manager_node.py-1] [INFO] [parameter_bridge-3]: process has finished cleanly [pid 34967]
+[simulation_manager_node.py-1] [INFO] [parameter_bridge-4]: process has finished cleanly [pid 34968]
+[simulation_manager_node.py-1] [INFO] [robot_state_publisher-5]: process has finished cleanly [pid 34969]
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985341.840374656] [controller_manager.pal_statistics]: Async messages lost 0
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985341.840478254] [controller_manager.pal_statistics]: publish_async_failures_ 0
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985341.843981351] [controller_manager.pal_statistics]: Async messages lost 0
+[simulation_manager_node.py-1] [gazebo-1] [INFO] [1793985341.844055384] [controller_manager.pal_statistics]: publish_async_failures_ 1
+[simulation_manager_node.py-1] [gazebo-1] 2m] to main window[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoaded plugin [[0m[1;32mEntityTree[0m[1;32m] from path [[0m[1;32m/opt/ros/jazzy/opt/gz_sim_vendor/lib/gz-sim-8/plugins/gui/libEntityTree.so[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:398] [0m[1;36mLoading window config[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mUsing server control service [[0m[1;32m/server_control[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:671] [0m[1;36mApplying config[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:802] [0m[1;36mCreating gz-rendering interface for OpenGL[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:986] [0m[1;36mCreating render thread interface for OpenGL[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mLoading plugin [[0m[1;32mgz-rendering-ogre2[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:749] [0m[1;36mCreate scene [[0m[1;36mscene[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:1037] [0m[1;36mCreating texture node render interface for OpenGL[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [TransformControl.cc:453] [0m[1;36mTransformControl plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Spawn.cc:308] [0m[1;36mSpawn plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [SelectEntities.cc:452] [0m[1;36mSelectEntities plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MarkerManager.cc:169] [0m[1;36mAdvertise [0m[1;36m/marker[0m[1;36m/list service.[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MarkerManager.cc:179] [0m[1;36mAdvertise [0m[1;36m/marker[0m[1;36m/list.[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MarkerManager.cc:189] [0m[1;36mAdvertise [0m[1;36m/marker[0m[1;36m_array.[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [CameraTracking.cc:205] [0m[1;36mCameraTrackingPrivate plugin is moving camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mMove to service on [[0m[1;32m/gui/move_to[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mFollow service on [[0m[1;32m/gui/follow[0m[1;32m] (deprecated)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mTracking topic on [[0m[1;32m/gui/track[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mTracking status topic on [[0m[1;32m/gui/currently_tracked[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mMove to pose service on [[0m[1;32m/gui/move_to/pose[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mCamera pose topic advertised on [[0m[1;32m/gui/camera/pose[0m[1;32m][0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;32m[GUI] [0m[1;32m[Msg] [0m[1;32mFollow offset service on [[0m[1;32m/gui/follow/offset[0m[1;32m] (deprecated)[0m[1;32m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [InteractiveViewControl.cc:176] [0m[1;36mInteractiveViewControl plugin is moving camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [EntityContextMenuPlugin.cc:79] [0m[1;36mEntity context menu plugin is using camera [[0m[1;36mscene::Camera(65527)[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [SignalHandler.cc:142] [0m[1;36mReceived signal[[0m[1;36m2[0m[1;36m].[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Gui.cc:535] [0m[1;36mShutting down gz-sim-gui[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [Application.cc:237] [0m[1;36mTerminating application.[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [SignalHandler.cc:142] [0m[1;36mReceived signal[[0m[1;36m2[0m[1;36m].[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[GUI] [Dbg] [MinimalScene.cc:841] [0m[1;36mDestroy scene [[0m[1;36mscene[0m[1;36m][0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:551] [0m[1;36mSensorsPrivate::RenderThread stopped[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [gz.cc:434] [0m[1;36mShutting down gz-sim-server[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:578] [0m[1;36mExiting postupdate worker thread ([0m[1;36m1[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:578] [0m[1;36mExiting postupdate worker thread ([0m[1;36m0[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [SimulationRunner.cc:578] [0m[1;36m[Dbg] [SimulationRunner.cc:578] Exiting postupdate worker thread ([0m[1;36m3[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36mExiting postupdate worker thread ([0m[1;36m2[0m[1;36m)[0m[1;36m[0m
+[simulation_manager_node.py-1] [gazebo-1] [1;36m[Dbg] [Sensors.cc:565] [0m[1;36mSensorsPrivate::Stop[0m[1;36m[0m
+[simulation_manager_node.py-1] [ERROR] [gazebo-1]: process has died [pid 34964, exit code -2, cmd 'ruby /opt/ros/jazzy/opt/gz_tools_vendor/bin/gz sim -r -v 4 "/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/worlds/warehouse_world.sdf" --force-version 8'].
+[simulation_manager_node.py-1] [INFO] [launch]: process[gazebo-1] was required: shutting down launched system
+[simulation_manager_node.py-1] [INFO] [1793985342.242306116] [simulation_manager]: Simulation state: stopped
+[simulation_manager_node.py-1] [INFO] [1793985342.253881697] [simulation_manager]: Simulation stopped successfully
+[simulation_manager_node.py-1] [INFO] [1793985342.363541484] [simulation_manager]: Simulation is already stopped
+[simulation_manager_node.py-1] [INFO] [1793985342.621754720] [simulation_manager]: Simulation is already stopped
+[simulation_manager_node.py-1] [INFO] [1793985343.087778803] [simulation_manager]: Simulation is already stopped
+[simulation_manager_node.py-1] [INFO] [1793985343.175801182] [simulation_manager]: Simulation is already stopped
+[simulation_manager_node.py-1] [INFO] [1793985343.317673475] [simulation_manager]: Simulation is already stopped
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[INFO] [python3-8]: sending signal 'SIGINT' to process[python3-8]
+[INFO] [rosbridge_websocket-7]: sending signal 'SIGINT' to process[rosbridge_websocket-7]
+[INFO] [platform_lifecycle_orchestrator_node.py-6]: sending signal 'SIGINT' to process[platform_lifecycle_orchestrator_node.py-6]
+[INFO] [navigation_goal_manager_node.py-5]: sending signal 'SIGINT' to process[navigation_goal_manager_node.py-5]
+[INFO] [localization_manager_node.py-4]: sending signal 'SIGINT' to process[localization_manager_node.py-4]
+[INFO] [mapping_manager_node.py-3]: sending signal 'SIGINT' to process[mapping_manager_node.py-3]
+[ERROR] [python3-8]: process has died [pid 34412, exit code -2, cmd 'python3 -m http.server 8080 --bind 0.0.0.0 --directory /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/web/dashboard'].
+[INFO] [mode_manager_node.py-2]: sending signal 'SIGINT' to process[mode_manager_node.py-2]
+[INFO] [simulation_manager_node.py-1]: sending signal 'SIGINT' to process[simulation_manager_node.py-1]
+[python3-8] Serving HTTP on 0.0.0.0 port 8080 (http://0.0.0.0:8080/) ...
+[python3-8] 
+[python3-8] Keyboard interrupt received, exiting.
+[platform_lifecycle_orchestrator_node.py-6] Traceback (most recent call last):
+[platform_lifecycle_orchestrator_node.py-6]   File "/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/platform_lifecycle_orchestrator_node.py", line 313, in <module>
+[platform_lifecycle_orchestrator_node.py-6]     main()
+[platform_lifecycle_orchestrator_node.py-6]   File "/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/platform_lifecycle_orchestrator_node.py", line 307, in main
+[platform_lifecycle_orchestrator_node.py-6]     node.destroy_node()
+[localization_manager_node.py-4] Traceback (most recent call last):
+[localization_manager_node.py-4]   File "/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/localization_manager_node.py", line 735, in <module>
+[platform_lifecycle_orchestrator_node.py-6]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1960, in destroy_node
+[localization_manager_node.py-4]     main()
+[localization_manager_node.py-4]   File "/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/localization_manager_node.py", line 728, in main
+[localization_manager_node.py-4]     node.destroy_node()
+[localization_manager_node.py-4]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1958, in destroy_node
+[localization_manager_node.py-4]     self.destroy_subscription(self._subscriptions[0])
+[localization_manager_node.py-4]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1854, in destroy_subscription
+[localization_manager_node.py-4]     subscription.destroy()
+[localization_manager_node.py-4]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/subscription.py", line 101, in destroy
+[localization_manager_node.py-4]     self.handle.destroy_when_not_in_use()
+[platform_lifecycle_orchestrator_node.py-6]     self.destroy_client(self._clients[0])
+[platform_lifecycle_orchestrator_node.py-6]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1870, in destroy_client
+[platform_lifecycle_orchestrator_node.py-6]     client.destroy()
+[platform_lifecycle_orchestrator_node.py-6]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/client.py", line 232, in destroy
+[platform_lifecycle_orchestrator_node.py-6]     self.__client.destroy_when_not_in_use()
+[platform_lifecycle_orchestrator_node.py-6] KeyboardInterrupt
+[localization_manager_node.py-4] KeyboardInterrupt
+[mapping_manager_node.py-3] Traceback (most recent call last):
+[mapping_manager_node.py-3]   File "/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/mapping_manager_node.py", line 609, in <module>
+[mapping_manager_node.py-3]     main()
+[mapping_manager_node.py-3]   File "/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/mapping_manager_node.py", line 602, in main
+[mapping_manager_node.py-3]     node.destroy_node()
+[mapping_manager_node.py-3]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1962, in destroy_node
+[mapping_manager_node.py-3]     self.destroy_service(self._services[0])
+[mapping_manager_node.py-3]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/node.py", line 1886, in destroy_service
+[mapping_manager_node.py-3]     service.destroy()
+[mapping_manager_node.py-3]   File "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/service.py", line 123, in destroy
+[mapping_manager_node.py-3]     self.__service.destroy_when_not_in_use()
+[mapping_manager_node.py-3] KeyboardInterrupt
+[rosbridge_websocket-7] registered capabilities (classes):
+[rosbridge_websocket-7]  - <class 'rosbridge_library.capabilities.advertise.Advertise'>
+[rosbridge_websocket-7]  - <class 'rosbridge_library.capabilities.publish.Publish'>
+[rosbridge_websocket-7]  - <class 'rosbridge_library.capabilities.subscribe.Subscribe'>
+[rosbridge_websocket-7]  - <class 'rosbridge_library.capabilities.defragmentation.Defragment'>
+[rosbridge_websocket-7]  - <class 'rosbridge_library.capabilities.advertise_service.AdvertiseService'>
+[rosbridge_websocket-7]  - <class 'rosbridge_library.capabilities.call_service.CallService'>
+[rosbridge_websocket-7]  - <class 'rosbridge_library.capabilities.service_response.ServiceResponse'>
+[rosbridge_websocket-7]  - <class 'rosbridge_library.capabilities.unadvertise_service.UnadvertiseService'>
+[rosbridge_websocket-7]  - <class 'rosbridge_library.capabilities.advertise_action.AdvertiseAction'>
+[rosbridge_websocket-7]  - <class 'rosbridge_library.capabilities.action_feedback.ActionFeedback'>
+[rosbridge_websocket-7]  - <class 'rosbridge_library.capabilities.action_result.ActionResult'>
+[rosbridge_websocket-7]  - <class 'rosbridge_library.capabilities.send_action_goal.SendActionGoal'>
+[rosbridge_websocket-7]  - <class 'rosbridge_library.capabilities.unadvertise_action.UnadvertiseAction'>
+[rosbridge_websocket-7] Exiting due to SIGINT
+[simulation_manager_node.py-1] [INFO] [1793985345.271055297] [simulation_manager]: SIGINT received; rclpy.spin exited and manager cleanup begins with ROS context valid
+[ERROR] [localization_manager_node.py-4]: process has died [pid 34408, exit code -2, cmd '/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/localization_manager_node.py --ros-args -r __node:=localization_manager --params-file /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/localization_manager.yaml --params-file /tmp/launch_params_5nd_75t8'].
+[ERROR] [mapping_manager_node.py-3]: process has died [pid 34407, exit code -2, cmd '/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/mapping_manager_node.py --ros-args -r __node:=mapping_manager --params-file /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/mapping_manager.yaml --params-file /tmp/launch_params_g7glim5r'].
+[ERROR] [platform_lifecycle_orchestrator_node.py-6]: process has died [pid 34410, exit code -2, cmd '/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/platform_lifecycle_orchestrator_node.py --ros-args -r __node:=platform_lifecycle_orchestrator --params-file /tmp/launch_params_rxikrdfj'].
+[INFO] [mode_manager_node.py-2]: process has finished cleanly [pid 34406]
+[INFO] [rosbridge_websocket-7]: process has finished cleanly [pid 34411]
+[INFO] [simulation_manager_node.py-1]: process has finished cleanly [pid 34405]
+[ERROR] [navigation_goal_manager_node.py-5]: process[navigation_goal_manager_node.py-5] failed to terminate '5' seconds after receiving 'SIGINT', escalating to 'SIGTERM'
+[INFO] [navigation_goal_manager_node.py-5]: sending signal 'SIGTERM' to process[navigation_goal_manager_node.py-5]
+[ERROR] [navigation_goal_manager_node.py-5]: process has died [pid 34409, exit code -15, cmd '/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/navigation_goal_manager_node.py --ros-args -r __node:=navigation_goal_manager --params-file /tmp/launch_params_wn0m3bg4'].

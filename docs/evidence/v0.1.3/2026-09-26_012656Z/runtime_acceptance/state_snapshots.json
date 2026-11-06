@@ -1,0 +1,184 @@
+[
+  {
+    "mapping": {
+      "component": "mapping",
+      "state": "unconfigured",
+      "last_transition_id": "",
+      "observed_at": "2026-09-26T01:23:39.494039+00:00"
+    },
+    "simulation": {
+      "component": "simulation",
+      "state": "unconfigured",
+      "last_transition_id": "",
+      "observed_at": "2026-09-26T01:23:39.477271+00:00"
+    },
+    "localization": {
+      "component": "localization",
+      "state": "unconfigured",
+      "last_transition_id": "",
+      "observed_at": "2026-09-26T01:23:39.510043+00:00"
+    },
+    "navigation": {
+      "component": "navigation",
+      "state": "unconfigured",
+      "last_transition_id": "",
+      "observed_at": "2026-09-26T01:23:39.682646+00:00"
+    }
+  },
+  {
+    "mapping": {
+      "component": "mapping",
+      "state": "inactive",
+      "last_transition_id": "d6eb3f29-4a43-49dc-899c-92b1b4832a47",
+      "observed_at": "2026-09-26T01:23:40.306207+00:00"
+    },
+    "simulation": {
+      "component": "simulation",
+      "state": "inactive",
+      "last_transition_id": "d37a689d-410f-4abe-aa06-f73b8d236f7f",
+      "observed_at": "2026-09-26T01:23:40.297156+00:00"
+    },
+    "localization": {
+      "component": "localization",
+      "state": "inactive",
+      "last_transition_id": "eca6baaa-423a-462e-a763-d2bfdbdc13d7",
+      "observed_at": "2026-09-26T01:23:40.308169+00:00"
+    },
+    "navigation": {
+      "component": "navigation",
+      "state": "inactive",
+      "last_transition_id": "bb91d2ec-d4cf-4592-98eb-6a845e31079c",
+      "observed_at": "2026-09-26T01:23:40.310816+00:00"
+    }
+  },
+  {
+    "mapping": {
+      "component": "mapping",
+      "state": "active",
+      "last_transition_id": "d2468df5-9ca0-428a-9a23-302a9bcadc39",
+      "observed_at": "2026-09-26T01:23:40.363919+00:00"
+    },
+    "simulation": {
+      "component": "simulation",
+      "state": "active",
+      "last_transition_id": "88b6c06b-e6db-407d-946a-362679e19a15",
+      "observed_at": "2026-09-26T01:23:40.347003+00:00"
+    },
+    "localization": {
+      "component": "localization",
+      "state": "active",
+      "last_transition_id": "7340973f-997e-4d4d-b9e0-a715f314aff4",
+      "observed_at": "2026-09-26T01:23:40.365018+00:00"
+    },
+    "navigation": {
+      "component": "navigation",
+      "state": "active",
+      "last_transition_id": "b7aa4cc0-1856-4397-b5a7-603cfa8ed679",
+      "observed_at": "2026-09-26T01:23:40.366441+00:00"
+    }
+  },
+  {
+    "mapping": {
+      "component": "mapping",
+      "state": "inactive",
+      "last_transition_id": "e7d813c2-301d-4069-a180-08596d18e16b",
+      "observed_at": "2026-09-26T01:24:24.280199+00:00"
+    },
+    "simulation": {
+      "component": "simulation",
+      "state": "inactive",
+      "last_transition_id": "b50a6736-b44b-469a-b377-3709c2fb2732",
+      "observed_at": "2026-09-26T01:24:24.288193+00:00"
+    },
+    "localization": {
+      "component": "localization",
+      "state": "unconfigured",
+      "last_transition_id": "e6042997-96ba-4545-b4d5-cc4592ea87d8",
+      "observed_at": "2026-09-26T01:24:24.301512+00:00"
+    },
+    "navigation": {
+      "component": "navigation",
+      "state": "inactive",
+      "last_transition_id": "becf292e-db7b-4a9f-8127-46dbe446711b",
+      "observed_at": "2026-09-26T01:24:24.105706+00:00"
+    }
+  },
+  {
+    "mapping": {
+      "component": "mapping",
+      "state": "active",
+      "last_transition_id": "1d005a51-6063-4823-ab82-e25504ec03b8",
+      "observed_at": "2026-09-26T01:24:24.494249+00:00"
+    },
+    "simulation": {
+      "component": "simulation",
+      "state": "active",
+      "last_transition_id": "d1436837-e214-4230-93b1-24d22a53cff5",
+      "observed_at": "2026-09-26T01:24:24.477447+00:00"
+    },
+    "localization": {
+      "component": "localization",
+      "state": "active",
+      "last_transition_id": "aa2105bd-fbf1-4560-b954-c91736e4072c",
+      "observed_at": "2026-09-26T01:24:24.437527+00:00"
+    },
+    "navigation": {
+      "component": "navigation",
+      "state": "active",
+      "last_transition_id": "de8d96a7-0a80-44f5-95d4-92f5e3f7ceb8",
+      "observed_at": "2026-09-26T01:24:24.450254+00:00"
+    }
+  },
+  {
+    "mapping": {
+      "component": "mapping",
+      "state": "finalized",
+      "last_transition_id": "fed8f840-6fd2-47ff-9513-17355dd123a4",
+      "observed_at": "2026-09-26T01:24:25.494226+00:00"
+    },
+    "simulation": {
+      "component": "simulation",
+      "state": "finalized",
+      "last_transition_id": "4586bbee-d37d-4ad6-868c-30eba89f9f4d",
+      "observed_at": "2026-09-26T01:24:25.477438+00:00"
+    },
+    "localization": {
+      "component": "localization",
+      "state": "finalized",
+      "last_transition_id": "ee259e11-e5d1-4938-8ad2-c79b602acea6",
+      "observed_at": "2026-09-26T01:24:25.510192+00:00"
+    },
+    "navigation": {
+      "component": "navigation",
+      "state": "finalized",
+      "last_transition_id": "2b206bde-9e04-401b-b06b-1438f629ac0a",
+      "observed_at": "2026-09-26T01:24:24.783149+00:00"
+    }
+  },
+  {
+    "mapping": {
+      "component": "mapping",
+      "state": "finalized",
+      "last_transition_id": "fed8f840-6fd2-47ff-9513-17355dd123a4",
+      "observed_at": "2026-09-26T01:24:25.494226+00:00"
+    },
+    "simulation": {
+      "component": "simulation",
+      "state": "finalized",
+      "last_transition_id": "4586bbee-d37d-4ad6-868c-30eba89f9f4d",
+      "observed_at": "2026-09-26T01:24:26.477441+00:00"
+    },
+    "localization": {
+      "component": "localization",
+      "state": "finalized",
+      "last_transition_id": "ee259e11-e5d1-4938-8ad2-c79b602acea6",
+      "observed_at": "2026-09-26T01:24:25.510192+00:00"
+    },
+    "navigation": {
+      "component": "navigation",
+      "state": "finalized",
+      "last_transition_id": "2b206bde-9e04-401b-b06b-1438f629ac0a",
+      "observed_at": "2026-09-26T01:24:24.783149+00:00"
+    }
+  }
+]

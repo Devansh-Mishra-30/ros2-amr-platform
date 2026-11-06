@@ -152,3 +152,242 @@ def test_adapter_exception_stops_downstream_and_preserves_rollback_report():
         'mapping', 'simulation',
     ]
     assert components['navigation'].state == State.UNCONFIGURED
+
+
+def test_stale_remote_active_snapshot_cannot_satisfy_platform_noop():
+    platform, components, _ = make_platform()
+    assert platform.transition(Transition.CONFIGURE).success
+    assert platform.transition(Transition.ACTIVATE).success
+
+    class ExpiredRemote:
+        state = None
+
+        def target_satisfied(self, target):
+            return False
+
+        def transition(self, operation):
+            raise AssertionError('expired publisher must not be called')
+
+    platform.components['localization'] = ExpiredRemote()
+    repeated = platform.transition(Transition.ACTIVATE)
+    assert not repeated.success
+    assert repeated.code == 'STATE_UNAVAILABLE'
+    assert repeated.failed_dependency == 'localization'
+
+
+def test_active_state_without_matching_activation_provenance_is_rejected():
+    platform, components, _ = make_platform()
+    assert platform.transition(Transition.CONFIGURE).success
+    assert platform.transition(Transition.ACTIVATE).success
+
+    class UnprovenRemote:
+        state = State.ACTIVE
+        last_transition_id = ''
+        verified_activation_id = 'different-transition'
+
+        def target_satisfied(self, target):
+            return (target != State.ACTIVE
+                    or bool(self.last_transition_id)
+                    and self.last_transition_id == self.verified_activation_id)
+
+        def transition(self, operation):
+            raise AssertionError('unproven ACTIVE state must not be trusted')
+
+    platform.components['localization'] = UnprovenRemote()
+    result = platform.transition(Transition.ACTIVATE)
+    assert not result.success
+    assert result.code == 'STATE_UNVERIFIED'
+    assert result.failed_dependency == 'localization'
+
+
+def test_direct_component_transition_during_platform_request_is_detected():
+    platform, components, _ = make_platform()
+    assert platform.transition(Transition.CONFIGURE).success
+
+    navigation = components['navigation']
+    original_transition = navigation.transition
+
+    def racing_transition(operation, **kwargs):
+        report = original_transition(operation, **kwargs)
+        if operation == Transition.ACTIVATE and report.success:
+            direct = components['simulation'].transition(Transition.DEACTIVATE)
+            assert direct.success
+        return report
+
+    navigation.transition = racing_transition
+    result = platform.transition(Transition.ACTIVATE)
+    assert not result.success
+    assert result.code == 'STATE_CHANGED'
+    assert result.failed_dependency == 'simulation'
+    assert components['simulation'].state == State.INACTIVE
+
+
+def test_delayed_ros_snapshot_cannot_hide_authoritative_direct_transition():
+    platform, components, _ = make_platform()
+    assert platform.transition(Transition.CONFIGURE).success
+
+    class DelayedRemote:
+        def __init__(self, authoritative):
+            self.authoritative = authoritative
+            self.cached_state = authoritative.state
+
+        @property
+        def state(self):
+            return self.cached_state
+
+        def refresh_state(self):
+            self.cached_state = self.authoritative.state
+            return True
+
+        def target_satisfied(self, target):
+            return self.cached_state == target
+
+        def transition(self, operation, **kwargs):
+            return self.authoritative.transition(operation, **kwargs)
+
+    authoritative = components['simulation']
+    remote = DelayedRemote(authoritative)
+    platform.components['simulation'] = remote
+    navigation = components['navigation']
+    original_transition = navigation.transition
+
+    def race_on_last_component(operation, **kwargs):
+        result = original_transition(operation, **kwargs)
+        if operation == Transition.ACTIVATE and result.success:
+            assert authoritative.transition(Transition.DEACTIVATE).success
+            # The transient-local state callback remains delayed; only the
+            # authoritative read can observe the manager's current state.
+        return result
+
+    navigation.transition = race_on_last_component
+    result = platform.transition(Transition.ACTIVATE)
+    assert not result.success
+    assert result.code == 'STATE_CHANGED'
+    assert result.failed_dependency == 'simulation'
+    assert remote.state == State.INACTIVE
+
+
+def test_direct_transition_between_final_component_refreshes_is_not_success():
+    platform, components, _ = make_platform()
+    assert platform.transition(Transition.CONFIGURE).success
+
+    class RemoteSnapshot:
+        def __init__(self, authoritative):
+            self.authoritative = authoritative
+            self.cached_state = authoritative.state
+
+        @property
+        def state(self):
+            return self.cached_state
+
+        def target_satisfied(self, target):
+            return self.cached_state == target
+
+        def refresh_state(self):
+            self.cached_state = self.authoritative.state
+            return True
+
+        def transition(self, operation, **kwargs):
+            return self.authoritative.transition(operation, **kwargs)
+
+    authoritative = components['simulation']
+    simulation_remote = RemoteSnapshot(authoritative)
+    platform.components['simulation'] = simulation_remote
+
+    localization = components['localization']
+    original_refresh = getattr(localization, 'refresh_state', None)
+
+    def deactivate_simulation_after_localization_read():
+        if original_refresh is not None:
+            assert original_refresh()
+        if authoritative.state == State.ACTIVE:
+            assert authoritative.transition(Transition.DEACTIVATE).success
+        return True
+
+    localization.refresh_state = deactivate_simulation_after_localization_read
+    result = platform.transition(Transition.ACTIVATE)
+    assert not result.success
+    assert result.code == 'STATE_CHANGED'
+    assert authoritative.state == State.INACTIVE
+
+
+def test_stable_authoritative_state_and_version_across_both_passes_succeeds():
+    platform, components, _ = make_platform()
+    assert platform.transition(Transition.CONFIGURE).success
+    refresh_counts = {name: 0 for name in components}
+
+    class RemoteSnapshot:
+        def __init__(self, name, authoritative):
+            self.name = name
+            self.authoritative = authoritative
+            self.cached_state = authoritative.state
+
+        @property
+        def state(self):
+            return self.cached_state
+
+        @property
+        def last_transition_id(self):
+            return self.authoritative.last_transition_id
+
+        @property
+        def last_transition(self):
+            return self.authoritative.last_transition
+
+        def target_satisfied(self, target):
+            return self.cached_state == target
+
+        def refresh_state(self):
+            refresh_counts[self.name] += 1
+            self.cached_state = self.authoritative.state
+            return True
+
+        def transition(self, operation, **kwargs):
+            return self.authoritative.transition(operation, **kwargs)
+
+    platform.components = {
+        name: RemoteSnapshot(name, component)
+        for name, component in components.items()
+    }
+    result = platform.transition(Transition.ACTIVATE)
+    assert result.success
+    # One request preflight plus the two complete final verification passes.
+    assert all(count >= 3 for count in refresh_counts.values())
+
+
+def test_second_pass_authoritative_refresh_failure_fails_closed():
+    platform, components, _ = make_platform()
+    assert platform.transition(Transition.CONFIGURE).success
+    simulation = components['simulation']
+    original_transition = simulation.transition
+    reads = 0
+
+    class RemoteSnapshot:
+        @property
+        def state(self):
+            return simulation.state
+
+        @property
+        def last_transition_id(self):
+            return simulation.last_transition_id
+
+        @property
+        def last_transition(self):
+            return simulation.last_transition
+
+        def refresh_state(self):
+            nonlocal reads
+            reads += 1
+            return reads < 3
+
+        def target_satisfied(self, target):
+            return simulation.state == target
+
+        def transition(self, operation, **kwargs):
+            return original_transition(operation, **kwargs)
+
+    platform.components['simulation'] = RemoteSnapshot()
+    result = platform.transition(Transition.ACTIVATE)
+    assert not result.success
+    assert result.code == 'STATE_UNAVAILABLE'
+    assert result.failed_dependency == 'simulation'

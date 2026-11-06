@@ -1,0 +1,6 @@
+---
+string component
+string state
+string last_transition
+string last_transition_id
+string observed_at

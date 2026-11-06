@@ -17,6 +17,7 @@ import os
 from pathlib import Path
 import stat
 import tempfile
+import time
 from typing import Iterator, Mapping
 import uuid
 
@@ -27,6 +28,10 @@ _ALLOWED_STATES = frozenset({'active', 'stopping', 'exited', 'stale'})
 
 class RegistryFormatError(ValueError):
     """Raised when the registry manifest or one record is malformed."""
+
+
+class DescendantIdentityTimeout(RuntimeError):
+    """Raised when a live launch never yields stable descendant identities."""
 
 
 @dataclass(frozen=True)
@@ -450,6 +455,12 @@ def verify_captured_identity(expected: ProcessIdentity) -> bool:
 
 def process_group_exists(pgid: int) -> bool:
     """Return whether a process group exists without sending it a signal."""
+    states = _process_group_states(pgid)
+    if states is not None and states:
+        # A zombie cannot run, hold resources, or receive cleanup signals. Some
+        # minimal container init processes do not promptly reap orphaned
+        # children, so killpg(pgid, 0) alone would report a dead group forever.
+        return any(state != 'Z' for state in states)
     try:
         os.killpg(pgid, 0)
     except ProcessLookupError:
@@ -457,6 +468,30 @@ def process_group_exists(pgid: int) -> bool:
     except PermissionError:
         return True
     return True
+
+
+def _process_group_states(pgid: int) -> set[str] | None:
+    """Return visible process states, or None when procfs cannot be scanned."""
+    try:
+        entries = list(Path('/proc').iterdir())
+    except OSError:
+        return None
+
+    states = set()
+    for entry in entries:
+        if not entry.name.isdigit():
+            continue
+        try:
+            stat_text = (entry / 'stat').read_text(encoding='utf-8')
+            _, current_pgid, _, _, _ = _parse_proc_stat(
+                int(entry.name), stat_text
+            )
+            state = stat_text[stat_text.rfind(')') + 1:].strip().split()[0]
+        except (OSError, ValueError, IndexError):
+            continue
+        if current_pgid == pgid:
+            states.add(state)
+    return states
 
 
 def process_group_session_ids(pgid: int) -> set[int]:
@@ -524,7 +559,12 @@ def capture_process_session_members(
             identity = capture_process_identity(pid)
         except (OSError, ValueError):
             continue
-        if identity.session_id == session_id:
+        try:
+            stat_text = (entry / 'stat').read_text(encoding='utf-8')
+            state = stat_text[stat_text.rfind(')') + 1:].strip().split()[0]
+        except (OSError, ValueError, IndexError):
+            continue
+        if identity.session_id == session_id and state != 'Z':
             identities.append(identity)
     return tuple(sorted(identities, key=lambda item: item.pid))
 
@@ -892,6 +932,121 @@ class ProcessRegistry:
                 {'schema_version': SCHEMA_VERSION, 'records': records}
             )
         return updated
+
+    def wait_for_group_members(
+        self,
+        record: ProcessRecord,
+        *,
+        timeout: float,
+        should_continue=lambda: True,
+        poll_interval: float = 0.05,
+    ) -> ProcessRecord:
+        """
+        Wait conditionally for a stable identity in the owned session.
+
+        Session membership may grow while a launch is starting. The required
+        condition is at least one exact PID/start-time/executable identity
+        observed in two consecutive scans, with every identity in the final
+        scan still validating and the launch leader remaining valid. The
+        current scan, including newly appeared children, is what gets stored.
+        """
+        if timeout <= 0 or poll_interval <= 0:
+            raise ValueError('identity timeout and poll interval must be positive')
+
+        deadline = time.monotonic() + timeout
+        previous: tuple[ProcessIdentity, ...] = ()
+        observations = 0
+        last_detail = 'no descendants observed'
+        while True:
+            if not should_continue():
+                raise RuntimeError(
+                    'managed launch leader exited while waiting for '
+                    'descendant identities'
+                )
+            if observations and time.monotonic() >= deadline:
+                raise DescendantIdentityTimeout(
+                    'timed out waiting for stable descendant identities '
+                    f'after {observations} scans: {last_detail}'
+                )
+            observations += 1
+            if not verify_process_identity(record):
+                raise RuntimeError(
+                    'managed launch leader identity became invalid while '
+                    'waiting for descendants'
+                )
+
+            scan_error = None
+            try:
+                current = capture_process_session_members(
+                    record.session_id, exclude_pid=record.pid
+                )
+            except OSError as error:
+                current = ()
+                scan_error = error
+                last_detail = f'identity scan failed: {error}'
+
+            if current and any(
+                item.session_id != record.session_id for item in current
+            ):
+                raise RuntimeError(
+                    'descendant scan returned a process outside the owned session'
+                )
+            valid = bool(current) and all(
+                verify_captured_identity(item) for item in current
+            )
+            if current and not valid:
+                last_detail = (
+                    'one or more captured identities changed during validation'
+                )
+
+            previous_keys = {
+                (item.pid, item.pgid, item.session_id, item.proc_start_time,
+                 item.exe, item.cmdline_fingerprint)
+                for item in previous
+            }
+            current_keys = {
+                (item.pid, item.pgid, item.session_id, item.proc_start_time,
+                 item.exe, item.cmdline_fingerprint)
+                for item in current
+            }
+            if valid and previous_keys.intersection(current_keys):
+                if not should_continue() or not verify_process_identity(record):
+                    raise RuntimeError(
+                        'managed launch leader changed before descendant '
+                        'identities were persisted'
+                    )
+                updated = replace(record, member_identities=current)
+                updated.validate()
+                with self._locked():
+                    records = self._records_unlocked()
+                    matching = [
+                        existing for existing in records
+                        if existing.instance_id == record.instance_id
+                    ]
+                    if matching != [record]:
+                        raise RuntimeError(
+                            'ownership record changed during refresh'
+                        )
+                    records = [
+                        updated if existing.instance_id == record.instance_id
+                        else existing
+                        for existing in records
+                    ]
+                    self._atomic_write_unlocked(
+                        {'schema_version': SCHEMA_VERSION, 'records': records}
+                    )
+                return updated
+
+            previous = current if valid else ()
+            if not current and scan_error is None:
+                last_detail = 'no descendants observed in the launch session'
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise DescendantIdentityTimeout(
+                    'timed out waiting for stable descendant identities '
+                    f'after {observations} scans: {last_detail}'
+                )
+            time.sleep(min(poll_interval, remaining))
 
     def duplicate_components(self) -> dict[str, list[ProcessRecord]]:
         """Return verified live ownership duplicates grouped by component."""

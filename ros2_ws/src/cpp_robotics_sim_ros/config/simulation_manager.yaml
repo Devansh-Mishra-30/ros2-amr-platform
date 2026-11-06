@@ -7,6 +7,8 @@ simulation_manager:
     # The manager itself continues using wall time.
     managed_use_sim_time: true
 
-    startup_grace_period: 4.0
+    readiness_timeout: 45.0
+    # Bounds observed process-identity convergence; it is not readiness evidence.
+    descendant_identity_timeout: 4.0
     shutdown_timeout: 4.0
     kill_timeout: 1.5

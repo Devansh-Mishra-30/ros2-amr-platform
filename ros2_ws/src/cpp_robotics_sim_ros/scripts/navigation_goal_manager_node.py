@@ -25,6 +25,7 @@ from rclpy.qos import (
     QoSProfile,
     ReliabilityPolicy,
 )
+from rclpy.signals import SignalHandlerOptions
 from std_msgs.msg import String
 
 SCRIPT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
@@ -33,6 +34,8 @@ if SCRIPT_DIRECTORY not in sys.path:
 
 from lifecycle_ros_adapter import bind_lifecycle  # noqa: E402,I100
 from managed_component import LifecycleState  # noqa: E402,I100
+from process_lifecycle import defer_termination_signals  # noqa: E402,I100
+from teardown import run_teardown  # noqa: E402,I100
 
 
 class NavigationGoalManagerNode(Node):
@@ -213,6 +216,7 @@ class NavigationGoalManagerNode(Node):
         self.lifecycle_accepting = False
         self.cancel_requested = False
         self.shutdown_prepared = False
+        self.shutdown_success: Optional[bool] = None
 
         self.request_sequence = 0
         self.current_request_id: Optional[int] = None
@@ -1074,10 +1078,6 @@ class NavigationGoalManagerNode(Node):
             result_message = wrapped_result.result
 
         except Exception as error:
-            with self.state_lock:
-                if self.current_request_id == request_id:
-                    self.reset_goal_state_locked()
-
             self.publish_status(
                 state='aborted',
                 message=(
@@ -1274,41 +1274,65 @@ class NavigationGoalManagerNode(Node):
                 or self.active_goal_handle is not None
             )
 
-    def prepare_shutdown(self) -> None:
+    def prepare_shutdown(self) -> bool:
         if self.shutdown_prepared:
-            return
+            return self.shutdown_success is True
         if (
             hasattr(self, 'lifecycle_component')
             and self.lifecycle_component.state == LifecycleState.FINALIZED
         ):
             self.shutdown_prepared = True
-            return
+            timer = getattr(self, 'lifecycle_state_timer', None)
+            if timer is None:
+                self.shutdown_success = True
+                return self.shutdown_success
+            self.shutdown_success = run_teardown([
+                ('cancel lifecycle state timer', timer.cancel)
+            ])
+            return self.shutdown_success
         self.shutdown_prepared = True
+        timer = getattr(self, 'lifecycle_state_timer', None)
+        stages = []
+        if timer is not None:
+            stages.append(('cancel lifecycle state timer', timer.cancel))
+        stages.append(('navigation resource and lifecycle cleanup',
+                       self._shutdown_navigation_resources))
+        self.shutdown_success = run_teardown(stages)
+        return self.shutdown_success
+
+    def _shutdown_navigation_resources(self) -> bool:
         if not hasattr(self, 'lifecycle_component'):
             # Preserve the historical helper behavior for focused domain
             # fixtures constructed without the ROS lifecycle adapter.
             with self.state_lock:
                 goal_handle = self.active_goal_handle
+            stages = []
             if goal_handle is not None:
-                try:
+                def cancel_goal():
                     goal_handle.cancel_goal_async()
                     self.get_logger().info(
                         'Requested active navigation goal cancellation during shutdown'
                     )
-                except Exception:
-                    self.get_logger().exception(
-                        'Unable to cancel navigation goal during shutdown'
-                    )
-            with self.state_lock:
-                self.reset_goal_state_locked()
-            return
+                stages.append(('request active goal cancellation', cancel_goal))
+
+            def clear_goal_state():
+                with self.state_lock:
+                    if (self.active_goal_handle is None
+                            and not self.goal_request_in_progress):
+                        self.reset_goal_state_locked()
+                return True
+
+            stages.append(('clear navigation goal state', clear_goal_state))
+            return run_teardown(stages)
         result = self.lifecycle_component.transition('shutdown')
-        if hasattr(self, 'publish_lifecycle_result'):
+        if (hasattr(self, 'publish_lifecycle_result')
+                and rclpy.ok(context=self.context)):
             self.publish_lifecycle_result(result)
-        if not result.success:
+        if (not result.success and rclpy.ok(context=self.context)):
             self.get_logger().error(
                 f'Navigation lifecycle shutdown failed: {result.reason}'
             )
+        return bool(result.success)
 
     def lifecycle_accepts_operations(self) -> bool:
         return (
@@ -1366,12 +1390,15 @@ class NavigationGoalManagerNode(Node):
         return not self.goal_is_active()
 
 
-def main(args=None) -> None:
-    rclpy.init(args=args)
+def main(args=None) -> int:
+    # Keep ROS entities usable while normal SIGINT cleanup runs.
+    rclpy.init(args=args, signal_handler_options=SignalHandlerOptions.NO)
 
     node: Optional[NavigationGoalManagerNode] = None
     executor = None
 
+    failure = None
+    cleanup_success = True
     try:
         from rclpy.executors import MultiThreadedExecutor
         node = NavigationGoalManagerNode()
@@ -1379,23 +1406,42 @@ def main(args=None) -> None:
         executor.add_node(node)
         executor.spin()
 
-    except (
-        KeyboardInterrupt,
-        ExternalShutdownException,
-    ):
+    except KeyboardInterrupt:
+        if node is not None and rclpy.ok(context=node.context):
+            node.get_logger().info(
+                'SIGINT received; executor.spin exited and manager cleanup '
+                'begins with ROS context valid'
+            )
+    except ExternalShutdownException:
         pass
+    except BaseException as error:
+        failure = error
 
     finally:
-        if node is not None:
-            node.prepare_shutdown()
-            node.destroy_node()
+        with defer_termination_signals():
+            stages = []
+            if node is not None:
+                stages.append(('manager cleanup', node.prepare_shutdown))
+            if executor is not None:
+                stages.append(('executor shutdown', executor.shutdown))
+            if node is not None:
+                stages.append(('node destruction', node.destroy_node))
 
-        if executor is not None:
-            executor.shutdown()
+            context = node.context if node is not None else None
 
-        if rclpy.ok():
-            rclpy.shutdown()
+            def shutdown_context():
+                if context is None:
+                    if rclpy.ok():
+                        rclpy.shutdown()
+                elif rclpy.ok(context=context):
+                    rclpy.shutdown(context=context)
+                return True
+
+            stages.append(('ROS context shutdown', shutdown_context))
+            cleanup_success = run_teardown(stages, primary_error=failure)
+
+    return 0 if cleanup_success else 1
 
 
 if __name__ == '__main__':
-    main()
+    raise SystemExit(main())

@@ -1,0 +1,38 @@
+[
+  {
+    "success": true,
+    "transition_id": "e7d813c2-301d-4069-a180-08596d18e16b",
+    "orchestration_id": "e604b7fd-9bef-4700-a37d-8758e2239204",
+    "component": "mapping",
+    "transition": "deactivate",
+    "source_state": "active",
+    "destination_state": "inactive",
+    "code": "SUCCESS",
+    "reason": "requested by e604b7fd-9bef-4700-a37d-8758e2239204",
+    "failed_dependency": "",
+    "started_at": "2026-09-26T01:24:24.280048+00:00",
+    "completed_at": "2026-09-26T01:24:24.280081+00:00",
+    "recovery_guidance": "",
+    "rollback_performed": false,
+    "rollback_result": "",
+    "attempts": 1
+  },
+  {
+    "success": true,
+    "transition_id": "b50a6736-b44b-469a-b377-3709c2fb2732",
+    "orchestration_id": "e604b7fd-9bef-4700-a37d-8758e2239204",
+    "component": "simulation",
+    "transition": "deactivate",
+    "source_state": "active",
+    "destination_state": "inactive",
+    "code": "SUCCESS",
+    "reason": "requested by e604b7fd-9bef-4700-a37d-8758e2239204",
+    "failed_dependency": "",
+    "started_at": "2026-09-26T01:24:24.284382+00:00",
+    "completed_at": "2026-09-26T01:24:24.288041+00:00",
+    "recovery_guidance": "",
+    "rollback_performed": false,
+    "rollback_result": "",
+    "attempts": 1
+  }
+]

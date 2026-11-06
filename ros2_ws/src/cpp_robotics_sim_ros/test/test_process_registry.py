@@ -59,6 +59,29 @@ def _record(instance_id: str = 'instance-a', *, pid: int = 101):
     )
 
 
+def _member(pid: int, *, pgid: int = 202, session_id: int = 202):
+    return MODULE.ProcessIdentity(
+        pid=pid,
+        pgid=pgid,
+        session_id=session_id,
+        parent_pid=202,
+        proc_start_time=1000 + pid,
+        exe='/usr/bin/python3',
+        cmdline_fingerprint=f'["python3","child-{pid}.py"]',
+    )
+
+
+class _ControlledClock:
+    def __init__(self):
+        self.now = 0.0
+
+    def monotonic(self):
+        return self.now
+
+    def sleep(self, duration):
+        self.now += duration
+
+
 def _stop_helper(process: subprocess.Popen) -> None:
     if process.poll() is not None:
         return
@@ -280,6 +303,163 @@ def test_refresh_group_members_rechecks_leader_after_proc_scan(
 
     with pytest.raises(RuntimeError, match='changed while descendants'):
         registry.refresh_group_members(record)
+
+    assert registry.list_records() == [record]
+
+
+def test_wait_for_group_members_accepts_progressive_descendant_startup(
+    tmp_path, monkeypatch,
+) -> None:
+    registry = MODULE.ProcessRegistry(_paths(tmp_path))
+    record = _record('progressive', pid=202)
+    registry.register(record)
+    first = _member(203)
+    second = _member(204, pgid=204)
+    scans = iter(((), (first,), (first, second), (first, second)))
+    clock = _ControlledClock()
+    monkeypatch.setattr(MODULE, 'verify_process_identity', lambda _record: True)
+    monkeypatch.setattr(MODULE, 'verify_captured_identity', lambda _identity: True)
+    monkeypatch.setattr(
+        MODULE, 'capture_process_session_members',
+        lambda *_args, **_kwargs: next(scans),
+    )
+    monkeypatch.setattr(MODULE.time, 'monotonic', clock.monotonic)
+    monkeypatch.setattr(MODULE.time, 'sleep', clock.sleep)
+
+    result = registry.wait_for_group_members(
+        record, timeout=1.0, poll_interval=0.1,
+    )
+
+    assert result.member_identities == (first, second)
+    assert registry.list_records() == [result]
+    assert clock.now == pytest.approx(0.2)
+
+
+def test_wait_for_group_members_retries_transient_unavailable_scan(
+    tmp_path, monkeypatch,
+) -> None:
+    registry = MODULE.ProcessRegistry(_paths(tmp_path))
+    record = _record('transient-scan', pid=202)
+    registry.register(record)
+    member = _member(203)
+    scans = iter((OSError('temporary /proc scan failure'), (member,), (member,)))
+    clock = _ControlledClock()
+
+    def scan_members(*_args, **_kwargs):
+        result = next(scans)
+        if isinstance(result, OSError):
+            raise result
+        return result
+
+    monkeypatch.setattr(MODULE, 'verify_process_identity', lambda _record: True)
+    monkeypatch.setattr(MODULE, 'verify_captured_identity', lambda _identity: True)
+    monkeypatch.setattr(
+        MODULE, 'capture_process_session_members',
+        scan_members,
+    )
+    monkeypatch.setattr(MODULE.time, 'monotonic', clock.monotonic)
+    monkeypatch.setattr(MODULE.time, 'sleep', clock.sleep)
+
+    result = registry.wait_for_group_members(
+        record, timeout=1.0, poll_interval=0.1,
+    )
+
+    assert result.member_identities == (member,)
+    assert clock.now == pytest.approx(0.2)
+
+
+def test_wait_for_group_members_retries_identity_change_during_scan(
+    tmp_path, monkeypatch,
+) -> None:
+    registry = MODULE.ProcessRegistry(_paths(tmp_path))
+    record = _record('changing-set', pid=202)
+    registry.register(record)
+    original = _member(203)
+    added = _member(204, pgid=204)
+    scans = iter(((original,), (original, added)))
+    clock = _ControlledClock()
+    monkeypatch.setattr(MODULE, 'verify_process_identity', lambda _record: True)
+    monkeypatch.setattr(MODULE, 'verify_captured_identity', lambda _identity: True)
+    monkeypatch.setattr(
+        MODULE, 'capture_process_session_members',
+        lambda *_args, **_kwargs: next(scans),
+    )
+    monkeypatch.setattr(MODULE.time, 'monotonic', clock.monotonic)
+    monkeypatch.setattr(MODULE.time, 'sleep', clock.sleep)
+
+    result = registry.wait_for_group_members(
+        record, timeout=1.0, poll_interval=0.1,
+    )
+
+    assert result.member_identities == (original, added)
+    assert registry.list_records() == [result]
+
+
+def test_wait_for_group_members_times_out_when_identities_never_validate(
+    tmp_path, monkeypatch,
+) -> None:
+    registry = MODULE.ProcessRegistry(_paths(tmp_path))
+    record = _record('never-stable', pid=202)
+    registry.register(record)
+    member = _member(203)
+    clock = _ControlledClock()
+    monkeypatch.setattr(MODULE, 'verify_process_identity', lambda _record: True)
+    monkeypatch.setattr(MODULE, 'verify_captured_identity', lambda _identity: False)
+    monkeypatch.setattr(
+        MODULE, 'capture_process_session_members',
+        lambda *_args, **_kwargs: (member,),
+    )
+    monkeypatch.setattr(MODULE.time, 'monotonic', clock.monotonic)
+    monkeypatch.setattr(MODULE.time, 'sleep', clock.sleep)
+
+    with pytest.raises(MODULE.DescendantIdentityTimeout, match='after 3 scans'):
+        registry.wait_for_group_members(
+            record, timeout=0.25, poll_interval=0.1,
+        )
+
+    assert registry.list_records() == [record]
+    assert clock.now == pytest.approx(0.25)
+
+
+def test_wait_for_group_members_fails_immediately_when_leader_exits(
+    tmp_path, monkeypatch,
+) -> None:
+    registry = MODULE.ProcessRegistry(_paths(tmp_path))
+    record = _record('leader-exits', pid=202)
+    registry.register(record)
+    scans = []
+    monkeypatch.setattr(MODULE, 'verify_process_identity', lambda _record: True)
+    monkeypatch.setattr(
+        MODULE, 'capture_process_session_members',
+        lambda *_args, **_kwargs: scans.append(True) or (),
+    )
+    continuing = iter((True, False))
+
+    with pytest.raises(RuntimeError, match='leader exited'):
+        registry.wait_for_group_members(
+            record, timeout=1.0,
+            should_continue=lambda: next(continuing),
+        )
+
+    assert len(scans) == 1
+    assert registry.list_records() == [record]
+
+
+def test_wait_for_group_members_rejects_out_of_session_identity(
+    tmp_path, monkeypatch,
+) -> None:
+    registry = MODULE.ProcessRegistry(_paths(tmp_path))
+    record = _record('wrong-session', pid=202)
+    registry.register(record)
+    foreign = _member(203, session_id=999)
+    monkeypatch.setattr(MODULE, 'verify_process_identity', lambda _record: True)
+    monkeypatch.setattr(
+        MODULE, 'capture_process_session_members',
+        lambda *_args, **_kwargs: (foreign,),
+    )
+
+    with pytest.raises(RuntimeError, match='outside the owned session'):
+        registry.wait_for_group_members(record, timeout=1.0)
 
     assert registry.list_records() == [record]
 

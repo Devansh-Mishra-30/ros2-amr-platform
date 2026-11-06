@@ -1,0 +1,26 @@
+{
+  "mapping": {
+    "component": "mapping",
+    "state": "finalized",
+    "last_transition_id": "fed8f840-6fd2-47ff-9513-17355dd123a4",
+    "observed_at": "2026-09-26T01:24:25.494226+00:00"
+  },
+  "simulation": {
+    "component": "simulation",
+    "state": "finalized",
+    "last_transition_id": "4586bbee-d37d-4ad6-868c-30eba89f9f4d",
+    "observed_at": "2026-09-26T01:24:26.477441+00:00"
+  },
+  "localization": {
+    "component": "localization",
+    "state": "finalized",
+    "last_transition_id": "ee259e11-e5d1-4938-8ad2-c79b602acea6",
+    "observed_at": "2026-09-26T01:24:25.510192+00:00"
+  },
+  "navigation": {
+    "component": "navigation",
+    "state": "finalized",
+    "last_transition_id": "2b206bde-9e04-401b-b06b-1438f629ac0a",
+    "observed_at": "2026-09-26T01:24:24.783149+00:00"
+  }
+}

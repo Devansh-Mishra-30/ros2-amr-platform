@@ -268,8 +268,8 @@ def _build_launch_description():
     open_browser = LaunchConfiguration(
         'open_browser'
     )
-    mode_startup_grace_period = LaunchConfiguration(
-        'mode_startup_grace_period'
+    mode_readiness_timeout = LaunchConfiguration(
+        'mode_readiness_timeout'
     )
 
     package_share = Path(
@@ -364,8 +364,8 @@ def _build_launch_description():
             str(mode_manager_config),
             {
                 'use_sim_time': False,
-                'startup_grace_period': ParameterValue(
-                    mode_startup_grace_period, value_type=float,
+                'readiness_timeout': ParameterValue(
+                    mode_readiness_timeout, value_type=float,
                 ),
             },
         ],
@@ -483,10 +483,10 @@ def _build_launch_description():
                 ),
             ),
             DeclareLaunchArgument(
-                'mode_startup_grace_period',
-                default_value='3.0',
+                'mode_readiness_timeout',
+                default_value='45.0',
                 description=(
-                    'Mode launch identity-capture grace period in seconds'
+                    'Maximum readiness wait for a requested mode in seconds'
                 ),
             ),
             LogInfo(

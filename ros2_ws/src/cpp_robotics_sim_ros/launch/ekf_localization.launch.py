@@ -8,7 +8,6 @@ from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
-    TimerAction,
 )
 from launch.launch_description_sources import (
     PythonLaunchDescriptionSource,
@@ -73,14 +72,6 @@ def generate_launch_description():
         ],
     )
 
-    delayed_ekf = TimerAction(
-        period=10.0,
-        actions=[
-            imu_sensor_frame_transform,
-            ekf_node,
-        ],
-    )
-
     return LaunchDescription([
         DeclareLaunchArgument(
             'use_sim_time',
@@ -88,5 +79,6 @@ def generate_launch_description():
             description='Use Gazebo simulation time',
         ),
         base_simulation,
-        delayed_ekf,
+        imu_sensor_frame_transform,
+        ekf_node,
     ])

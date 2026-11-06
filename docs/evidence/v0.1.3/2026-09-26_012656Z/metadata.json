@@ -1,0 +1,368 @@
+{
+  "recorded_utc": "2026-09-26T01:26:56Z",
+  "branch": "feature/v0.1.3-readiness-contracts",
+  "head_sha": "7764c3683387c966873e00195d0417810624f33c",
+  "base_sha": "7764c3683387c966873e00195d0417810624f33c",
+  "dirty_state_before_evidence_creation": "dirty; accumulated uncommitted release work present; no commit, push, or tag made",
+  "dirty_state_porcelain_sha256": "37d3f993c6f558c7755fb0118840a1ea3050221bef3b047a2d7861539d964c2d",
+  "source_diff": {
+    "tracked_patch": "working_tree.patch",
+    "sha256": "2db4803d45f142121ab1cf924461ed5ad7d855426619a3efaf66072a6946d127",
+    "untracked_source_bundle": "untracked_source_bundle.tar.gz",
+    "untracked_sha256": "2fe6f887cc3dc8bad8f4d7bb0c337939bcba9bd8b72b2e4ca25bb47c51605f04"
+  },
+  "environment": {
+    "os": "Ubuntu 24.04.4 LTS",
+    "kernel": "6.6.87.2-microsoft-standard-WSL2",
+    "ros_distro": "jazzy",
+    "rmw_implementation": "rmw_fastrtps_cpp",
+    "ros_domain_id": 86
+  },
+  "validation": {
+    "focused": "PASS: two focused pytest cases passed (readiness probe remap regression and cancellation terminal-state semantics).",
+    "build": "PASS: ./scripts/build.sh; syntax gates and package-selective colcon build completed.",
+    "broad_gate": {
+      "command": "./scripts/test.sh",
+      "result": "PASS",
+      "package_tests": "563 passed, 0 errors, 0 failures, 0 skipped",
+      "integrations": [
+        "launch regression PASS",
+        "headless dashboard integration PASS",
+        "public launcher lifecycle PASS"
+      ],
+      "log": "broad_gate.log",
+      "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+    },
+    "diff_check": "PASS: git diff --check"
+  },
+  "acceptance": {
+    "command": "HOME=/tmp/v013-release-home ROS_LOG_DIR=/tmp/v013-release-home/.ros/log ROS_DOMAIN_ID=86 RMW_IMPLEMENTATION=rmw_fastrtps_cpp; source ROS Jazzy and workspace install; run scripts/v012_lifecycle_acceptance.py",
+    "result": "ACCEPTED",
+    "started_at": "2026-09-26T01:23:38.787067+00:00",
+    "completed_at": "2026-09-26T01:24:31.613760+00:00",
+    "passed_checks": 34,
+    "total_checks": 34,
+    "remaining_blockers": [],
+    "raw": "runtime_acceptance/"
+  },
+  "requirements": {
+    "REQ-021": {
+      "requirement": "The platform shall provide a common contract for readiness checks and structured results.",
+      "acceptance_criteria": "Acceptance test passes; failure path is verified; regression suite remains green.",
+      "result": "PASS",
+      "evidence": [
+        "test_every_profile_dependency_is_required",
+        "test_aggregate_retains_all_simultaneous_failures_and_is_actionable",
+        "4_active_provenance"
+      ]
+    },
+    "REQ-022": {
+      "requirement": "The platform shall verify /clock exists, advances, and uses simulation time.",
+      "acceptance_criteria": "Acceptance test passes; failure path is verified; regression suite remains green.",
+      "result": "PASS",
+      "evidence": [
+        "test_clock_requires_fresh_advancing_ros_and_receive_time",
+        "test_probe_clock_zero_blocks_and_fresh_advancement_recovers",
+        "7_simulation_operations_after_activation"
+      ]
+    },
+    "REQ-023": {
+      "requirement": "The platform shall verify required topics publish recent messages at acceptable rates.",
+      "acceptance_criteria": "Acceptance test passes; failure path is verified; regression suite remains green.",
+      "result": "PASS",
+      "evidence": [
+        "test_topic_checks_freshness_and_rate",
+        "test_evidence_is_bound_to_runtime_identity_and_lease",
+        "readiness-gated mode workflows"
+      ]
+    },
+    "REQ-024": {
+      "requirement": "The platform shall verify required transforms exist, are fresh, and resolve within timeout.",
+      "acceptance_criteria": "Acceptance test passes; failure path is verified; regression suite remains green.",
+      "result": "PASS",
+      "evidence": [
+        "test_tf_checks_resolution_freshness_and_timeout",
+        "navigation_localization_transform_ready"
+      ]
+    },
+    "REQ-025": {
+      "requirement": "The platform shall verify required services are discoverable and responsive.",
+      "acceptance_criteria": "Nominal and negative tests pass; behavior is documented and reproducible.",
+      "result": "PASS",
+      "evidence": [
+        "test_endpoint_discovery_requires_explicit_responsiveness_by_default",
+        "responsive controller-manager readiness in simulation/navigation profiles"
+      ]
+    },
+    "REQ-026": {
+      "requirement": "The platform shall verify required action servers are available before activation.",
+      "acceptance_criteria": "Nominal and negative tests pass; behavior is documented and reproducible.",
+      "result": "PASS",
+      "evidence": [
+        "test_endpoint_discovery_requires_explicit_responsiveness_by_default (action readiness assertions)",
+        "navigation_real_goal_and_deactivation_workflow"
+      ]
+    },
+    "REQ-027": {
+      "requirement": "The platform shall verify required controllers are active.",
+      "acceptance_criteria": "Acceptance test passes; failure path is verified; regression suite remains green.",
+      "result": "PASS",
+      "evidence": [
+        "test_controllers_map_and_localization",
+        "active controller evidence in runtime readiness profiles"
+      ]
+    },
+    "REQ-028": {
+      "requirement": "The platform shall verify map availability and localization estimate validity.",
+      "acceptance_criteria": "Nominal and negative tests pass; behavior is documented and reproducible.",
+      "result": "PASS",
+      "evidence": [
+        "test_latched_map_persists_for_runtime_and_invalidates_independently",
+        "localization_real_fixture_and_pose_workflow",
+        "navigation_real_goal_and_deactivation_workflow"
+      ]
+    },
+    "REQ-029": {
+      "requirement": "The platform shall aggregate all checks without hiding simultaneous failures.",
+      "acceptance_criteria": "Acceptance test passes; failure path is verified; regression suite remains green.",
+      "result": "PASS",
+      "evidence": [
+        "test_every_profile_dependency_is_required",
+        "test_profile_blocking_selection_matches_declared_dependencies",
+        "34 acceptance checks passed"
+      ]
+    },
+    "REQ-030": {
+      "requirement": "The platform shall replace fixed-delay sequencing with transitions and readiness conditions.",
+      "acceptance_criteria": "Acceptance test passes; failure path is verified; regression suite remains green.",
+      "result": "PASS",
+      "evidence": [
+        "test_mode_launch_with_missing_readiness_dependency_never_becomes_active",
+        "active-only-via-activate and lifecycle/readiness separation checks",
+        "MET-005 static scan and runtime acceptance"
+      ]
+    }
+  },
+  "test_cases": {
+    "TC-0026": {
+      "title": "Reusable readiness-check interface \u2014 nominal acceptance",
+      "acceptance_criteria": "Declared acceptance criteria pass and no existing regression test fails.",
+      "result": "PASS",
+      "evidence": [
+        "test_every_profile_dependency_is_required",
+        "4_active_provenance"
+      ],
+      "execution_note": "Satisfied by the registered automated suite plus the full v0.1.3 runtime acceptance; tracker workbook was not modified."
+    },
+    "TC-0027": {
+      "title": "Reusable readiness-check interface \u2014 failure/recovery path",
+      "acceptance_criteria": "Failure is detected, unsafe behavior is prevented, cause is reported, and recovery follows policy.",
+      "result": "PASS",
+      "evidence": [
+        "test_readiness_wait_times_out_when_process_lives_but_dependency_is_missing",
+        "11_middle_activation_failure_suppresses_downstream",
+        "13_error_recovery_to_unconfigured"
+      ],
+      "execution_note": "Satisfied by the registered automated suite plus the full v0.1.3 runtime acceptance; tracker workbook was not modified."
+    },
+    "TC-0028": {
+      "title": "Simulation clock check \u2014 nominal acceptance",
+      "acceptance_criteria": "Declared acceptance criteria pass and no existing regression test fails.",
+      "result": "PASS",
+      "evidence": [
+        "test_clock_requires_fresh_advancing_ros_and_receive_time",
+        "test_probe_clock_high_rate_live_window_is_ready_and_stales_when_stopped",
+        "7_simulation_operations_after_activation"
+      ],
+      "execution_note": "Satisfied by the registered automated suite plus the full v0.1.3 runtime acceptance; tracker workbook was not modified."
+    },
+    "TC-0029": {
+      "title": "Simulation clock check \u2014 failure/recovery path",
+      "acceptance_criteria": "Failure is detected, unsafe behavior is prevented, cause is reported, and recovery follows policy.",
+      "result": "PASS",
+      "evidence": [
+        "test_clock_stopped_plateau_does_not_lend_span_to_one_recovery_tick",
+        "test_probe_clock_zero_blocks_and_fresh_advancement_recovers"
+      ],
+      "execution_note": "Satisfied by the registered automated suite plus the full v0.1.3 runtime acceptance; tracker workbook was not modified."
+    },
+    "TC-0030": {
+      "title": "Topic existence and freshness check \u2014 nominal acceptance",
+      "acceptance_criteria": "Declared acceptance criteria pass and no existing regression test fails.",
+      "result": "PASS",
+      "evidence": [
+        "test_topic_checks_freshness_and_rate",
+        "mapping/localization/navigation readiness acceptance"
+      ],
+      "execution_note": "Satisfied by the registered automated suite plus the full v0.1.3 runtime acceptance; tracker workbook was not modified."
+    },
+    "TC-0031": {
+      "title": "Topic existence and freshness check \u2014 failure/recovery path",
+      "acceptance_criteria": "Failure is detected, unsafe behavior is prevented, cause is reported, and recovery follows policy.",
+      "result": "PASS",
+      "evidence": [
+        "test_evidence_is_bound_to_runtime_identity_and_lease",
+        "test_topic_checks_freshness_and_rate"
+      ],
+      "execution_note": "Satisfied by the registered automated suite plus the full v0.1.3 runtime acceptance; tracker workbook was not modified."
+    },
+    "TC-0032": {
+      "title": "TF existence and freshness check \u2014 nominal acceptance",
+      "acceptance_criteria": "Declared acceptance criteria pass and no existing regression test fails.",
+      "result": "PASS",
+      "evidence": [
+        "test_tf_checks_resolution_freshness_and_timeout",
+        "navigation_localization_transform_ready"
+      ],
+      "execution_note": "Satisfied by the registered automated suite plus the full v0.1.3 runtime acceptance; tracker workbook was not modified."
+    },
+    "TC-0033": {
+      "title": "TF existence and freshness check \u2014 failure/recovery path",
+      "acceptance_criteria": "Failure is detected, unsafe behavior is prevented, cause is reported, and recovery follows policy.",
+      "result": "PASS",
+      "evidence": [
+        "test_tf_checks_resolution_freshness_and_timeout",
+        "test_evidence_is_bound_to_runtime_identity_and_lease"
+      ],
+      "execution_note": "Satisfied by the registered automated suite plus the full v0.1.3 runtime acceptance; tracker workbook was not modified."
+    },
+    "TC-0034": {
+      "title": "Service availability check \u2014 nominal acceptance",
+      "acceptance_criteria": "Declared acceptance criteria pass and no existing regression test fails.",
+      "result": "PASS",
+      "evidence": [
+        "test_endpoint_discovery_requires_explicit_responsiveness_by_default",
+        "responsive service/controller-manager observations during acceptance"
+      ],
+      "execution_note": "Satisfied by the registered automated suite plus the full v0.1.3 runtime acceptance; tracker workbook was not modified."
+    },
+    "TC-0035": {
+      "title": "Action server availability check \u2014 nominal acceptance",
+      "acceptance_criteria": "Declared acceptance criteria pass and no existing regression test fails.",
+      "result": "PASS",
+      "evidence": [
+        "test_endpoint_discovery_requires_explicit_responsiveness_by_default",
+        "active bt_navigator state and accepted navigation goal in acceptance"
+      ],
+      "execution_note": "Satisfied by the registered automated suite plus the full v0.1.3 runtime acceptance; tracker workbook was not modified."
+    },
+    "TC-0036": {
+      "title": "Controller-state check \u2014 nominal acceptance",
+      "acceptance_criteria": "Declared acceptance criteria pass and no existing regression test fails.",
+      "result": "PASS",
+      "evidence": [
+        "test_controllers_map_and_localization",
+        "simulation and navigation profiles observed required controllers active"
+      ],
+      "execution_note": "Satisfied by the registered automated suite plus the full v0.1.3 runtime acceptance; tracker workbook was not modified."
+    },
+    "TC-0037": {
+      "title": "Controller-state check \u2014 failure/recovery path",
+      "acceptance_criteria": "Failure is detected, unsafe behavior is prevented, cause is reported, and recovery follows policy.",
+      "result": "PASS",
+      "evidence": [
+        "test_controllers_map_and_localization (missing controller blocked)"
+      ],
+      "execution_note": "Satisfied by the registered automated suite plus the full v0.1.3 runtime acceptance; tracker workbook was not modified."
+    },
+    "TC-0038": {
+      "title": "Map and localization check \u2014 nominal acceptance",
+      "acceptance_criteria": "Declared acceptance criteria pass and no existing regression test fails.",
+      "result": "PASS",
+      "evidence": [
+        "test_latched_map_persists_for_runtime_and_invalidates_independently",
+        "localization_real_fixture_and_pose_workflow",
+        "navigation_real_goal_and_deactivation_workflow"
+      ],
+      "execution_note": "Satisfied by the registered automated suite plus the full v0.1.3 runtime acceptance; tracker workbook was not modified."
+    },
+    "TC-0039": {
+      "title": "Aggregated readiness report \u2014 nominal acceptance",
+      "acceptance_criteria": "Declared acceptance criteria pass and no existing regression test fails.",
+      "result": "PASS",
+      "evidence": [
+        "test_every_profile_dependency_is_required",
+        "test_profile_blocking_selection_matches_declared_dependencies",
+        "34 acceptance checks passed"
+      ],
+      "execution_note": "Satisfied by the registered automated suite plus the full v0.1.3 runtime acceptance; tracker workbook was not modified."
+    },
+    "TC-0040": {
+      "title": "Aggregated readiness report \u2014 failure/recovery path",
+      "acceptance_criteria": "Failure is detected, unsafe behavior is prevented, cause is reported, and recovery follows policy.",
+      "result": "PASS",
+      "evidence": [
+        "test_aggregate_retains_all_simultaneous_failures_and_is_actionable",
+        "11_middle_activation_failure_suppresses_downstream",
+        "13_error_recovery_to_unconfigured"
+      ],
+      "execution_note": "Satisfied by the registered automated suite plus the full v0.1.3 runtime acceptance; tracker workbook was not modified."
+    },
+    "TC-0041": {
+      "title": "Remove blind startup TimerActions \u2014 nominal acceptance",
+      "acceptance_criteria": "Declared acceptance criteria pass and no existing regression test fails.",
+      "result": "PASS",
+      "evidence": [
+        "test_mode_launch_with_missing_readiness_dependency_never_becomes_active",
+        "lifecycle/readiness separation checks",
+        "MET-005=0"
+      ],
+      "execution_note": "Satisfied by the registered automated suite plus the full v0.1.3 runtime acceptance; tracker workbook was not modified."
+    },
+    "TC-0042": {
+      "title": "Remove blind startup TimerActions \u2014 failure/recovery path",
+      "acceptance_criteria": "Failure is detected, unsafe behavior is prevented, cause is reported, and recovery follows policy.",
+      "result": "PASS",
+      "evidence": [
+        "11_middle_activation_failure_suppresses_downstream",
+        "12_reverse_upstream_rollback",
+        "13_error_recovery_to_unconfigured",
+        "17_shutdown_finalized"
+      ],
+      "execution_note": "Satisfied by the registered automated suite plus the full v0.1.3 runtime acceptance; tracker workbook was not modified."
+    }
+  },
+  "metric_MET-005": {
+    "name": "Blind-delay activations",
+    "value": 0,
+    "target": 0,
+    "measurement": "Source scan found TimerAction only in web_interface.launch.py for delayed optional browser opening; no mode activation TimerAction. Full runtime acceptance passed readiness-gated mode startup."
+  },
+  "cleanup_and_process_checks": {
+    "acceptance_process_registry_clean": {
+      "passed": true,
+      "detail": "[]"
+    },
+    "required_lifecycle_manager_uniqueness": {
+      "passed": true,
+      "detail": "{'manager_counts': {'/simulation_manager': 1, '/mapping_manager': 1, '/localization_manager': 1, '/navigation_goal_manager': 1}}"
+    },
+    "critical_duplicate_detection": {
+      "passed": true,
+      "detail": "{'duplicate_critical_nodes': {}, 'critical_node_source': 'runtime_verification.CRITICAL_ROS_NODES', 'graph_nodes': ['/localization_manager', '/mapping_manager', '/mode_manager', '/navigation_goal_manager', '/platform_lifecycle_orchestrator', '/rosbridge_websocket', '/simulation_manager', '/simulation_readiness_probe', '/simulation_readiness_probe', '/simulation_readiness_probe', '/simulation_readiness_probe', '/simulation_readiness_probe', '/v012_late_lifecycle_subscriber', '/v012_lifecycle_acceptance', '/v012_runtime_graph_verifier'], 'graph_convergence_timeout_seconds': 30.0, 'consecutive_clean_samples_required': 3, 'graph_observer': 'fresh_rclpy_context'}"
+    },
+    "simulation_lifecycle_cleanup": {
+      "passed": true,
+      "detail": "{'success': True, 'transition_id': 'ddcd629e-9746-4876-8519-ed148344ba77', 'orchestration_id': 'ddcd629e-9746-4876-8519-ed148344ba77', 'component': 'platform', 'transition': 'cleanup', 'source_state': '', 'destination_state': '', 'code': 'SUCCESS', 'reason': 'platform transition completed', 'failed_dependency': '', 'started_at': '2026-09-26T01:24:24.677977+00:00', 'completed_at': '2026-09-26T01:24:24.762433+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 4}"
+    },
+    "shutdown_finalized": {
+      "passed": true,
+      "detail": "{'success': True, 'transition_id': '79b67c9a-0b8f-44a2-ad44-e1a68b84394a', 'orchestration_id': '79b67c9a-0b8f-44a2-ad44-e1a68b84394a', 'component': 'platform', 'transition': 'shutdown', 'source_state': '', 'destination_state': '', 'code': 'SUCCESS', 'reason': 'platform transition completed', 'failed_dependency': '', 'started_at': '2026-09-26T01:24:24.778331+00:00', 'completed_at': '2026-09-26T01:24:24.822833+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 4}"
+    },
+    "post_acceptance_process_scan": "No managed ROS/Gazebo processes remained in ps output."
+  },
+  "scope_coverage": {
+    "simulation_mapping_localization_navigation_readiness": "PASS; active workflows and readiness-gated transitions recorded in summary and web launch log.",
+    "missing_and_stale_dependencies": "PASS in focused registered contract tests, including missing dependency, stale clock/topic/TF evidence, leases, and recovery.",
+    "recovery": "PASS; acceptance checks 11-14 verify failure suppression, rollback, recovery, and reactivation.",
+    "lifecycle_readiness_separation": "PASS; checks 6_lifecycle_active_simulation_stopped and 6_simulation_active_distinct_from_running.",
+    "declared_profile_completeness": "PASS; profile dependency omission and selection tests plus acceptance profiles.",
+    "session_process_isolation": "PASS; process registry empty and exactly one required lifecycle manager of each kind.",
+    "critical_duplicate_detection": "PASS; no duplicated node from CRITICAL_ROS_NODES."
+  },
+  "known_limitations": [
+    "The final graph snapshot contains five entries named /simulation_readiness_probe, an internal transient probe excluded from runtime_verification.CRITICAL_ROS_NODES. Critical manager uniqueness passes; do not interpret the acceptance result as a claim that every noncritical node name is unique.",
+    "TC-0026..TC-0042 were evidenced through mapped registered tests and the full acceptance, not executed as separate workbook rows; the tracker workbook remains unchanged."
+  ],
+  "release_decision": "ACCEPTED for v0.1.3 release-candidate acceptance under the existing oracle. Do not commit, push, or tag."
+}

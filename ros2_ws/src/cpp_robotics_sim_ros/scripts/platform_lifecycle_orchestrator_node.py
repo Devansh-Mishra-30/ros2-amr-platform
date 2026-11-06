@@ -14,6 +14,7 @@ This node is installed but not launched until manager lifecycle adapters exist.
 from __future__ import annotations
 
 from datetime import datetime
+import time
 from typing import Optional
 from uuid import uuid4
 
@@ -21,7 +22,9 @@ from cpp_robotics_sim_ros.msg import (
     LifecycleTransitionEvent,
     ManagedLifecycleState,
 )
-from cpp_robotics_sim_ros.srv import TransitionManagedComponent
+from cpp_robotics_sim_ros.srv import (
+    GetManagedComponentState, TransitionManagedComponent,
+)
 from managed_component import (
     LEGAL_TRANSITIONS, LifecycleState, LifecycleTransition,
     TransitionResult, utc_now,
@@ -40,6 +43,7 @@ STATE_QOS = QoSProfile(
     reliability=ReliabilityPolicy.RELIABLE,
     durability=DurabilityPolicy.TRANSIENT_LOCAL,
 )
+REMOTE_STATE_MAX_AGE = 3.0
 
 
 def event_from_result(result: TransitionResult) -> LifecycleTransitionEvent:
@@ -56,8 +60,17 @@ class RemoteComponent:
         self.name = name
         self._state: Optional[LifecycleState] = None
         self._observed_at = ''
+        self._received_at = 0.0
+        self._last_transition_id = ''
+        self._verified_activation_id = ''
+        self._last_transition = ''
         self._client = node.create_client(
             TransitionManagedComponent, f'/lifecycle/{name}/transition',
+            callback_group=callback_group,
+        )
+        self._state_client = node.create_client(
+            GetManagedComponentState,
+            f'/lifecycle/{name}/state_snapshot',
             callback_group=callback_group,
         )
         self._subscription = node.create_subscription(
@@ -67,7 +80,24 @@ class RemoteComponent:
 
     @property
     def state(self) -> Optional[LifecycleState]:
+        if (self._received_at <= 0.0
+                or time.monotonic() - self._received_at > REMOTE_STATE_MAX_AGE):
+            return None
         return self._state
+
+    def target_satisfied(self, target: LifecycleState) -> bool:
+        """Require a live snapshot and verified activate response for ACTIVE."""
+        if self.state != target:
+            return False
+        if target == LifecycleState.ACTIVE:
+            return bool(self._last_transition_id
+                        and self._verified_activation_id == self._last_transition_id)
+        return True
+
+    @property
+    def snapshot_version(self) -> tuple[str, str]:
+        """Identity tuple updated by each authoritative lifecycle read."""
+        return (self._last_transition, self._last_transition_id)
 
     def _on_state(self, snapshot: ManagedLifecycleState) -> None:
         if snapshot.component != self.name:
@@ -83,6 +113,49 @@ class RemoteComponent:
             return
         self._state = state
         self._observed_at = snapshot.observed_at
+        self._received_at = time.monotonic()
+        self._last_transition_id = snapshot.last_transition_id
+        if state == LifecycleState.ACTIVE:
+            if (not snapshot.last_transition_id
+                    or self._last_transition != LifecycleTransition.ACTIVATE.value):
+                self._verified_activation_id = ''
+        else:
+            self._verified_activation_id = ''
+
+    def refresh_state(self) -> bool:
+        """Read authoritative manager state before orchestration decisions."""
+        try:
+            if not self._state_client.wait_for_service(timeout_sec=2.0):
+                raise TimeoutError('authoritative state service is unavailable')
+            response = self._state_client.call(
+                GetManagedComponentState.Request(), timeout_sec=2.0,
+            )
+            if response is None or response.component != self.name:
+                raise ValueError('authoritative state response identity mismatch')
+            observed = datetime.fromisoformat(response.observed_at)
+            if observed.tzinfo is None:
+                raise ValueError('authoritative state timestamp has no timezone')
+            state = LifecycleState(response.state)
+            transition = response.last_transition
+            transition_id = response.last_transition_id
+            if state == LifecycleState.ACTIVE and (
+                    transition != LifecycleTransition.ACTIVATE.value
+                    or not transition_id):
+                raise ValueError('ACTIVE state has no valid activation provenance')
+            self._state = state
+            self._observed_at = response.observed_at
+            self._received_at = time.monotonic()
+            self._last_transition = transition
+            self._last_transition_id = transition_id
+            self._verified_activation_id = (
+                transition_id if state == LifecycleState.ACTIVE else ''
+            )
+            return True
+        except Exception:
+            self._state = None
+            self._received_at = 0.0
+            self._verified_activation_id = ''
+            return False
 
     def transition(self, operation: LifecycleTransition, **kwargs) -> TransitionResult:
         started_at = utc_now()
@@ -125,6 +198,14 @@ class RemoteComponent:
             )
             self._state = destination
             self._observed_at = event.completed_at
+            self._received_at = time.monotonic()
+            self._last_transition_id = event.transition_id
+            self._last_transition = operation.value if event.success else ''
+            self._verified_activation_id = (
+                event.transition_id
+                if event.success and operation == LifecycleTransition.ACTIVATE
+                and destination == LifecycleState.ACTIVE else ''
+            )
             return report
         except Exception as error:
             state = self._state or LifecycleState.UNCONFIGURED

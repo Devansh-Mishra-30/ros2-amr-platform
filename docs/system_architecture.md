@@ -13,7 +13,7 @@
 ## 1. Document Purpose
 
 This document defines the software architecture of
-`cpp_robotics_sim_foundation` at release `v0.1.0`.
+`ros2-amr-platform` at release `v0.1.0`.
 
 It explains:
 
@@ -32,7 +32,7 @@ It explains:
 
 ## 2. System Overview
 
-`cpp_robotics_sim_foundation` is a browser-controlled ROS 2 mobile-robot
+`ros2-amr-platform` is a browser-controlled ROS 2 mobile-robot
 simulation platform.
 
 Release `v0.1.0` supports:
@@ -244,7 +244,7 @@ Docker
 The tagged `v0.1.0` repository contains:
 
 ```text
-cpp_robotics_sim_foundation/
+ros2-amr-platform/
 ├── .github/
 │   └── workflows/
 │       └── ros2_jazzy_ci.yml

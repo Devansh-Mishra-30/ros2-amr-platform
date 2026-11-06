@@ -5,7 +5,7 @@
 # https://opensource.org/licenses/MIT.
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
@@ -127,21 +127,6 @@ def generate_launch_description():
         ]
     )
 
-    delayed_diff_drive_controller = TimerAction(
-        period=8.0,
-        actions=[diff_drive_controller_spawner]
-    )
-
-    delayed_spawn = TimerAction(
-        period=3.0,
-        actions=[spawn_diffbot]
-    )
-
-    delayed_joint_state_broadcaster = TimerAction(
-        period=6.0,
-        actions=[joint_state_broadcaster_spawner]
-    )
-
     return LaunchDescription([
         DeclareLaunchArgument(
             'world',
@@ -158,7 +143,7 @@ def generate_launch_description():
         scan_bridge,
         imu_bridge,
         description,
-        delayed_spawn,
-        delayed_joint_state_broadcaster,
-        delayed_diff_drive_controller
+        spawn_diffbot,
+        joint_state_broadcaster_spawner,
+        diff_drive_controller_spawner,
     ])

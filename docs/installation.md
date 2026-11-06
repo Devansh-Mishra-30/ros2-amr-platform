@@ -13,7 +13,7 @@
 ## 1. Purpose
 
 This guide covers installation, first build, validation, and first launch of
-`cpp_robotics_sim_foundation` release `v0.1.0`.
+`ros2-amr-platform` release `v0.1.0`.
 
 The supported native setup is:
 
@@ -161,9 +161,9 @@ missing.
 
 ```bash
 git clone \
-  https://github.com/Devansh-Mishra-30/cpp_robotics_sim_foundation.git
+  https://github.com/Devansh-Mishra-30/ros2-amr-platform.git
 
-cd cpp_robotics_sim_foundation
+cd ros2-amr-platform
 ```
 
 For exact release reproduction:
@@ -788,7 +788,7 @@ media:
 
 ```bash
 cd ..
-rm -rf cpp_robotics_sim_foundation
+rm -rf ros2-amr-platform
 ```
 
 Project setup installs system packages through `apt` and `rosdep`. Those
@@ -851,9 +851,9 @@ First installation:
 
 ```bash
 git clone \
-  https://github.com/Devansh-Mishra-30/cpp_robotics_sim_foundation.git
+  https://github.com/Devansh-Mishra-30/ros2-amr-platform.git
 
-cd cpp_robotics_sim_foundation
+cd ros2-amr-platform
 
 git checkout v0.1.0
 
