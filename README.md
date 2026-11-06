@@ -1,985 +1,414 @@
-# C++ Robotics Simulation Foundation
+# ROS 2 AMR Platform
 
-[![ROS 2 Jazzy CI](https://github.com/Devansh-Mishra-30/cpp_robotics_sim_foundation/actions/workflows/ros2_jazzy_ci.yml/badge.svg)](https://github.com/Devansh-Mishra-30/cpp_robotics_sim_foundation/actions/workflows/ros2_jazzy_ci.yml)
-![ROS 2](https://img.shields.io/badge/ROS%202-Jazzy-22314E)
-![Ubuntu](https://img.shields.io/badge/Ubuntu-24.04-E95420)
-![Gazebo](https://img.shields.io/badge/Gazebo-Harmonic-FF6F00)
-![License](https://img.shields.io/badge/License-MIT-green)
+[![ROS 2 Jazzy CI](https://github.com/Devansh-Mishra-30/ros2-amr-platform/actions/workflows/ros2_jazzy_ci.yml/badge.svg)](https://github.com/Devansh-Mishra-30/ros2-amr-platform/actions/workflows/ros2_jazzy_ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A browser-controlled ROS 2 autonomous mobile robot simulation platform for **manual control, SLAM mapping, map management, AMCL localization, Nav2 navigation, lifecycle orchestration, and repeatable validation**.
+A browser-controlled autonomous mobile robot (AMR) simulation and verification
+platform built with ROS 2 Jazzy, Gazebo Harmonic, ros2_control, SLAM Toolbox,
+AMCL, Nav2, and rosbridge.
 
-The project began as a C++ robotics-learning exercise and evolved into a managed simulation workflow that reduces repeated terminal setup, coordinates multiple ROS 2 subsystems, and provides one interface for operating and validating an autonomous mobile robot stack.
+The repository is preparing the **v0.1.3 release candidate**. No v0.1.3 tag
+exists yet. The last published tag is v0.1.2; the candidate adds fail-closed
+readiness contracts and authoritative lifecycle-state verification while
+preserving the established simulation, mapping, localization, navigation, and
+dashboard interfaces.
 
-> **Release status:** `v0.1.0` stable release
-> **Primary environment:** Ubuntu 24.04, ROS 2 Jazzy, Gazebo Harmonic
-> **Validation baseline:** 357 automated tests, native and Docker validation, launch regression, dashboard integration, and launcher lifecycle tests
+## Implemented capabilities
 
----
+- Browser dashboard served with rosbridge connectivity.
+- Warehouse and hospital Gazebo environments.
+- Differential-drive robot with LiDAR, odometry, joint states, and simulated
+  clock.
+- Manual velocity control with command arbitration and emergency stop.
+- SLAM mapping and validated map saving.
+- AMCL localization with map selection and initial-pose workflows.
+- Nav2 single-goal navigation, feedback, cancellation, and safe terminal stop.
+- Managed simulation and operating-mode process lifecycles.
+- Component lifecycle orchestration with dependency-ordered transitions,
+  structured failures, rollback evidence, and explicit recovery.
+- Fail-closed runtime readiness profiles for simulation, mapping, localization,
+  and navigation.
+- Automated syntax, unit, integration, launch, lifecycle, and runtime
+  acceptance checks.
 
-## Overview
-
-The platform brings together:
-
-- a differential-drive mobile robot modeled in URDF/Xacro;
-- Gazebo Harmonic simulation;
-- `ros2_control` and `diff_drive_controller`;
-- simulated LiDAR, odometry, TF, and joint states;
-- SLAM Toolbox mapping;
-- environment-aware map storage;
-- AMCL localization;
-- Nav2 planning, control, goal execution, and cancellation;
-- browser-based simulation and mode management;
-- runtime safety, command arbitration, and clean shutdown;
-- native, CI, and Docker-based validation.
-
-The primary user workflow is controlled from the browser dashboard rather than by repeatedly launching individual nodes and commands manually.
-
----
-
-## Demo and Media
-
-### v0.1.0 project overview
-
-[![CPP Robotics Simulation Foundation v0.1.0](docs/media/v0.1.0/dashboard.png)](https://www.youtube.com/watch?v=zKf_hjIYtlk)
-
-**[Watch the 32-second project teaser](https://www.youtube.com/watch?v=zKf_hjIYtlk)**
-
-**[Watch the complete v0.1.0 demonstration playlist](https://www.youtube.com/playlist?list=PLP_aJnUqSRf8)**
-
-### Simulation environments
-
-<table>
-  <tr>
-    <td width="50%">
-      <img src="docs/media/v0.1.0/warehouse_gazebo.png" alt="Warehouse Gazebo environment">
-      <p align="center"><strong>Warehouse Environment</strong></p>
-    </td>
-    <td width="50%">
-      <img src="docs/media/v0.1.0/hospital_gazebo.png" alt="Hospital Gazebo environment">
-      <p align="center"><strong>Hospital Environment</strong></p>
-    </td>
-  </tr>
-</table>
-
-### Demonstration videos
-
-| Demonstration | Description |
-|---|---|
-| [Project teaser](https://www.youtube.com/watch?v=zKf_hjIYtlk) | Concise overview of the complete `v0.1.0` platform |
-| [Manual control](https://www.youtube.com/watch?v=eXRZwrg_8eY) | Dashboard and keyboard-based differential-drive control |
-| [SLAM mapping](https://www.youtube.com/watch?v=gJ5ggf250xE) | LiDAR-based occupancy-map generation and saving |
-| [AMCL localization](https://www.youtube.com/watch?v=HJZlihnV8Ko) | Localization against a previously generated map |
-| [Nav2 navigation](https://www.youtube.com/watch?v=O9wMdFE_PvU) | Autonomous map-frame goal execution and cancellation |
-| [Installation and first launch](https://www.youtube.com/watch?v=_x2Z7jXXnWw) | Setup, build, launch, environment selection, validation, and shutdown |
-| [Docker build and validation](https://www.youtube.com/watch?v=4M628CFYiz8) | Reproducible container validation with 357 passing tests |
-
----
-
-## Current Capabilities
-
-### Simulation lifecycle
-
-- Select Warehouse or Hospital simulation environments.
-- Launch Gazebo and the complete robot-control stack.
-- Stop and reset the simulation from the dashboard.
-- Prevent environment changes while a simulation is active.
-- Detect unexpected simulator exits.
-- Recover environment selection after an external Gazebo close.
-- Clean up managed processes during stop and shutdown.
-
-### Manual control
-
-- Browser-based velocity commands.
-- Keyboard and supported dashboard control paths.
-- Command-source tracking.
-- Velocity routing through a controlled command pipeline.
-- Safe zero-velocity output when control ends.
-
-### Mapping
-
-- Start and stop SLAM Toolbox from the dashboard.
-- Build a map from LiDAR and odometry.
-- Save maps under an environment-specific map directory.
-- Validate and sanitize map names.
-- List available saved maps.
-- Preserve map metadata and image files.
-
-### Localization
-
-- Select an environment-specific saved map.
-- Launch `map_server` and AMCL.
-- Publish an initial pose.
-- Maintain the `map → odom → base_link` transform chain.
-- Recover cleanly when switching environments or stopping modes.
-
-### Navigation
-
-- Launch the Nav2 stack from the dashboard.
-- Submit map-frame navigation goals.
-- Monitor goal state and feedback.
-- Cancel active goals.
-- Stop the robot after success or cancellation.
-- Prevent conflicting command sources.
-
-### Validation and release engineering
-
-- Python, JavaScript, and Bash syntax checks.
-- C++ GoogleTest coverage.
-- Python unit and behavior tests.
-- ROS 2 linting through ament.
-- Simulator launch regression.
-- Headless dashboard integration testing.
-- Public launcher lifecycle testing.
-- Docker build and full container test gate.
-- GitHub Actions CI for ROS 2 Jazzy.
-
----
-
-## Environments
-
-| Environment | Purpose |
-|---|---|
-| **Warehouse** | Aisles, obstacles, loading areas, and navigation corridors |
-| **Hospital** | Corridors, rooms, reception areas, and indoor navigation scenarios |
-
-Environment definitions are registered in:
-
-```text
-ros2_ws/src/cpp_robotics_sim_ros/config/environment_registry.yaml
-```
-
-World files are stored in:
-
-```text
-ros2_ws/src/cpp_robotics_sim_ros/worlds/
-```
-
-Saved maps are stored outside the repository by default:
-
-```text
-~/.ros/cpp_robotics_sim/maps/<environment>/
-```
-
-Example:
-
-```text
-~/.ros/cpp_robotics_sim/maps/hospital/hospital.yaml
-~/.ros/cpp_robotics_sim/maps/hospital/hospital.pgm
-```
-
----
+This is a simulation and engineering-verification platform. It is not a
+certified safety system or a production-hardware deployment.
 
 ## Architecture
 
 ```text
-Browser Dashboard
-        │
-        │ rosbridge WebSocket
-        ▼
-Simulation / Mode / Mapping / Localization / Navigation Managers
-        │
-        ├── Simulation lifecycle and environment selection
-        ├── Command-source arbitration and safe stop
-        ├── SLAM Toolbox and map management
-        ├── Map server and AMCL localization
-        └── Nav2 goal execution and cancellation
-        │
-        ▼
-ROS 2 Runtime
-        │
-        ├── robot_state_publisher
-        ├── controller_manager
-        ├── joint_state_broadcaster
-        ├── diff_drive_controller
-        ├── ros_gz_bridge
-        ├── SLAM Toolbox
-        ├── AMCL
-        ├── map_server
-        └── Nav2
-        │
-        ▼
-Gazebo Harmonic
-        │
-        ├── Differential-drive robot
-        ├── Wheel joints
-        ├── LiDAR
-        └── Warehouse / Hospital worlds
+Browser dashboard
+    |
+    +-- HTTP server :8080
+    +-- rosbridge WebSocket :9090
+             |
+             v
+simulation_manager ---- environment selection / Gazebo / ros2_control
+mode_manager ---------- manual / mapping / localization / navigation
+mapping_manager ------- map-save workflow and saved-map inventory
+localization_manager -- map selection and initial pose
+navigation_manager --- Nav2 goal, feedback, cancel, and terminal state
+             |
+             +-- command multiplexer --> diff_drive_controller
+             +-- lifecycle adapters --> platform_lifecycle_orchestrator
+             +-- readiness probes --> /platform/readiness
 ```
 
-Detailed architecture:
+The dashboard publishes requests and presents ROS 2 state; it does not
+implement the robotics algorithms. Operating modes remain mutually exclusive.
+Velocity sources pass through the command multiplexer before reaching the
+drive controller. Mapping and localization/navigation retain distinct TF
+ownership:
 
-- [`docs/installation.md`](docs/installation.md)
-- [`docs/system_architecture.md`](docs/system_architecture.md)
-- [`docs/topic_interface_reference.md`](docs/topic_interface_reference.md)
-- [`docs/debugging_and_validation.md`](docs/debugging_and_validation.md)
+- Mapping: SLAM Toolbox owns `map -> odom`.
+- Localization/navigation: AMCL owns `map -> odom`.
+- ros2_control owns `odom -> base_link`.
+- robot_state_publisher owns the robot link and sensor transforms.
 
----
+See [system architecture](docs/system_architecture.md) for the original v0.1.0
+baseline, [lifecycle foundation](docs/lifecycle_foundation.md) for v0.1.2, and
+[readiness contracts](docs/readiness_contracts.md) for v0.1.3.
 
-## Repository Structure
+## Technology stack
+
+| Area | Technology |
+| --- | --- |
+| Platform | Ubuntu 24.04, ROS 2 Jazzy |
+| Simulation | Gazebo Harmonic, `ros_gz_sim`, `ros_gz_bridge` |
+| Robot control | ros2_control, `gz_ros2_control`, differential-drive controller |
+| Autonomy | SLAM Toolbox, AMCL, Nav2 |
+| Application | C++17, Python 3, Bash |
+| Browser interface | HTML, CSS, JavaScript, rosbridge |
+| Build and test | ament_cmake, colcon, pytest, GoogleTest |
+| Automation | Docker, GitHub Actions on Ubuntu 24.04 |
+
+## Repository layout
 
 ```text
-cpp_robotics_sim_foundation/
+ros2-amr-platform/
 ├── .github/
-│   └── workflows/
-│       └── ros2_jazzy_ci.yml
+│   ├── ISSUE_TEMPLATE/
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   └── workflows/ros2_jazzy_ci.yml
 ├── docs/
-│   ├── media/
-│   │   └── v0.1.0/
-│   │       ├── dashboard.png
-│   │       ├── hospital_gazebo.png
-│   │       └── warehouse_gazebo.png
-│   ├── debugging_and_validation.md
-│   ├── installation.md
-│   ├── system_architecture.md
-│   └── topic_interface_reference.md
-├── ros2_ws/
-│   └── src/
-│       └── cpp_robotics_sim_ros/
-│           ├── config/
-│           ├── launch/
-│           ├── maps/
-│           ├── nav2/
-│           ├── rviz/
-│           ├── scripts/
-│           ├── src/
-│           ├── test/
-│           ├── urdf/
-│           ├── web/
-│           ├── worlds/
-│           └── xacro/
-├── scripts/
-│   ├── check_syntax.sh
-│   ├── launch_regression.sh
-│   ├── run.sh
-│   └── test.sh
-├── Dockerfile
-├── LICENSE
-└── README.md
+│   ├── evidence/v0.1.3/
+│   ├── lifecycle_foundation.md
+│   ├── readiness_contracts.md
+│   ├── topic_interface_reference.md
+│   └── AMR_Release_Verification_Tracker.xlsx
+├── ros2_ws/src/cpp_robotics_sim_ros/
+│   ├── config/      # managers, controllers, environments, and Nav2
+│   ├── include/     # public C++ headers
+│   ├── launch/      # simulation and dashboard launch descriptions
+│   ├── maps/        # repository map assets
+│   ├── msg/         # lifecycle messages
+│   ├── nav2/        # Nav2 parameter sets
+│   ├── scripts/     # installed Python manager and contract nodes
+│   ├── src/         # C++ robot and simulation implementation
+│   ├── srv/         # lifecycle services
+│   ├── test/        # C++, Python, launch, and contract tests
+│   ├── urdf/ and xacro/
+│   ├── web/dashboard/
+│   └── worlds/
+└── scripts/         # setup, build, run, cleanup, and validation entry points
 ```
 
-Generated build products, logs, bags, and local maps should remain outside version control unless intentionally added.
+Generated `build/`, `install/`, and `log/` directories are workspace
+artifacts and are not source.
 
----
+## Supported environment and prerequisites
 
-## Requirements
+The verified primary environment is:
 
-### Supported development environment
+- Ubuntu 24.04 LTS, including WSL2;
+- ROS 2 Jazzy;
+- Gazebo Harmonic;
+- an OpenGL-capable desktop for interactive Gazebo;
+- Bash, Python 3, CMake, colcon, and a C++17 compiler.
 
-- Ubuntu 24.04
-- ROS 2 Jazzy
-- Gazebo Harmonic
-- Python 3.12
-- CMake and a C++17-compatible compiler
-- `colcon`
-- Docker Desktop or Docker Engine for container validation
-
-WSL2 can be used when GUI forwarding and Docker integration are configured correctly.
-
-### Core ROS packages
-
-The workspace depends on packages including:
-
-```text
-nav2_bringup
-nav2_amcl
-nav2_map_server
-nav2_controller
-nav2_planner
-nav2_bt_navigator
-nav2_behaviors
-nav2_waypoint_follower
-nav2_velocity_smoother
-nav2_lifecycle_manager
-slam_toolbox
-robot_localization
-ros_gz_sim
-ros_gz_bridge
-gz_ros2_control
-ros2_control
-ros2_controllers
-controller_manager
-diff_drive_controller
-robot_state_publisher
-xacro
-rosbridge_server
-tf2_ros
-```
-
-Use `rosdep` to resolve package dependencies rather than installing them manually one by one.
-
----
-
-## Clone and Install
-
-Clone the repository:
-
-```bash
-git clone https://github.com/Devansh-Mishra-30/cpp_robotics_sim_foundation.git
-cd cpp_robotics_sim_foundation
-```
-
-Install ROS 2 Jazzy before running the project setup script. The current
-release setup supports Ubuntu 24.04.
-
-From the repository root:
+The setup helper installs the repository's supported Ubuntu/ROS dependencies:
 
 ```bash
 ./scripts/setup.sh
 ```
 
-The setup script:
+Review the script before running it on an existing development machine. The
+long-form [installation guide](docs/installation.md) records the v0.1.0
+baseline and should be read as historical release documentation where it names
+that version.
 
-- verifies that the host is Ubuntu 24.04;
-- verifies that the configured ROS 2 installation exists;
-- installs `python3-rosdep` when necessary;
-- initializes and updates rosdep;
-- resolves dependencies from `ros2_ws/src`;
-- verifies that `colcon` and `ros2` are available.
-
-The script may request administrator privileges while installing packages.
-
-After setup completes:
+## Clone and build
 
 ```bash
+git clone https://github.com/Devansh-Mishra-30/ros2-amr-platform.git
+cd ros2-amr-platform
 ./scripts/build.sh
-./scripts/test.sh
 ```
 
-## Build
+`build.sh` validates source syntax, sources ROS 2, and builds
+`cpp_robotics_sim_ros` with tests enabled.
 
-From the repository root:
-
-```bash
-source /opt/ros/jazzy/setup.bash
-
-cd ros2_ws
-
-colcon build \
-  --packages-select cpp_robotics_sim_ros \
-  --cmake-args -DBUILD_TESTING=ON
-
-source install/setup.bash
-```
-
-Expected result:
-
-```text
-Summary: 1 package finished
-```
-
-For development with symlinked Python and resource files:
-
-```bash
-colcon build \
-  --packages-select cpp_robotics_sim_ros \
-  --symlink-install \
-  --cmake-args -DBUILD_TESTING=ON
-```
-
----
-
-## Run the Platform
-
-From the repository root:
-
-```bash
-./scripts/run.sh
-```
-
-The launcher starts:
-
-- the browser dashboard HTTP server;
-- rosbridge WebSocket;
-- simulation manager;
-- mode manager;
-- mapping manager;
-- localization manager;
-- navigation goal manager.
-
-Default ports:
-
-| Service | Port |
-|---|---|
-| Dashboard HTTP server | `8080` |
-| rosbridge WebSocket | `9090` |
-
-On native Linux, the dashboard is normally available at
-`http://localhost:8080`. Under WSL2, `run.sh` detects the WSL network address,
-prints the complete dashboard URL, and opens it in the Windows browser when
-browser launching is enabled.
-
-The dashboard does not automatically start Gazebo. Select an environment and
-use **Start**.
-
----
-
-## Dashboard Workflow
-
-### 1. Start the platform
-
-```bash
-./scripts/run.sh
-```
-
-Open:
-
-```text
-http://localhost:8080
-```
-
-Confirm that the dashboard shows:
-
-```text
-ROS connected
-Safety state: READY
-Simulation: stopped
-```
-
-### 2. Select an environment
-
-Choose:
-
-- Warehouse; or
-- Hospital.
-
-Environment selection is locked while the simulation is running.
-
-### 3. Start the simulation
-
-Press **Start**.
-
-Expected runtime components include:
-
-```text
-Gazebo
-robot_state_publisher
-controller_manager
-joint_state_broadcaster
-diff_drive_controller
-LiDAR bridge
-command routing
-```
-
-### 4. Choose an operating mode
-
-The supported user modes are:
-
-```text
-Manual
-Mapping
-Localization
-Navigation
-```
-
-Only one auxiliary mode should be active at a time.
-
-### 5. Stop cleanly
-
-Use **Stop Mode** before changing high-level operating modes when appropriate.
-
-Use **Stop Simulation** before switching environments.
-
-Stop the dashboard launcher with `Ctrl+C` after the simulation has stopped.
-
----
-
-## Manual Control
-
-1. Start the simulation.
-2. Select **Manual**.
-3. Use the dashboard controls to drive the robot.
-4. Observe linear and angular command values.
-5. Release control and verify that the command returns to zero.
-6. Select **Stop Mode** when finished.
-
-Safety behavior:
-
-- the active command source is tracked;
-- stale or inactive control should not continue moving the robot;
-- a zero command is issued when manual control ends.
-
----
-
-## Mapping Workflow
-
-1. Start the selected simulation environment.
-2. Select **Mapping**.
-3. Drive the robot through unexplored areas.
-4. Monitor live map growth.
-5. Enter a valid map name.
-6. Save the map.
-7. Stop Mapping before starting Localization or Navigation.
-
-Map output:
-
-```text
-~/.ros/cpp_robotics_sim/maps/<environment>/<map_name>.yaml
-~/.ros/cpp_robotics_sim/maps/<environment>/<map_name>.pgm
-```
-
-Map names are validated to prevent invalid or unsafe paths.
-
----
-
-## Localization Workflow
-
-1. Stop Mapping.
-2. Select a saved map for the current environment.
-3. Start **Localization**.
-4. Set the initial pose from the dashboard.
-5. Confirm that AMCL becomes active.
-6. Verify the map-based TF chain:
-
-```text
-map → odom → base_link
-```
-
-Useful checks:
-
-```bash
-ros2 topic echo /amcl_pose --once
-ros2 run tf2_ros tf2_echo map base_link
-ros2 topic info /map
-ros2 topic info /scan
-```
-
----
-
-## Navigation Workflow
-
-1. Complete or load a valid map.
-2. Select the saved map for the current environment.
-3. Select **Navigation**.
-4. Set the initial pose from the dashboard.
-5. Confirm that the map, AMCL, TF, and Nav2 servers are active.
-6. Enter a map-frame goal:
-   - `x`
-   - `y`
-   - `yaw`
-7. Select **Send Goal**.
-8. Monitor distance, estimated time, elapsed time, and recovery count.
-9. Allow the goal to complete or select **Cancel Goal**.
-
-Navigation mode launches its own map-server, AMCL, and Nav2 stack. Because
-operating modes are mutually exclusive, Localization mode does not remain
-active while Navigation mode is running.
-
-Expected safety behavior:
-
-- the command source changes to navigation while a goal is active;
-- the robot stops after success;
-- the robot stops after cancellation;
-- the active source returns to none;
-- the simulation remains running until explicitly stopped.
-
----
-
-## ROS 2 Interfaces
-
-### Dashboard and manager interfaces
-
-#### Topics
-
-| Interface | Type | Purpose |
-|---|---|---|
-| `/cmd_vel/gui` | `geometry_msgs/msg/TwistStamped` | Dashboard manual-velocity command |
-| `/control/emergency_stop` | `std_msgs/msg/Bool` | Engage or release emergency stop |
-| `/control/active_source` | `std_msgs/msg/String` | Current velocity-command source |
-| `/simulation/status` | `std_msgs/msg/String` | High-level simulation state |
-| `/simulation/environment_status` | `std_msgs/msg/String` | Environment state, selection, world, and lock status |
-| `/simulation/environment_request` | `std_msgs/msg/String` | Requested simulation environment |
-| `/mode/status` | `std_msgs/msg/String` | Active operating-mode state |
-| `/mapping/save_request` | `std_msgs/msg/String` | Requested map name |
-| `/mapping/save_status` | `std_msgs/msg/String` | JSON map-save result |
-| `/mapping/saved_maps` | `std_msgs/msg/String` | JSON saved-map inventory |
-| `/localization/select_map_request` | `std_msgs/msg/String` | JSON map-selection request |
-| `/localization/initial_pose_request` | `std_msgs/msg/String` | JSON initial-pose request |
-| `/localization/status` | `std_msgs/msg/String` | JSON localization-manager status |
-| `/localization/selected_map` | `std_msgs/msg/String` | JSON selected-map metadata |
-| `/navigation/goal_request` | `std_msgs/msg/String` | JSON map-frame goal request |
-| `/navigation/cancel_request` | `std_msgs/msg/String` | JSON goal-cancellation request |
-| `/navigation/status` | `std_msgs/msg/String` | JSON navigation state and final result |
-| `/navigation/feedback` | `std_msgs/msg/String` | JSON navigation-progress feedback |
-
-#### Services
-
-| Interface | Type | Purpose |
-|---|---|---|
-| `/simulation/start` | `std_srvs/srv/Trigger` | Start the selected simulation environment |
-| `/simulation/stop` | `std_srvs/srv/Trigger` | Stop the managed simulation |
-| `/simulation/reset` | `std_srvs/srv/Trigger` | Stop and restart the selected environment |
-| `/mode/manual` | `std_srvs/srv/Trigger` | Activate Manual mode |
-| `/mode/mapping` | `std_srvs/srv/Trigger` | Launch Mapping mode |
-| `/mode/localization` | `std_srvs/srv/Trigger` | Launch Localization mode |
-| `/mode/navigation` | `std_srvs/srv/Trigger` | Launch Navigation mode |
-| `/mode/stop` | `std_srvs/srv/Trigger` | Stop the active operating mode |
-
-### Robot and autonomy interfaces
-
-| Interface | Type | Purpose |
-|---|---|---|
-| `/scan` | `sensor_msgs/msg/LaserScan` | Simulated LiDAR |
-| `/joint_states` | `sensor_msgs/msg/JointState` | Robot joint states |
-| `/diff_drive_controller/odom` | `nav_msgs/msg/Odometry` | Controller odometry |
-| `/diff_drive_controller/cmd_vel` | `geometry_msgs/msg/TwistStamped` | Controller command input |
-| `/map` | `nav_msgs/msg/OccupancyGrid` | SLAM or map-server map |
-| `/amcl_pose` | `geometry_msgs/msg/PoseWithCovarianceStamped` | AMCL pose estimate |
-| `/initialpose` | `geometry_msgs/msg/PoseWithCovarianceStamped` | Initial pose published to AMCL |
-| `/navigate_to_pose` | `nav2_msgs/action/NavigateToPose` | Nav2 single-goal action |
-| `/tf` | `tf2_msgs/msg/TFMessage` | Dynamic transforms |
-| `/tf_static` | `tf2_msgs/msg/TFMessage` | Static transforms |
-| `/clock` | `rosgraph_msgs/msg/Clock` | Simulation time |
-
-See [`docs/topic_interface_reference.md`](docs/topic_interface_reference.md) for the full contract.
-
----
-
-## Transform Ownership
-
-### Mapping
-
-```text
-SLAM Toolbox:
-  map → odom
-
-diff_drive_controller:
-  odom → base_link
-
-robot_state_publisher:
-  base_link → robot links and sensors
-```
-
-### Localization and Navigation
-
-```text
-AMCL:
-  map → odom
-
-diff_drive_controller:
-  odom → base_link
-
-robot_state_publisher:
-  base_link → robot links and sensors
-```
-
-Avoid running multiple publishers for the same TF edge.
-
----
-
-## Testing
-
-Build the workspace and run the complete native release gate:
-
-```bash
-./scripts/build.sh
-./scripts/test.sh
-```
-
-`test.sh` expects an existing built workspace and exits with an error when
-`ros2_ws/install/setup.bash` is missing.
-
-The current validated baseline is:
-
-```text
-357 tests
-0 errors
-0 failures
-0 skipped
-```
-
-The combined build and test gate includes:
-
-1. Python syntax checks
-2. JavaScript syntax checks
-3. Bash syntax checks
-4. ROS 2 package build
-5. registered ROS 2 tests
-6. ament lint checks
-7. GoogleTest
-8. simulator launch regression
-9. headless dashboard integration
-10. public launcher lifecycle validation
-
-### Targeted ROS 2 test execution
+To source the built workspace manually:
 
 ```bash
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
-
-cd ros2_ws
-
-colcon test \
-  --packages-select cpp_robotics_sim_ros \
-  --event-handlers console_direct+
-
-colcon test-result --verbose
 ```
 
----
-
-## Docker
-
-Build the development and test image:
+## Run
 
 ```bash
-docker build \
-  --tag cpp-robotics-sim:v0.1.0 \
-  .
+./scripts/run.sh
 ```
 
-Run the full test gate:
+The launcher starts the dashboard HTTP server, rosbridge, manager layer, and
+supporting ROS 2 nodes. By default it prints and opens the dashboard URL, uses
+port 8080 for HTTP and 9090 for rosbridge, and performs verified owned-process
+cleanup when stopped with Ctrl+C.
+
+Useful overrides:
 
 ```bash
-docker run --rm \
-  --name cpp-robotics-sim-v010-test \
-  cpp-robotics-sim:v0.1.0 \
-  bash -lc './scripts/test.sh'
+OPEN_BROWSER=false ./scripts/run.sh
+DASHBOARD_PORT=8081 ROSBRIDGE_PORT=9091 ./scripts/run.sh
 ```
 
-The Docker gate validates the same source tree in a clean Ubuntu 24.04 / ROS 2 Jazzy environment.
+## Operator workflows
 
-GUI simulation is normally run on the host. The container is primarily intended for build, lint, and automated test reproducibility.
+### Simulation
 
----
+1. Open the dashboard and confirm the rosbridge connection.
+2. Select the warehouse or hospital environment.
+3. Start the simulation.
+4. Wait for the manager to report the simulation running and the
+   `simulation_ready` profile ready.
+5. Stop or reset through the dashboard; do not treat a button click alone as
+   proof of completion.
 
-## Continuous Integration
+### Manual control
 
-Workflow:
+Activate Manual mode, then use the dashboard controls to publish
+`TwistStamped` commands on `/cmd_vel/gui`. The command multiplexer owns the
+controller input selection. Stop the mode or use emergency stop before leaving
+manual operation.
 
-```text
-.github/workflows/ros2_jazzy_ci.yml
-```
+### Mapping
 
-CI validates:
+Start Mapping mode only after simulation readiness succeeds. Drive the robot to
+cover the environment, enter a valid map name, save the map, and confirm the
+reported result and saved-map inventory. Map names and filesystem paths are
+validated.
 
-- source syntax;
-- dependency installation;
-- ROS 2 package build;
-- unit and behavior tests;
-- ament linting;
-- test-result collection.
+### Localization
 
-GUI-dependent Gazebo scenarios are validated locally because hosted CI environments do not provide the same desktop and graphics stack.
+Select a saved map, start Localization mode, and provide an initial pose. A
+successful mode request is not reported until clock, scan, map, AMCL pose, and
+the required TF chain satisfy the localization readiness contract.
 
----
+### Navigation
 
-## Validation Evidence
+After localization is valid, start Navigation mode and send a map-frame goal.
+The manager reports Nav2 feedback and terminal result. Deactivation requests
+goal cancellation and waits for a terminal state; success and cancellation
+both command a safe stop.
 
-Validated release-candidate scenarios include:
+## Lifecycle and readiness contracts
 
-- Warehouse startup and shutdown;
-- Hospital startup and shutdown;
-- manual drive and safe stop;
-- mapping and map save;
-- map selection;
-- AMCL localization;
-- Nav2 goal success;
-- Nav2 goal cancellation;
-- environment switching in both directions;
-- stale-process cleanup;
-- launcher port release;
-- recovery after closing Gazebo externally;
-- native full test gate;
-- Docker full test gate.
+Lifecycle and readiness answer different questions:
 
-Release evidence should be reproduced against the exact commit used for the GitHub tag.
+- Lifecycle records whether a manager component is unconfigured, inactive,
+  active, in error, or finalized.
+- Readiness records whether the runtime dependencies for an operation are
+  presently satisfied.
 
----
+The orchestrator exposes `/platform/lifecycle/transition` and orders
+simulation, mapping, localization, and navigation transitions by dependency.
+Rollback results and failures are kept separate from the originating failure.
+Manager adapters publish transient-local state plus a heartbeat and provide an
+authoritative read-only snapshot service. Aggregate success requires two
+complete, stable authoritative reads; missing, expired, or changed evidence
+fails closed.
 
-## Troubleshooting
+Simulation and mode managers publish transient-local JSON readiness reports on
+`/platform/readiness`. Reports include the profile, runtime ID, monotonic
+observation and lease, all blocked dependencies, reasons, guidance, and
+per-dependency checks. Consumers must reject the wrong profile, an earlier
+runtime ID, or an expired lease.
 
-### Dashboard opens but ROS is disconnected
+| Profile | Principal dependencies |
+| --- | --- |
+| `simulation_ready` | clock, scan, odometry, joint states, TF, controller service and controller states |
+| `mapping_ready` | clock, scan, odometry, TF |
+| `localization_ready` | clock, scan, map, AMCL pose, map/odom/base TF |
+| `navigation_ready` | localization inputs plus Nav2 action/lifecycle and controller state |
 
-Check:
+The exact schemas, rates, freshness limits, and fail-closed rules are in
+[readiness_contracts.md](docs/readiness_contracts.md).
+
+## Principal ROS 2 interfaces
+
+| Interface | Type | Purpose |
+| --- | --- | --- |
+| `/simulation/status` | `std_msgs/msg/String` | Simulation state |
+| `/simulation/environment_request` | `std_msgs/msg/String` | Environment selection |
+| `/mode/status` | `std_msgs/msg/String` | Active mode state |
+| `/platform/readiness` | `std_msgs/msg/String` | Structured readiness report |
+| `/cmd_vel/gui` | `geometry_msgs/msg/TwistStamped` | Manual velocity command |
+| `/control/emergency_stop` | `std_msgs/msg/Bool` | Emergency-stop state |
+| `/mapping/save_request` | `std_msgs/msg/String` | Map-save request |
+| `/localization/initial_pose_request` | `std_msgs/msg/String` | Initial-pose request |
+| `/navigation/goal_request` | `std_msgs/msg/String` | Map-frame navigation goal |
+| `/navigate_to_pose` | `nav2_msgs/action/NavigateToPose` | Nav2 goal action |
+| `/platform/lifecycle/transition` | custom service | Aggregate lifecycle transition |
+
+Simulation and mode control services use `std_srvs/srv/Trigger`. See the
+[topic and interface reference](docs/topic_interface_reference.md) for the
+complete public and internal contract.
+
+## Validation
+
+Run the native release gate from the repository root:
 
 ```bash
-ss -ltnp | grep -E ':8080|:9090'
-ros2 node list
+./scripts/build.sh
+./scripts/test.sh
+git diff --check
 ```
 
-Restart the launcher if rosbridge or the manager nodes are missing.
+`test.sh` repeats syntax validation, executes the colcon suite, reports
+individual results, and runs simulator launch regression, headless dashboard
+integration, and public-launcher lifecycle integration.
 
-### Gazebo closes and the dashboard shows an error
+The accepted historical v0.1.3 candidate evidence from 2026-09-26 records:
 
-An externally closed simulator is treated as an unexpected process exit.
+- `./scripts/build.sh`: passed;
+- `./scripts/test.sh`: 563 package tests, 0 failures, errors, or skips;
+- launch regression, headless dashboard, and launcher lifecycle integrations:
+  passed;
+- full runtime acceptance: 34/34 checks passed;
+- final managed process registry: empty;
+- critical manager-node multiplicity: exactly one each.
 
-Expected behavior:
+The evidence was captured from a dirty candidate based on commit
+`7764c3683387c966873e00195d0417810624f33c`. It is bound to that source by a
+hashed tracked patch and untracked-source archive; it is not evidence for a
+v0.1.3 tag or commit. See the
+[acceptance summary](docs/evidence/v0.1.3/2026-09-26_012656Z/acceptance_summary.md),
+[metadata](docs/evidence/v0.1.3/2026-09-26_012656Z/metadata.json), and
+[checksums](docs/evidence/v0.1.3/2026-09-26_012656Z/SHA256SUMS).
 
-- simulation status becomes `error`;
-- environment selection unlocks;
-- the user can choose another environment;
-- the simulation can be restarted without restarting the dashboard.
+The recorded graph contains five noncritical
+`/simulation_readiness_probe` entries; the accepted oracle excludes those
+internal probe nodes from its critical-node uniqueness check. The evidence
+does not claim that every graph name is unique.
 
-### Environment selection is locked
+Fresh final-candidate verification completed on 2026-11-06 against the staged
+uncommitted release candidate:
 
-Stop the simulation first. Selection is intentionally locked during:
+- syntax validation and `./scripts/build.sh`: passed;
+- `./scripts/test.sh`: 565 tests, 0 errors, failures, or skips;
+- launch regression, headless dashboard, and public-launcher lifecycle:
+  passed;
+- isolated runtime acceptance: 34/34 checks passed with an empty final process
+  registry and no remaining managed ROS/Gazebo processes.
 
-```text
-starting
-running
-stopping
-```
+The raw output, full build/test logs, source-candidate patch, metadata, tracker
+reconciliation, and verified SHA-256 manifest are in the
+[final-candidate evidence bundle](docs/evidence/v0.1.3/2026-11-06_171445Z/acceptance_summary.md).
+The bundle is source-bound to the staged diff, not yet to a release commit or
+tag; its metadata records the post-commit reconciliation rule.
 
-### Navigation does not start
+## Continuous integration and Docker
 
-Verify:
+The GitHub Actions workflow targets Ubuntu 24.04 and ROS 2 Jazzy. It runs the
+native build/test path and Docker build/test coverage defined in
+[ros2_jazzy_ci.yml](.github/workflows/ros2_jazzy_ci.yml). Hosted CI does not
+exercise interactive Gazebo GUI scenarios.
+
+For local container validation, use the repository's Docker scripts:
 
 ```bash
-ros2 topic info /map
-ros2 topic info /scan
-ros2 topic echo /amcl_pose --once
-ros2 run tf2_ros tf2_echo map base_link
-ros2 action list | grep navigate_to_pose
+./scripts/docker_build.sh
+./scripts/docker_test.sh
 ```
 
-Navigation requires a valid map, localization, TF, LiDAR, odometry, and active Nav2 servers.
+## Historical media
 
-### Generated build state needs to be refreshed
+The screenshots and demonstration links under
+[`docs/media/v0.1.0`](docs/media/v0.1.0) document the v0.1.0 user experience.
+They are retained as historical media and are not presented as fresh v0.1.3
+runtime evidence.
 
-Use the normal dashboard and launcher shutdown paths for runtime processes.
+## v0.1.3 release materials
 
-The repository cleanup script removes generated workspace artifacts and Python caches. It does not terminate ROS 2 or Gazebo processes.
+- [Release notes](docs/v0.1.3_release_notes.md)
+- [Manual release checklist](docs/v0.1.3_manual_release_checklist.md)
+- [Media capture plan](docs/v0.1.3_media_capture_plan.md)
+- [LinkedIn publication package](docs/v0.1.3_linkedin_package.md)
+- [v0.1.4 engineering handoff](docs/v0.1.4_handoff.md)
 
-```bash
-./scripts/clean.sh
-```
+## Known limitations
 
-After cleaning, rebuild the workspace before launching the platform again.
----
-
-## Known Limitations
-
-`v0.1.0` is a validated first public release, not a production deployment platform.
-
-Current limitations:
-
-- RViz is not integrated into the browser dashboard.
-- GUI Gazebo scenarios are not executed in hosted CI.
-- Custom robots are not yet loadable through the dashboard.
-- Custom user maps and worlds require configuration changes.
-- Algorithm selection is fixed by the current configuration.
-- Parameter tuning is configuration-file based rather than dashboard-driven.
-- Dynamic-obstacle benchmarking is not part of the first release.
-- Hardware deployment is outside the `v0.1.0` scope.
-- PS4 controller support is deferred.
-- Performance comparisons are not yet exposed as a complete experiment pipeline.
-
----
+- The candidate has not yet been committed or tagged as v0.1.3.
+- The accepted evidence binds an uncommitted candidate with hashes rather than
+  a release commit; final-source verification must remain distinct from that
+  historical run.
+- Five internal readiness-probe graph entries were observed; critical manager
+  uniqueness still passed the accepted oracle.
+- GUI Gazebo scenarios are not run in hosted CI.
+- The platform supports the repository's configured robot, environments,
+  maps, and autonomy algorithms; arbitrary dashboard-driven imports and tuning
+  are not implemented.
+- Runtime maps default to user data outside the repository.
+- Hardware deployment, safety certification, performance benchmarking, and
+  dynamic-obstacle qualification are outside v0.1.3 scope.
+- A final authoritative lifecycle verification failure is reported but cannot
+  undo already completed irreversible runtime effects.
 
 ## Roadmap
 
-Planned post-`v0.1.0` work includes:
+Future work is planning-only and is not part of v0.1.3. The current forward
+plan is documented in
+[`docs/v0.1.4-v0.1.6_forward_engineering_plan.md`](docs/v0.1.4-v0.1.6_forward_engineering_plan.md).
+It must not be interpreted as implemented behavior.
 
-- custom robot import;
-- custom map and world selection;
-- dashboard-based parameter tuning;
-- selectable planners, controllers, and localization methods;
-- RViz integration;
-- experiment orchestration;
-- automated parameter sweeps;
-- plot and report generation;
-- spreadsheet-driven test definitions;
-- algorithm and configuration comparison;
-- rosbag replay regression;
-- dynamic-obstacle scenarios;
-- sensor and physics noise sweeps;
-- simulation-to-hardware workflows;
-- improved portfolio and teaching material.
+## Development and contribution
 
-The long-term goal is an instructional and experimentation platform for autonomous mobile robot development rather than a single fixed demo.
-
----
-
-## Security and Safety Notes
-
-- Map names and filesystem paths are validated before use.
-- Environment changes are allowlisted.
-- Mutually exclusive modes prevent conflicting autonomy stacks.
-- Velocity sources are tracked and deactivated on stop.
-- Navigation success and cancellation trigger a safe stop.
-- Shutdown attempts normal process-group termination before escalation.
-- Generated maps, bags, build products, and logs are not committed by default.
-
----
-
-## Development Guidelines
-
-Before submitting changes:
+Keep changes bounded, preserve established ROS interfaces unless intentionally
+versioned, and include validation proportional to the affected subsystem.
+Before proposing a merge:
 
 ```bash
 ./scripts/test.sh
-```
-
-Also verify:
-
-```bash
 git diff --check
 git status --short
 ```
 
-Changes to lifecycle, command routing, mapping, localization, navigation, or filesystem handling should include targeted regression tests.
+Use the issue and pull-request templates to record objective, scope,
+architecture/interface impact, commands actually executed, results, risks,
+and remaining limitations. Do not commit generated workspace artifacts,
+runtime maps, bags, logs, or local environment files.
 
-Do not add new runtime behavior without documenting:
+## Release information
 
-- the user workflow;
-- ROS 2 interfaces;
-- safety behavior;
-- failure recovery;
-- validation evidence.
+| Item | Value |
+| --- | --- |
+| Candidate | v0.1.3 |
+| Package | `cpp_robotics_sim_ros` |
+| Package version | `0.1.3` |
+| Primary environment | Ubuntu 24.04, ROS 2 Jazzy, Gazebo Harmonic |
+| License | MIT |
+| Published baseline tags | v0.1.0, v0.1.1, v0.1.2 |
+| v0.1.3 tag | Not created |
 
----
-
-## Contributing
-
-Issues and focused pull requests are welcome after the first public release.
-
-A useful contribution should include:
-
-- a clear problem statement;
-- reproduction steps;
-- minimal implementation scope;
-- tests;
-- documentation updates;
-- validation evidence.
-
-For larger features, open an issue before implementation to align on architecture and release scope.
-
----
+Release publication requires a reviewed commit whose final tree has passed the
+applicable release gates. This repository intentionally contains no claim that
+the untagged candidate is already published.
 
 ## License
 
-This project is licensed under the MIT License.
-
-See [`LICENSE`](LICENSE).
-
----
+Licensed under the [MIT License](LICENSE).
 
 ## Author
 
-**Devansh Mishra**
-
-- GitHub: [Devansh-Mishra-30](https://github.com/Devansh-Mishra-30)
-- LinkedIn: [linkedin.com/in/dvm](https://linkedin.com/in/dvm)
-- Portfolio: [devanshportfolio.bubbleapps.io/version-test/](https://devanshportfolio.bubbleapps.io/version-test/)
-
----
-
-## Release Summary
-
-`v0.1.0` establishes a reproducible baseline for:
-
-```text
-Environment selection
-Managed simulation lifecycle
-Browser-based manual control
-SLAM mapping
-Environment-aware map management
-AMCL localization
-Nav2 navigation
-Goal cancellation
-Command-source safety
-Native and Docker validation
-Clean shutdown and recovery
-```
-
-The first release is intended to provide a stable foundation for continued robotics simulation, experimentation, teaching, and autonomous mobile robot development.
+Devansh Mishra — [GitHub](https://github.com/Devansh-Mishra-30)

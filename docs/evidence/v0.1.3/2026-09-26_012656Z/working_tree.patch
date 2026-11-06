@@ -1,0 +1,2777 @@
+diff --git a/docs/lifecycle_foundation.md b/docs/lifecycle_foundation.md
+index 12c2278..2ff6e1d 100644
+--- a/docs/lifecycle_foundation.md
++++ b/docs/lifecycle_foundation.md
+@@ -64,6 +64,10 @@ Concurrent platform requests return `BUSY` immediately.
+ Each manager adapter publishes a transient-local
+ `ManagedLifecycleState` on `/lifecycle/<component>/state` and offers
+ `TransitionManagedComponent` on `/lifecycle/<component>/transition`.
++v0.1.3 also provides the read-only
++`GetManagedComponentState` service at
++`/lifecycle/<component>/state_snapshot`, used to verify authoritative current
++state and transition provenance before an aggregate result is returned.
+ Component transition events and aggregate orchestration events are published
+ on `/platform/lifecycle/transition_events`. Manager service requests carry an
+ `orchestration_id`; the manager event repeats it, allowing the orchestrator to
+diff --git a/docs/topic_interface_reference.md b/docs/topic_interface_reference.md
+index 496b607..07c1614 100644
+--- a/docs/topic_interface_reference.md
++++ b/docs/topic_interface_reference.md
+@@ -89,7 +89,19 @@ Unless stated otherwise:
+ - state and status payloads are published as compact JSON objects;
+ - malformed payloads are rejected or ignored without crashing the manager.
+ 
+-### 2.4 Service type
++### 2.4 Readiness report (v0.1.3)
++
++Simulation and mode managers publish structured JSON as
++`std_msgs/msg/String` on `/platform/readiness` with transient-local, reliable
++QoS. The payload contains a readiness profile, per-dependency checks, all
++blocked dependency names, actionable reasons, a runtime ID, and monotonic
++observation/lease values. Consumers must reject reports from an earlier
++runtime ID and expired leases. Readiness does not replace or mutate lifecycle
++state, `/simulation/status`, or `/mode/status`. See
++[`readiness_contracts.md`](readiness_contracts.md) for exact profiles and
++payload fields.
++
++### 2.5 Service type
+ 
+ All public simulation and mode services use:
+ 
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/CMakeLists.txt b/ros2_ws/src/cpp_robotics_sim_ros/CMakeLists.txt
+index fafba34..a092f4a 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/CMakeLists.txt
++++ b/ros2_ws/src/cpp_robotics_sim_ros/CMakeLists.txt
+@@ -29,6 +29,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
+   "msg/ManagedLifecycleState.msg"
+   "msg/LifecycleTransitionEvent.msg"
+   "srv/TransitionManagedComponent.srv"
++  "srv/GetManagedComponentState.srv"
+ )
+ 
+ find_package(rclcpp REQUIRED)
+@@ -125,12 +126,15 @@ install(
+     scripts/navigation_goal_manager_node.py
+     scripts/process_registry.py
+     scripts/process_lifecycle.py
++    scripts/teardown.py
+     scripts/runtime_verification.py
+     scripts/managed_component.py
+     scripts/platform_lifecycle_orchestrator.py
+     scripts/platform_lifecycle_orchestrator_node.py
+     scripts/lifecycle_ros_adapter.py
+     scripts/v012_lifecycle_acceptance.py
++    scripts/readiness_contract.py
++    scripts/ros_runtime_readiness.py
+   DESTINATION lib/${PROJECT_NAME}
+ )
+ 
+@@ -179,6 +183,24 @@ if(BUILD_TESTING)
+     TIMEOUT 30
+   )
+ 
++  ament_add_pytest_test(
++    test_readiness_contract
++    test/test_readiness_contract.py
++    TIMEOUT 30
++  )
++
++  ament_add_pytest_test(
++    test_package_manifest
++    test/test_package_manifest.py
++    TIMEOUT 30
++  )
++
++  ament_add_pytest_test(
++    test_manager_shutdown
++    test/test_manager_shutdown.py
++    TIMEOUT 30
++  )
++
+   ament_add_pytest_test(
+     test_manager_lifecycle_integration
+     test/test_manager_lifecycle_integration.py
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/config/amcl_params.yaml b/ros2_ws/src/cpp_robotics_sim_ros/config/amcl_params.yaml
+index 2996758..3b57cc3 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/config/amcl_params.yaml
++++ b/ros2_ws/src/cpp_robotics_sim_ros/config/amcl_params.yaml
+@@ -47,8 +47,9 @@ amcl:
+     beam_skip_error_threshold: 0.9
+ 
+     # Update thresholds
+-    update_min_d: 0.10
+-    update_min_a: 0.10
++    # Publish fresh localization evidence while the simulated robot is idle.
++    update_min_d: 0.0
++    update_min_a: 0.0
+ 
+     # Recovery behavior
+     recovery_alpha_fast: 0.0
+@@ -56,7 +57,7 @@ amcl:
+ 
+     # TF and pose publication
+     tf_broadcast: true
+-    transform_tolerance: 1.0
++    transform_tolerance: 0.0
+     save_pose_rate: 0.5
+ 
+     # Initial pose near the simulated spawn position
+@@ -65,4 +66,4 @@ amcl:
+       x: 0.0
+       y: 0.0
+       z: 0.0
+-      yaw: 0.0
+\ No newline at end of file
++      yaw: 0.0
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/config/mode_manager.yaml b/ros2_ws/src/cpp_robotics_sim_ros/config/mode_manager.yaml
+index 36208c6..f2186a6 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/config/mode_manager.yaml
++++ b/ros2_ws/src/cpp_robotics_sim_ros/config/mode_manager.yaml
+@@ -8,6 +8,7 @@ mode_manager:
+ 
+     managed_use_sim_time: true
+ 
+-    startup_grace_period: 3.0
++    readiness_timeout: 45.0
++    descendant_identity_timeout: 4.0
+     shutdown_timeout: 4.0
+     kill_timeout: 1.5
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/config/simulation_manager.yaml b/ros2_ws/src/cpp_robotics_sim_ros/config/simulation_manager.yaml
+index 1e413ac..efccef7 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/config/simulation_manager.yaml
++++ b/ros2_ws/src/cpp_robotics_sim_ros/config/simulation_manager.yaml
+@@ -7,6 +7,8 @@ simulation_manager:
+     # The manager itself continues using wall time.
+     managed_use_sim_time: true
+ 
+-    startup_grace_period: 4.0
++    readiness_timeout: 45.0
++    # Bounds observed process-identity convergence; it is not readiness evidence.
++    descendant_identity_timeout: 4.0
+     shutdown_timeout: 4.0
+     kill_timeout: 1.5
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/launch/ekf_localization.launch.py b/ros2_ws/src/cpp_robotics_sim_ros/launch/ekf_localization.launch.py
+index 06dc84a..5ad7361 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/launch/ekf_localization.launch.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/launch/ekf_localization.launch.py
+@@ -8,7 +8,6 @@ from launch import LaunchDescription
+ from launch.actions import (
+     DeclareLaunchArgument,
+     IncludeLaunchDescription,
+-    TimerAction,
+ )
+ from launch.launch_description_sources import (
+     PythonLaunchDescriptionSource,
+@@ -73,14 +72,6 @@ def generate_launch_description():
+         ],
+     )
+ 
+-    delayed_ekf = TimerAction(
+-        period=10.0,
+-        actions=[
+-            imu_sensor_frame_transform,
+-            ekf_node,
+-        ],
+-    )
+-
+     return LaunchDescription([
+         DeclareLaunchArgument(
+             'use_sim_time',
+@@ -88,5 +79,6 @@ def generate_launch_description():
+             description='Use Gazebo simulation time',
+         ),
+         base_simulation,
+-        delayed_ekf,
++        imu_sensor_frame_transform,
++        ekf_node,
+     ])
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/launch/interactive_control.launch.py b/ros2_ws/src/cpp_robotics_sim_ros/launch/interactive_control.launch.py
+index 4b2f12e..00c772f 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/launch/interactive_control.launch.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/launch/interactive_control.launch.py
+@@ -8,7 +8,6 @@ from launch import LaunchDescription
+ from launch.actions import (
+     DeclareLaunchArgument,
+     IncludeLaunchDescription,
+-    TimerAction,
+ )
+ from launch.launch_description_sources import (
+     PythonLaunchDescriptionSource,
+@@ -64,13 +63,6 @@ def generate_launch_description():
+         ],
+     )
+ 
+-    delayed_command_mux = TimerAction(
+-        period=10.0,
+-        actions=[
+-            command_mux,
+-        ],
+-    )
+-
+     return LaunchDescription(
+         [
+             DeclareLaunchArgument(
+@@ -90,6 +82,6 @@ def generate_launch_description():
+                 description='Use Gazebo simulation time',
+             ),
+             simulation,
+-            delayed_command_mux,
++            command_mux,
+         ]
+     )
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/launch/nav2_navigation.launch.py b/ros2_ws/src/cpp_robotics_sim_ros/launch/nav2_navigation.launch.py
+index 1834b15..7cb34f6 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/launch/nav2_navigation.launch.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/launch/nav2_navigation.launch.py
+@@ -13,7 +13,6 @@ from launch import LaunchDescription
+ from launch.actions import (
+     DeclareLaunchArgument,
+     IncludeLaunchDescription,
+-    TimerAction,
+ )
+ from launch.launch_description_sources import (
+     PythonLaunchDescriptionSource,
+@@ -214,22 +213,6 @@ def generate_launch_description():
+         ],
+     )
+ 
+-    delayed_navigation_stack = TimerAction(
+-        period=4.0,
+-        actions=[
+-            scan_frame_bridge,
+-            cmd_vel_bridge,
+-            localization_stack,
+-            controller_server,
+-            planner_server,
+-            behavior_server,
+-            bt_navigator,
+-            waypoint_follower,
+-            velocity_smoother,
+-            lifecycle_manager_navigation,
+-        ],
+-    )
+-
+     return LaunchDescription(
+         [
+             DeclareLaunchArgument(
+@@ -243,6 +226,15 @@ def generate_launch_description():
+                     'Absolute path to saved map YAML'
+                 ),
+             ),
+-            delayed_navigation_stack,
++            scan_frame_bridge,
++            cmd_vel_bridge,
++            localization_stack,
++            controller_server,
++            planner_server,
++            behavior_server,
++            bt_navigator,
++            waypoint_follower,
++            velocity_smoother,
++            lifecycle_manager_navigation,
+         ]
+     )
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/launch/ros2_control.launch.py b/ros2_ws/src/cpp_robotics_sim_ros/launch/ros2_control.launch.py
+index 0c8722a..12d6c76 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/launch/ros2_control.launch.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/launch/ros2_control.launch.py
+@@ -5,7 +5,7 @@
+ # https://opensource.org/licenses/MIT.
+ 
+ from launch import LaunchDescription
+-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction
++from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+ from launch.launch_description_sources import PythonLaunchDescriptionSource
+ from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+ from launch_ros.actions import Node
+@@ -127,21 +127,6 @@ def generate_launch_description():
+         ]
+     )
+ 
+-    delayed_diff_drive_controller = TimerAction(
+-        period=8.0,
+-        actions=[diff_drive_controller_spawner]
+-    )
+-
+-    delayed_spawn = TimerAction(
+-        period=3.0,
+-        actions=[spawn_diffbot]
+-    )
+-
+-    delayed_joint_state_broadcaster = TimerAction(
+-        period=6.0,
+-        actions=[joint_state_broadcaster_spawner]
+-    )
+-
+     return LaunchDescription([
+         DeclareLaunchArgument(
+             'world',
+@@ -158,7 +143,7 @@ def generate_launch_description():
+         scan_bridge,
+         imu_bridge,
+         description,
+-        delayed_spawn,
+-        delayed_joint_state_broadcaster,
+-        delayed_diff_drive_controller
++        spawn_diffbot,
++        joint_state_broadcaster_spawner,
++        diff_drive_controller_spawner,
+     ])
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/launch/web_interface.launch.py b/ros2_ws/src/cpp_robotics_sim_ros/launch/web_interface.launch.py
+index c0f838f..6ffe347 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/launch/web_interface.launch.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/launch/web_interface.launch.py
+@@ -268,8 +268,8 @@ def _build_launch_description():
+     open_browser = LaunchConfiguration(
+         'open_browser'
+     )
+-    mode_startup_grace_period = LaunchConfiguration(
+-        'mode_startup_grace_period'
++    mode_readiness_timeout = LaunchConfiguration(
++        'mode_readiness_timeout'
+     )
+ 
+     package_share = Path(
+@@ -364,8 +364,8 @@ def _build_launch_description():
+             str(mode_manager_config),
+             {
+                 'use_sim_time': False,
+-                'startup_grace_period': ParameterValue(
+-                    mode_startup_grace_period, value_type=float,
++                'readiness_timeout': ParameterValue(
++                    mode_readiness_timeout, value_type=float,
+                 ),
+             },
+         ],
+@@ -483,10 +483,10 @@ def _build_launch_description():
+                 ),
+             ),
+             DeclareLaunchArgument(
+-                'mode_startup_grace_period',
+-                default_value='3.0',
++                'mode_readiness_timeout',
++                default_value='45.0',
+                 description=(
+-                    'Mode launch identity-capture grace period in seconds'
++                    'Maximum readiness wait for a requested mode in seconds'
+                 ),
+             ),
+             LogInfo(
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/nav2/diffbot_nav2_params.yaml b/ros2_ws/src/cpp_robotics_sim_ros/nav2/diffbot_nav2_params.yaml
+index a3857aa..ac15f9d 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/nav2/diffbot_nav2_params.yaml
++++ b/ros2_ws/src/cpp_robotics_sim_ros/nav2/diffbot_nav2_params.yaml
+@@ -8,13 +8,19 @@ amcl:
+     scan_topic: scan
+ 
+     tf_broadcast: true
+-    transform_tolerance: 1.0
++    transform_tolerance: 0.0
++    set_initial_pose: true
++    initial_pose:
++      x: 0.0
++      y: 0.0
++      z: 0.0
++      yaw: 0.0
+ 
+     min_particles: 500
+     max_particles: 2000
+ 
+-    update_min_d: 0.10
+-    update_min_a: 0.10
++    update_min_d: 0.0
++    update_min_a: 0.0
+ 
+     laser_model_type: likelihood_field
+     laser_max_range: 12.0
+@@ -357,4 +363,4 @@ lifecycle_manager_navigation:
+       - behavior_server
+       - velocity_smoother
+       - bt_navigator
+-      - waypoint_follower
+\ No newline at end of file
++      - waypoint_follower
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/package.xml b/ros2_ws/src/cpp_robotics_sim_ros/package.xml
+index 9863d07..d19f781 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/package.xml
++++ b/ros2_ws/src/cpp_robotics_sim_ros/package.xml
+@@ -1,8 +1,4 @@
+ <?xml version="1.0"?>
+-<?xml-model
+-  href="http://download.ros.org/schema/package_format3.xsd"
+-  schematypens="http://www.w3.org/2001/XMLSchema"?>
+-
+ <package format="3">
+   <name>cpp_robotics_sim_ros</name>
+   <version>0.1.0</version>
+@@ -56,6 +52,8 @@
+   <exec_depend>ros2_control</exec_depend>
+   <exec_depend>ros2_controllers</exec_depend>
+   <exec_depend>controller_manager</exec_depend>
++  <exec_depend>controller_manager_msgs</exec_depend>
++  <exec_depend>rosgraph_msgs</exec_depend>
+   <exec_depend>joint_state_broadcaster</exec_depend>
+   <exec_depend>diff_drive_controller</exec_depend>
+   <exec_depend>gz_ros2_control</exec_depend>
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/scripts/lifecycle_ros_adapter.py b/ros2_ws/src/cpp_robotics_sim_ros/scripts/lifecycle_ros_adapter.py
+index 09c280f..90e485b 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/scripts/lifecycle_ros_adapter.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/scripts/lifecycle_ros_adapter.py
+@@ -10,8 +10,11 @@
+ from datetime import datetime, timezone
+ 
+ from cpp_robotics_sim_ros.msg import LifecycleTransitionEvent, ManagedLifecycleState
+-from cpp_robotics_sim_ros.srv import TransitionManagedComponent
++from cpp_robotics_sim_ros.srv import (
++    GetManagedComponentState, TransitionManagedComponent,
++)
+ from managed_component import LifecycleTransition, ManagedComponent
++import rclpy
+ from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
+ 
+ 
+@@ -33,6 +36,8 @@ def bind_lifecycle(node, component_name, hooks):
+     )
+ 
+     def publish_state():
++        if not rclpy.ok(context=node.context):
++            return
+         snapshot = ManagedLifecycleState()
+         snapshot.component = component_name
+         snapshot.state = component.state.value
+@@ -41,6 +46,8 @@ def bind_lifecycle(node, component_name, hooks):
+         state_publisher.publish(snapshot)
+ 
+     def publish_result(result, orchestration_id=''):
++        if not rclpy.ok(context=node.context):
++            return None
+         event = LifecycleTransitionEvent()
+         for field, value in result.to_mapping().items():
+             setattr(event, field, value)
+@@ -67,7 +74,25 @@ def bind_lifecycle(node, component_name, hooks):
+         f'/lifecycle/{component_name}/transition',
+         callback,
+     )
++
++    def get_state(_request, response):
++        response.component = component_name
++        response.state = component.state.value
++        response.last_transition = component.last_transition
++        response.last_transition_id = component.last_transition_id
++        response.observed_at = datetime.now(timezone.utc).isoformat()
++        return response
++
++    node.create_service(
++        GetManagedComponentState,
++        f'/lifecycle/{component_name}/state_snapshot',
++        get_state,
++    )
+     node.publish_lifecycle_state = publish_state
+     node.publish_lifecycle_result = publish_result
++    # Transient-local state communicates the last value to late joiners, but
++    # cannot prove the publisher is still alive. Periodic snapshots provide a
++    # small lease for remote consumers without adding readiness to lifecycle.
++    node.lifecycle_state_timer = node.create_timer(1.0, publish_state)
+     publish_state()
+     return component
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/scripts/managed_component.py b/ros2_ws/src/cpp_robotics_sim_ros/scripts/managed_component.py
+index bef2f61..fa0c9a5 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/scripts/managed_component.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/scripts/managed_component.py
+@@ -138,6 +138,7 @@ class ManagedComponent:
+         self.__state = LifecycleState.UNCONFIGURED
+         self._lock = Lock()
+         self._last_transition_id = ''
++        self._last_transition = ''
+ 
+     @property
+     def state(self) -> LifecycleState:
+@@ -147,6 +148,10 @@ class ManagedComponent:
+     def last_transition_id(self) -> str:
+         return self._last_transition_id
+ 
++    @property
++    def last_transition(self) -> str:
++        return self._last_transition
++
+     def transition(self, operation: LifecycleTransition,
+                    *, reason: str = '', failed_dependency: str = '',
+                    orchestration_id: str = '') -> TransitionResult:
+@@ -204,6 +209,7 @@ class ManagedComponent:
+             if operation == LifecycleTransition.ERROR:
+                 self.__state = LifecycleState.ERROR
+                 self._last_transition_id = transition_id
++                self._last_transition = operation.value
+                 try:
+                     self._hooks.on_error()
+                 except Exception as error:
+@@ -257,6 +263,7 @@ class ManagedComponent:
+ 
+                 self.__state = destination
+                 self._last_transition_id = transition_id
++                self._last_transition = operation.value
+                 return result(True, source, 'SUCCESS', reason or 'transition completed',
+                               rollback_performed=rollback_performed,
+                               rollback_result=rollback_result, attempts=attempt)
+@@ -271,6 +278,7 @@ class ManagedComponent:
+                      attempt: int) -> TransitionResult:
+         self.__state = LifecycleState.ERROR
+         self._last_transition_id = transition_id
++        self._last_transition = LifecycleTransition.ERROR.value
+         try:
+             self._hooks.on_error()
+         except Exception as error:
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/scripts/mode_manager_node.py b/ros2_ws/src/cpp_robotics_sim_ros/scripts/mode_manager_node.py
+index 776d0a3..ce22ae7 100755
+--- a/ros2_ws/src/cpp_robotics_sim_ros/scripts/mode_manager_node.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/scripts/mode_manager_node.py
+@@ -14,7 +14,6 @@ from pathlib import Path
+ import subprocess
+ import sys
+ import threading
+-import time
+ from typing import Optional
+ 
+ import rclpy
+@@ -87,10 +86,8 @@ class ModeManagerNode(Node):
+             'managed_use_sim_time',
+             True,
+         )
+-        self.declare_parameter(
+-            'startup_grace_period',
+-            3.0,
+-        )
++        self.declare_parameter('readiness_timeout', 45.0)
++        self.declare_parameter('descendant_identity_timeout', 4.0)
+         self.declare_parameter(
+             'shutdown_timeout',
+             4.0,
+@@ -108,10 +105,11 @@ class ModeManagerNode(Node):
+                 'managed_use_sim_time'
+             ).value
+         )
+-        self.startup_grace_period = float(
+-            self.get_parameter(
+-                'startup_grace_period'
+-            ).value
++        self.readiness_timeout = float(
++            self.get_parameter('readiness_timeout').value
++        )
++        self.descendant_identity_timeout = float(
++            self.get_parameter('descendant_identity_timeout').value
+         )
+         self.shutdown_timeout = float(
+             self.get_parameter('shutdown_timeout').value
+@@ -152,6 +150,9 @@ class ModeManagerNode(Node):
+             '/mode/status',
+             status_qos,
+         )
++        self.readiness_publisher = self.create_publisher(
++            String, '/platform/readiness', status_qos,
++        )
+ 
+         self.simulation_subscription = (
+             self.create_subscription(
+@@ -243,9 +244,10 @@ class ModeManagerNode(Node):
+ 
+             self.launch_files[mode] = normalized_launch_file
+ 
+-        self.require_nonnegative_finite(
+-            'startup_grace_period',
+-            self.startup_grace_period,
++        self.require_positive_finite('readiness_timeout', self.readiness_timeout)
++        self.require_positive_finite(
++            'descendant_identity_timeout',
++            self.descendant_identity_timeout,
+         )
+         self.require_positive_finite(
+             'shutdown_timeout',
+@@ -526,8 +528,6 @@ class ModeManagerNode(Node):
+                 self.get_logger().error(message)
+                 return False, message
+ 
+-            time.sleep(self.startup_grace_period)
+-
+             if self.process.poll() is not None:
+                 return_code = self.process.returncode
+                 self.process = None
+@@ -555,8 +555,14 @@ class ModeManagerNode(Node):
+                 return False, self.last_error
+ 
+             try:
+-                self.process_record = self.refresh_process_record(
+-                    self.process_registry, self.process_record
++                self.process_record = self.wait_for_process_record(
++                    self.process_registry,
++                    self.process_record,
++                    timeout=self.descendant_identity_timeout,
++                    should_continue=lambda: (
++                        self.process is not None
++                        and self.process.poll() is None
++                    ),
+                 )
+                 self.process_group_id = self.process_record.pgid
+             except (OSError, RuntimeError, ValueError) as error:
+@@ -582,6 +588,30 @@ class ModeManagerNode(Node):
+                 self.get_logger().error(self.last_error)
+                 return False, self.last_error
+ 
++            readiness = self.wait_for_mode_readiness(requested_mode)
++            self.publish_readiness(readiness)
++            if not readiness.ready:
++                self.last_error = (
++                    f'{requested_mode.value} readiness failed: '
++                    + json.dumps(readiness.to_mapping(), sort_keys=True)
++                )
++                report = self.terminate_process_record(
++                    self.process_registry, self.process_record,
++                    process=self.process,
++                    sigint_timeout=self.shutdown_timeout,
++                    sigterm_timeout=self.kill_timeout,
++                    sigkill_timeout=self.kill_timeout,
++                )
++                self.last_shutdown_report = report
++                self.persist_shutdown_report(report)
++                if report.success:
++                    self.process = None
++                    self.process_record = None
++                    self.process_group_id = None
++                self.publish_mode(OperatingMode.ERROR)
++                self.get_logger().error(self.last_error)
++                return False, self.last_error
++
+             self.publish_mode(requested_mode)
+ 
+             message = (
+@@ -592,6 +622,37 @@ class ModeManagerNode(Node):
+             self.get_logger().info(message)
+             return True, message
+ 
++    def wait_for_mode_readiness(self, mode):
++        """Wait for mode-specific dependency evidence before reporting active."""
++        from readiness_contract import ReadinessProfile, wait_for_readiness
++        from ros_runtime_readiness import SimulationReadinessProbe
++
++        profile = {
++            OperatingMode.MAPPING: ReadinessProfile.MAPPING_READY,
++            OperatingMode.LOCALIZATION: ReadinessProfile.LOCALIZATION_READY,
++            OperatingMode.NAVIGATION: ReadinessProfile.NAVIGATION_READY,
++        }[mode]
++        probe = SimulationReadinessProbe(
++            use_sim_time=self.managed_use_sim_time,
++            profile=profile, map_path=self.selected_map_path,
++        )
++        try:
++            return wait_for_readiness(
++                probe, timeout=self.readiness_timeout,
++                process_alive=lambda: self.process is not None
++                and self.process.poll() is None,
++            )
++        finally:
++            probe.close()
++
++    def publish_readiness(self, report) -> None:
++        """Publish structured, lease-bound readiness evidence as JSON."""
++        if not hasattr(self, 'readiness_publisher'):
++            return
++        message = String()
++        message.data = json.dumps(report.to_mapping(), sort_keys=True)
++        self.readiness_publisher.publish(message)
++
+     def process_group_exists(
+         self,
+         process_group_id: int,
+@@ -721,6 +782,14 @@ class ModeManagerNode(Node):
+     def refresh_process_record(registry, record):
+         return registry.refresh_group_members(record)
+ 
++    @staticmethod
++    def wait_for_process_record(
++        registry, record, *, timeout, should_continue,
++    ):
++        return registry.wait_for_group_members(
++            record, timeout=timeout, should_continue=should_continue,
++        )
++
+     @staticmethod
+     def release_exited_process_record(registry, record):
+         return deregister_exited_process(registry, record)
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/scripts/navigation_goal_manager_node.py b/ros2_ws/src/cpp_robotics_sim_ros/scripts/navigation_goal_manager_node.py
+index fde4c0a..c46bbb4 100755
+--- a/ros2_ws/src/cpp_robotics_sim_ros/scripts/navigation_goal_manager_node.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/scripts/navigation_goal_manager_node.py
+@@ -25,6 +25,7 @@ from rclpy.qos import (
+     QoSProfile,
+     ReliabilityPolicy,
+ )
++from rclpy.signals import SignalHandlerOptions
+ from std_msgs.msg import String
+ 
+ SCRIPT_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+@@ -33,6 +34,8 @@ if SCRIPT_DIRECTORY not in sys.path:
+ 
+ from lifecycle_ros_adapter import bind_lifecycle  # noqa: E402,I100
+ from managed_component import LifecycleState  # noqa: E402,I100
++from process_lifecycle import defer_termination_signals  # noqa: E402,I100
++from teardown import run_teardown  # noqa: E402,I100
+ 
+ 
+ class NavigationGoalManagerNode(Node):
+@@ -213,6 +216,7 @@ class NavigationGoalManagerNode(Node):
+         self.lifecycle_accepting = False
+         self.cancel_requested = False
+         self.shutdown_prepared = False
++        self.shutdown_success: Optional[bool] = None
+ 
+         self.request_sequence = 0
+         self.current_request_id: Optional[int] = None
+@@ -1074,10 +1078,6 @@ class NavigationGoalManagerNode(Node):
+             result_message = wrapped_result.result
+ 
+         except Exception as error:
+-            with self.state_lock:
+-                if self.current_request_id == request_id:
+-                    self.reset_goal_state_locked()
+-
+             self.publish_status(
+                 state='aborted',
+                 message=(
+@@ -1274,41 +1274,65 @@ class NavigationGoalManagerNode(Node):
+                 or self.active_goal_handle is not None
+             )
+ 
+-    def prepare_shutdown(self) -> None:
++    def prepare_shutdown(self) -> bool:
+         if self.shutdown_prepared:
+-            return
++            return self.shutdown_success is True
+         if (
+             hasattr(self, 'lifecycle_component')
+             and self.lifecycle_component.state == LifecycleState.FINALIZED
+         ):
+             self.shutdown_prepared = True
+-            return
++            timer = getattr(self, 'lifecycle_state_timer', None)
++            if timer is None:
++                self.shutdown_success = True
++                return self.shutdown_success
++            self.shutdown_success = run_teardown([
++                ('cancel lifecycle state timer', timer.cancel)
++            ])
++            return self.shutdown_success
+         self.shutdown_prepared = True
++        timer = getattr(self, 'lifecycle_state_timer', None)
++        stages = []
++        if timer is not None:
++            stages.append(('cancel lifecycle state timer', timer.cancel))
++        stages.append(('navigation resource and lifecycle cleanup',
++                       self._shutdown_navigation_resources))
++        self.shutdown_success = run_teardown(stages)
++        return self.shutdown_success
++
++    def _shutdown_navigation_resources(self) -> bool:
+         if not hasattr(self, 'lifecycle_component'):
+             # Preserve the historical helper behavior for focused domain
+             # fixtures constructed without the ROS lifecycle adapter.
+             with self.state_lock:
+                 goal_handle = self.active_goal_handle
++            stages = []
+             if goal_handle is not None:
+-                try:
++                def cancel_goal():
+                     goal_handle.cancel_goal_async()
+                     self.get_logger().info(
+                         'Requested active navigation goal cancellation during shutdown'
+                     )
+-                except Exception:
+-                    self.get_logger().exception(
+-                        'Unable to cancel navigation goal during shutdown'
+-                    )
+-            with self.state_lock:
+-                self.reset_goal_state_locked()
+-            return
++                stages.append(('request active goal cancellation', cancel_goal))
++
++            def clear_goal_state():
++                with self.state_lock:
++                    if (self.active_goal_handle is None
++                            and not self.goal_request_in_progress):
++                        self.reset_goal_state_locked()
++                return True
++
++            stages.append(('clear navigation goal state', clear_goal_state))
++            return run_teardown(stages)
+         result = self.lifecycle_component.transition('shutdown')
+-        if hasattr(self, 'publish_lifecycle_result'):
++        if (hasattr(self, 'publish_lifecycle_result')
++                and rclpy.ok(context=self.context)):
+             self.publish_lifecycle_result(result)
+-        if not result.success:
++        if (not result.success and rclpy.ok(context=self.context)):
+             self.get_logger().error(
+                 f'Navigation lifecycle shutdown failed: {result.reason}'
+             )
++        return bool(result.success)
+ 
+     def lifecycle_accepts_operations(self) -> bool:
+         return (
+@@ -1366,12 +1390,15 @@ class NavigationGoalManagerNode(Node):
+         return not self.goal_is_active()
+ 
+ 
+-def main(args=None) -> None:
+-    rclpy.init(args=args)
++def main(args=None) -> int:
++    # Keep ROS entities usable while normal SIGINT cleanup runs.
++    rclpy.init(args=args, signal_handler_options=SignalHandlerOptions.NO)
+ 
+     node: Optional[NavigationGoalManagerNode] = None
+     executor = None
+ 
++    failure = None
++    cleanup_success = True
+     try:
+         from rclpy.executors import MultiThreadedExecutor
+         node = NavigationGoalManagerNode()
+@@ -1379,23 +1406,42 @@ def main(args=None) -> None:
+         executor.add_node(node)
+         executor.spin()
+ 
+-    except (
+-        KeyboardInterrupt,
+-        ExternalShutdownException,
+-    ):
++    except KeyboardInterrupt:
++        if node is not None and rclpy.ok(context=node.context):
++            node.get_logger().info(
++                'SIGINT received; executor.spin exited and manager cleanup '
++                'begins with ROS context valid'
++            )
++    except ExternalShutdownException:
+         pass
++    except BaseException as error:
++        failure = error
+ 
+     finally:
+-        if node is not None:
+-            node.prepare_shutdown()
+-            node.destroy_node()
++        with defer_termination_signals():
++            stages = []
++            if node is not None:
++                stages.append(('manager cleanup', node.prepare_shutdown))
++            if executor is not None:
++                stages.append(('executor shutdown', executor.shutdown))
++            if node is not None:
++                stages.append(('node destruction', node.destroy_node))
++
++            context = node.context if node is not None else None
++
++            def shutdown_context():
++                if context is None:
++                    if rclpy.ok():
++                        rclpy.shutdown()
++                elif rclpy.ok(context=context):
++                    rclpy.shutdown(context=context)
++                return True
+ 
+-        if executor is not None:
+-            executor.shutdown()
++            stages.append(('ROS context shutdown', shutdown_context))
++            cleanup_success = run_teardown(stages, primary_error=failure)
+ 
+-        if rclpy.ok():
+-            rclpy.shutdown()
++    return 0 if cleanup_success else 1
+ 
+ 
+ if __name__ == '__main__':
+-    main()
++    raise SystemExit(main())
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/scripts/platform_lifecycle_orchestrator.py b/ros2_ws/src/cpp_robotics_sim_ros/scripts/platform_lifecycle_orchestrator.py
+index 7fd4252..3d1e80e 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/scripts/platform_lifecycle_orchestrator.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/scripts/platform_lifecycle_orchestrator.py
+@@ -103,6 +103,7 @@ class PlatformLifecycleOrchestrator:
+                 or parameter.kind == inspect.Parameter.VAR_KEYWORD
+                 for parameter in parameters
+             )
++
+             report = (
+                 method(operation, orchestration_id=orchestration_id)
+                 if accepts_correlation else method(operation)
+@@ -125,6 +126,55 @@ class PlatformLifecycleOrchestrator:
+                 orchestration_id=orchestration_id,
+             )
+ 
++    @staticmethod
++    def _target_satisfied(component: ComponentPort,
++                          target: LifecycleState) -> bool:
++        """Use adapter provenance checks when available, then lifecycle state."""
++        validator = getattr(component, 'target_satisfied', None)
++        if callable(validator):
++            return bool(validator(target))
++        return component.state == target
++
++    @staticmethod
++    def _refresh(component: ComponentPort) -> bool:
++        """Ask remote adapters for authoritative state when supported."""
++        refresh = getattr(component, 'refresh_state', None)
++        return not callable(refresh) or bool(refresh())
++
++    @staticmethod
++    def _snapshot_version(component: ComponentPort) -> tuple:
++        """Return state and lifecycle transition identity after an authoritative read."""
++        explicit = getattr(component, 'snapshot_version', None)
++        if callable(explicit):
++            explicit = explicit()
++        return (component.state, explicit,
++                getattr(component, 'last_transition_id', ''),
++                getattr(component, 'last_transition', ''))
++
++    def _stable_target_snapshot(self, target: LifecycleState) -> str | None:
++        """
++        Verify two consecutive authoritative state/version vectors agree.
++
++        A successful result has an interval between the two complete reads in
++        which every component held the target with unchanged transition identity.
++        """
++        first = {}
++        for name in self.order:
++            component = self.components[name]
++            if not self._refresh(component):
++                return f'{name}: authoritative lifecycle state unavailable'
++            if not self._target_satisfied(component, target):
++                return f'{name}: component does not satisfy {target.value}'
++            first[name] = self._snapshot_version(component)
++        for name in self.order:
++            component = self.components[name]
++            if not self._refresh(component):
++                return f'{name}: authoritative lifecycle state unavailable'
++            if (not self._target_satisfied(component, target)
++                    or self._snapshot_version(component) != first[name]):
++                return f'{name}: state or transition identity changed during verification'
++        return None
++
+     def transition(self, operation: LifecycleTransition) -> OrchestrationResult:
+         started_at = utc_now()
+         transition_id = str(uuid4())
+@@ -142,6 +192,11 @@ class PlatformLifecycleOrchestrator:
+         if not self._lock.acquire(blocking=False):
+             return result(False, 'BUSY', 'platform transition already in progress')
+         try:
++            for name, component in self.components.items():
++                if not self._refresh(component):
++                    return result(False, 'STATE_UNAVAILABLE',
++                                  f'authoritative lifecycle state unavailable for {name}',
++                                  failed_dependency=name)
+             if operation not in TARGET:
+                 return result(False, 'UNSUPPORTED_TRANSITION',
+                               'platform supports configure, activate, '
+@@ -155,16 +210,36 @@ class PlatformLifecycleOrchestrator:
+                               f'no lifecycle state snapshot for {unknown}',
+                               failed_dependency=unknown)
+             target = TARGET[operation]
+-            if all(component.state == target for component in self.components.values()):
+-                return result(True, 'ALREADY_APPLIED',
+-                              f'all components already {target.value}')
++            if (target == LifecycleState.ACTIVE and any(
++                    component.state == target
++                    and not self._target_satisfied(component, target)
++                    for component in self.components.values())):
++                return result(False, 'STATE_UNVERIFIED',
++                              'an ACTIVE snapshot has no verified activation provenance',
++                              failed_dependency=next(
++                                  name for name, component in self.components.items()
++                                  if component.state == target
++                                  and not self._target_satisfied(component, target)
++                              ))
++            if all(self._target_satisfied(component, target)
++                   for component in self.components.values()):
++                changed = self._stable_target_snapshot(target)
++                if changed is None:
++                    return result(True, 'ALREADY_APPLIED',
++                                  f'all components already {target.value}')
++                name = changed.split(':', 1)[0]
++                unavailable = 'unavailable' in changed
++                return result(False,
++                              'STATE_UNAVAILABLE' if unavailable else 'STATE_CHANGED',
++                              f'{changed} while verifying no-op',
++                              failed_dependency=name)
+ 
+             names = self.order if operation in FORWARD else tuple(reversed(self.order))
+             completed: list[str] = []
+             reports: list[TransitionResult] = []
+             for name in names:
+                 component = self.components[name]
+-                if component.state == target:
++                if self._target_satisfied(component, target):
+                     continue
+                 report = self._invoke(name, operation, transition_id)
+                 reports.append(report)
+@@ -188,6 +263,14 @@ class PlatformLifecycleOrchestrator:
+                         rollback_unavailable=tuple(unavailable),
+                     )
+                 completed.append(name)
++            changed = self._stable_target_snapshot(target)
++            if changed is not None:
++                name = changed.split(':', 1)[0]
++                unavailable = 'unavailable' in changed
++                return result(False,
++                              'STATE_UNAVAILABLE' if unavailable else 'STATE_CHANGED',
++                              f'{changed} during final verification',
++                              failed_dependency=name, results=tuple(reports))
+             return result(True, 'SUCCESS', 'platform transition completed',
+                           results=tuple(reports))
+         finally:
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/scripts/platform_lifecycle_orchestrator_node.py b/ros2_ws/src/cpp_robotics_sim_ros/scripts/platform_lifecycle_orchestrator_node.py
+index bedabd6..4750fa9 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/scripts/platform_lifecycle_orchestrator_node.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/scripts/platform_lifecycle_orchestrator_node.py
+@@ -14,6 +14,7 @@ This node is installed but not launched until manager lifecycle adapters exist.
+ from __future__ import annotations
+ 
+ from datetime import datetime
++import time
+ from typing import Optional
+ from uuid import uuid4
+ 
+@@ -21,7 +22,9 @@ from cpp_robotics_sim_ros.msg import (
+     LifecycleTransitionEvent,
+     ManagedLifecycleState,
+ )
+-from cpp_robotics_sim_ros.srv import TransitionManagedComponent
++from cpp_robotics_sim_ros.srv import (
++    GetManagedComponentState, TransitionManagedComponent,
++)
+ from managed_component import (
+     LEGAL_TRANSITIONS, LifecycleState, LifecycleTransition,
+     TransitionResult, utc_now,
+@@ -40,6 +43,7 @@ STATE_QOS = QoSProfile(
+     reliability=ReliabilityPolicy.RELIABLE,
+     durability=DurabilityPolicy.TRANSIENT_LOCAL,
+ )
++REMOTE_STATE_MAX_AGE = 3.0
+ 
+ 
+ def event_from_result(result: TransitionResult) -> LifecycleTransitionEvent:
+@@ -56,10 +60,19 @@ class RemoteComponent:
+         self.name = name
+         self._state: Optional[LifecycleState] = None
+         self._observed_at = ''
++        self._received_at = 0.0
++        self._last_transition_id = ''
++        self._verified_activation_id = ''
++        self._last_transition = ''
+         self._client = node.create_client(
+             TransitionManagedComponent, f'/lifecycle/{name}/transition',
+             callback_group=callback_group,
+         )
++        self._state_client = node.create_client(
++            GetManagedComponentState,
++            f'/lifecycle/{name}/state_snapshot',
++            callback_group=callback_group,
++        )
+         self._subscription = node.create_subscription(
+             ManagedLifecycleState, f'/lifecycle/{name}/state',
+             self._on_state, STATE_QOS, callback_group=callback_group,
+@@ -67,8 +80,25 @@ class RemoteComponent:
+ 
+     @property
+     def state(self) -> Optional[LifecycleState]:
++        if (self._received_at <= 0.0
++                or time.monotonic() - self._received_at > REMOTE_STATE_MAX_AGE):
++            return None
+         return self._state
+ 
++    def target_satisfied(self, target: LifecycleState) -> bool:
++        """Require a live snapshot and verified activate response for ACTIVE."""
++        if self.state != target:
++            return False
++        if target == LifecycleState.ACTIVE:
++            return bool(self._last_transition_id
++                        and self._verified_activation_id == self._last_transition_id)
++        return True
++
++    @property
++    def snapshot_version(self) -> tuple[str, str]:
++        """Identity tuple updated by each authoritative lifecycle read."""
++        return (self._last_transition, self._last_transition_id)
++
+     def _on_state(self, snapshot: ManagedLifecycleState) -> None:
+         if snapshot.component != self.name:
+             return
+@@ -83,6 +113,49 @@ class RemoteComponent:
+             return
+         self._state = state
+         self._observed_at = snapshot.observed_at
++        self._received_at = time.monotonic()
++        self._last_transition_id = snapshot.last_transition_id
++        if state == LifecycleState.ACTIVE:
++            if (not snapshot.last_transition_id
++                    or self._last_transition != LifecycleTransition.ACTIVATE.value):
++                self._verified_activation_id = ''
++        else:
++            self._verified_activation_id = ''
++
++    def refresh_state(self) -> bool:
++        """Read authoritative manager state before orchestration decisions."""
++        try:
++            if not self._state_client.wait_for_service(timeout_sec=2.0):
++                raise TimeoutError('authoritative state service is unavailable')
++            response = self._state_client.call(
++                GetManagedComponentState.Request(), timeout_sec=2.0,
++            )
++            if response is None or response.component != self.name:
++                raise ValueError('authoritative state response identity mismatch')
++            observed = datetime.fromisoformat(response.observed_at)
++            if observed.tzinfo is None:
++                raise ValueError('authoritative state timestamp has no timezone')
++            state = LifecycleState(response.state)
++            transition = response.last_transition
++            transition_id = response.last_transition_id
++            if state == LifecycleState.ACTIVE and (
++                    transition != LifecycleTransition.ACTIVATE.value
++                    or not transition_id):
++                raise ValueError('ACTIVE state has no valid activation provenance')
++            self._state = state
++            self._observed_at = response.observed_at
++            self._received_at = time.monotonic()
++            self._last_transition = transition
++            self._last_transition_id = transition_id
++            self._verified_activation_id = (
++                transition_id if state == LifecycleState.ACTIVE else ''
++            )
++            return True
++        except Exception:
++            self._state = None
++            self._received_at = 0.0
++            self._verified_activation_id = ''
++            return False
+ 
+     def transition(self, operation: LifecycleTransition, **kwargs) -> TransitionResult:
+         started_at = utc_now()
+@@ -125,6 +198,14 @@ class RemoteComponent:
+             )
+             self._state = destination
+             self._observed_at = event.completed_at
++            self._received_at = time.monotonic()
++            self._last_transition_id = event.transition_id
++            self._last_transition = operation.value if event.success else ''
++            self._verified_activation_id = (
++                event.transition_id
++                if event.success and operation == LifecycleTransition.ACTIVATE
++                and destination == LifecycleState.ACTIVE else ''
++            )
+             return report
+         except Exception as error:
+             state = self._state or LifecycleState.UNCONFIGURED
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/scripts/process_registry.py b/ros2_ws/src/cpp_robotics_sim_ros/scripts/process_registry.py
+index 4da46a1..ca67353 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/scripts/process_registry.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/scripts/process_registry.py
+@@ -17,6 +17,7 @@ import os
+ from pathlib import Path
+ import stat
+ import tempfile
++import time
+ from typing import Iterator, Mapping
+ import uuid
+ 
+@@ -29,6 +30,10 @@ class RegistryFormatError(ValueError):
+     """Raised when the registry manifest or one record is malformed."""
+ 
+ 
++class DescendantIdentityTimeout(RuntimeError):
++    """Raised when a live launch never yields stable descendant identities."""
++
++
+ @dataclass(frozen=True)
+ class RegistryPaths:
+     """Filesystem paths used by one per-user process registry."""
+@@ -450,6 +455,12 @@ def verify_captured_identity(expected: ProcessIdentity) -> bool:
+ 
+ def process_group_exists(pgid: int) -> bool:
+     """Return whether a process group exists without sending it a signal."""
++    states = _process_group_states(pgid)
++    if states is not None and states:
++        # A zombie cannot run, hold resources, or receive cleanup signals. Some
++        # minimal container init processes do not promptly reap orphaned
++        # children, so killpg(pgid, 0) alone would report a dead group forever.
++        return any(state != 'Z' for state in states)
+     try:
+         os.killpg(pgid, 0)
+     except ProcessLookupError:
+@@ -459,6 +470,30 @@ def process_group_exists(pgid: int) -> bool:
+     return True
+ 
+ 
++def _process_group_states(pgid: int) -> set[str] | None:
++    """Return visible process states, or None when procfs cannot be scanned."""
++    try:
++        entries = list(Path('/proc').iterdir())
++    except OSError:
++        return None
++
++    states = set()
++    for entry in entries:
++        if not entry.name.isdigit():
++            continue
++        try:
++            stat_text = (entry / 'stat').read_text(encoding='utf-8')
++            _, current_pgid, _, _, _ = _parse_proc_stat(
++                int(entry.name), stat_text
++            )
++            state = stat_text[stat_text.rfind(')') + 1:].strip().split()[0]
++        except (OSError, ValueError, IndexError):
++            continue
++        if current_pgid == pgid:
++            states.add(state)
++    return states
++
++
+ def process_group_session_ids(pgid: int) -> set[int]:
+     """Return session IDs for every currently visible member of a group."""
+     session_ids: set[int] = set()
+@@ -524,7 +559,12 @@ def capture_process_session_members(
+             identity = capture_process_identity(pid)
+         except (OSError, ValueError):
+             continue
+-        if identity.session_id == session_id:
++        try:
++            stat_text = (entry / 'stat').read_text(encoding='utf-8')
++            state = stat_text[stat_text.rfind(')') + 1:].strip().split()[0]
++        except (OSError, ValueError, IndexError):
++            continue
++        if identity.session_id == session_id and state != 'Z':
+             identities.append(identity)
+     return tuple(sorted(identities, key=lambda item: item.pid))
+ 
+@@ -893,6 +933,121 @@ class ProcessRegistry:
+             )
+         return updated
+ 
++    def wait_for_group_members(
++        self,
++        record: ProcessRecord,
++        *,
++        timeout: float,
++        should_continue=lambda: True,
++        poll_interval: float = 0.05,
++    ) -> ProcessRecord:
++        """
++        Wait conditionally for a stable identity in the owned session.
++
++        Session membership may grow while a launch is starting. The required
++        condition is at least one exact PID/start-time/executable identity
++        observed in two consecutive scans, with every identity in the final
++        scan still validating and the launch leader remaining valid. The
++        current scan, including newly appeared children, is what gets stored.
++        """
++        if timeout <= 0 or poll_interval <= 0:
++            raise ValueError('identity timeout and poll interval must be positive')
++
++        deadline = time.monotonic() + timeout
++        previous: tuple[ProcessIdentity, ...] = ()
++        observations = 0
++        last_detail = 'no descendants observed'
++        while True:
++            if not should_continue():
++                raise RuntimeError(
++                    'managed launch leader exited while waiting for '
++                    'descendant identities'
++                )
++            if observations and time.monotonic() >= deadline:
++                raise DescendantIdentityTimeout(
++                    'timed out waiting for stable descendant identities '
++                    f'after {observations} scans: {last_detail}'
++                )
++            observations += 1
++            if not verify_process_identity(record):
++                raise RuntimeError(
++                    'managed launch leader identity became invalid while '
++                    'waiting for descendants'
++                )
++
++            scan_error = None
++            try:
++                current = capture_process_session_members(
++                    record.session_id, exclude_pid=record.pid
++                )
++            except OSError as error:
++                current = ()
++                scan_error = error
++                last_detail = f'identity scan failed: {error}'
++
++            if current and any(
++                item.session_id != record.session_id for item in current
++            ):
++                raise RuntimeError(
++                    'descendant scan returned a process outside the owned session'
++                )
++            valid = bool(current) and all(
++                verify_captured_identity(item) for item in current
++            )
++            if current and not valid:
++                last_detail = (
++                    'one or more captured identities changed during validation'
++                )
++
++            previous_keys = {
++                (item.pid, item.pgid, item.session_id, item.proc_start_time,
++                 item.exe, item.cmdline_fingerprint)
++                for item in previous
++            }
++            current_keys = {
++                (item.pid, item.pgid, item.session_id, item.proc_start_time,
++                 item.exe, item.cmdline_fingerprint)
++                for item in current
++            }
++            if valid and previous_keys.intersection(current_keys):
++                if not should_continue() or not verify_process_identity(record):
++                    raise RuntimeError(
++                        'managed launch leader changed before descendant '
++                        'identities were persisted'
++                    )
++                updated = replace(record, member_identities=current)
++                updated.validate()
++                with self._locked():
++                    records = self._records_unlocked()
++                    matching = [
++                        existing for existing in records
++                        if existing.instance_id == record.instance_id
++                    ]
++                    if matching != [record]:
++                        raise RuntimeError(
++                            'ownership record changed during refresh'
++                        )
++                    records = [
++                        updated if existing.instance_id == record.instance_id
++                        else existing
++                        for existing in records
++                    ]
++                    self._atomic_write_unlocked(
++                        {'schema_version': SCHEMA_VERSION, 'records': records}
++                    )
++                return updated
++
++            previous = current if valid else ()
++            if not current and scan_error is None:
++                last_detail = 'no descendants observed in the launch session'
++            remaining = deadline - time.monotonic()
++            if remaining <= 0:
++                raise DescendantIdentityTimeout(
++                    'timed out waiting for stable descendant identities '
++                    f'after {observations} scans: {last_detail}'
++                )
++            time.sleep(min(poll_interval, remaining))
++
+     def duplicate_components(self) -> dict[str, list[ProcessRecord]]:
+         """Return verified live ownership duplicates grouped by component."""
+         with self._locked():
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/scripts/simulation_manager_node.py b/ros2_ws/src/cpp_robotics_sim_ros/scripts/simulation_manager_node.py
+index 6e6bc80..a83c9d1 100755
+--- a/ros2_ws/src/cpp_robotics_sim_ros/scripts/simulation_manager_node.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/scripts/simulation_manager_node.py
+@@ -27,6 +27,7 @@ from rclpy.qos import (
+     QoSProfile,
+     ReliabilityPolicy,
+ )
++from rclpy.signals import SignalHandlerOptions
+ from std_msgs.msg import Bool
+ from std_msgs.msg import String
+ from std_srvs.srv import Trigger
+@@ -43,6 +44,7 @@ from process_lifecycle import (  # noqa: E402,I100,I101
+     terminate_owned_process,
+ )
+ from process_registry import ProcessRecord, ProcessRegistry  # noqa: E402,I100
++from teardown import run_teardown  # noqa: E402,I100
+ from lifecycle_ros_adapter import bind_lifecycle  # noqa: E402,I100
+ from managed_component import LifecycleState, LifecycleTransition  # noqa: E402,I100
+ 
+@@ -94,10 +96,8 @@ class SimulationManagerNode(Node):
+             'hospital_world.sdf',
+         )
+ 
+-        self.declare_parameter(
+-            'startup_grace_period',
+-            4.0,
+-        )
++        self.declare_parameter('readiness_timeout', 45.0)
++        self.declare_parameter('descendant_identity_timeout', 4.0)
+         self.declare_parameter(
+             'shutdown_timeout',
+             4.0,
+@@ -150,8 +150,11 @@ class SimulationManagerNode(Node):
+             )
+         )
+ 
+-        self.startup_grace_period = float(
+-            self.get_parameter('startup_grace_period').value
++        self.readiness_timeout = float(
++            self.get_parameter('readiness_timeout').value
++        )
++        self.descendant_identity_timeout = float(
++            self.get_parameter('descendant_identity_timeout').value
+         )
+         self.shutdown_timeout = float(
+             self.get_parameter('shutdown_timeout').value
+@@ -174,6 +177,9 @@ class SimulationManagerNode(Node):
+             '/simulation/status',
+             status_qos,
+         )
++        self.readiness_publisher = self.create_publisher(
++            String, '/platform/readiness', status_qos,
++        )
+ 
+         self.environment_status_publisher = (
+             self.create_publisher(
+@@ -228,6 +234,7 @@ class SimulationManagerNode(Node):
+         self.state = SimulationState.STOPPED
+         self.last_error = ''
+         self.shutdown_prepared = False
++        self.shutdown_success: Optional[bool] = None
+         self.stop_in_progress = False
+         self.last_shutdown_report: Optional[ShutdownResult] = None
+ 
+@@ -320,15 +327,17 @@ class SimulationManagerNode(Node):
+                     f'{environment}'
+                 )
+ 
+-        if (
+-            not math.isfinite(
+-                self.startup_grace_period
++        if not math.isfinite(self.readiness_timeout) or self.readiness_timeout <= 0.0:
++            raise ValueError(
++                'readiness_timeout must be finite and greater than zero'
+             )
+-            or self.startup_grace_period < 0.0
++
++        if (
++            not math.isfinite(self.descendant_identity_timeout)
++            or self.descendant_identity_timeout <= 0.0
+         ):
+             raise ValueError(
+-                'startup_grace_period must be finite and '
+-                'not negative'
++                'descendant_identity_timeout must be finite and greater than zero'
+             )
+ 
+         if (
+@@ -535,8 +544,6 @@ class SimulationManagerNode(Node):
+             )
+             return response
+ 
+-        time.sleep(1.0)
+-
+         started, start_message = self.start_simulation()
+ 
+         response.success = started
+@@ -617,8 +624,6 @@ class SimulationManagerNode(Node):
+                 self.get_logger().error(message)
+                 return False, message
+ 
+-            time.sleep(self.startup_grace_period)
+-
+             if self.process.poll() is not None:
+                 return_code = self.process.returncode
+                 self.last_error = (
+@@ -643,8 +648,14 @@ class SimulationManagerNode(Node):
+                 return False, self.last_error
+ 
+             try:
+-                self.process_record = self.refresh_process_record(
+-                    self.process_registry, self.process_record
++                self.process_record = self.wait_for_process_record(
++                    self.process_registry,
++                    self.process_record,
++                    timeout=self.descendant_identity_timeout,
++                    should_continue=lambda: (
++                        self.process is not None
++                        and self.process.poll() is None
++                    ),
+                 )
+             except (OSError, RuntimeError, ValueError) as error:
+                 report = self.terminate_process_record(
+@@ -668,6 +679,30 @@ class SimulationManagerNode(Node):
+                 self.get_logger().error(self.last_error)
+                 return False, self.last_error
+ 
++            readiness = self.wait_for_runtime_readiness()
++            self.publish_readiness(readiness)
++            if not readiness.ready:
++                self.last_error = (
++                    'Simulation runtime readiness failed: '
++                    + json.dumps(readiness.to_mapping(), sort_keys=True)
++                )
++                report = self.terminate_process_record(
++                    self.process_registry, self.process_record,
++                    process=self.process,
++                    sigint_timeout=self.shutdown_timeout,
++                    sigterm_timeout=self.kill_timeout,
++                    sigkill_timeout=self.kill_timeout,
++                )
++                self.last_shutdown_report = report
++                self.persist_shutdown_report(report)
++                if report.success:
++                    self.process = None
++                    self.process_record = None
++                self.set_state(SimulationState.ERROR)
++                self.publish_environment_status(state='error', message=self.last_error)
++                self.get_logger().error(self.last_error)
++                return False, self.last_error
++
+             self.set_state(SimulationState.RUNNING)
+             self.publish_emergency_stop(False)
+             self.publish_environment_status(
+@@ -685,6 +720,29 @@ class SimulationManagerNode(Node):
+             self.get_logger().info(message)
+             return True, message
+ 
++    def wait_for_runtime_readiness(self):
++        """Wait for observed runtime dependencies; timeout only bounds waiting."""
++        from readiness_contract import wait_for_readiness
++        from ros_runtime_readiness import SimulationReadinessProbe
++
++        probe = SimulationReadinessProbe(use_sim_time=self.managed_use_sim_time)
++        try:
++            return wait_for_readiness(
++                probe, timeout=self.readiness_timeout,
++                process_alive=lambda: self.process is not None
++                and self.process.poll() is None,
++            )
++        finally:
++            probe.close()
++
++    def publish_readiness(self, report) -> None:
++        """Publish structured, lease-bound readiness evidence as JSON."""
++        if not hasattr(self, 'readiness_publisher'):
++            return
++        message = String()
++        message.data = json.dumps(report.to_mapping(), sort_keys=True)
++        self.readiness_publisher.publish(message)
++
+     def lifecycle_accepts_operations(self) -> bool:
+         return (
+             not hasattr(self, 'lifecycle_component')
+@@ -953,6 +1011,14 @@ class SimulationManagerNode(Node):
+     def refresh_process_record(registry, record):
+         return registry.refresh_group_members(record)
+ 
++    @staticmethod
++    def wait_for_process_record(
++        registry, record, *, timeout, should_continue,
++    ):
++        return registry.wait_for_group_members(
++            record, timeout=timeout, should_continue=should_continue,
++        )
++
+     @staticmethod
+     def release_exited_process_record(registry, record):
+         return deregister_exited_process(registry, record)
+@@ -1117,23 +1183,28 @@ class SimulationManagerNode(Node):
+         """Reconcile exited records without process-name-based signaling."""
+         self.process_registry.reconcile_stale_records()
+ 
+-    def shutdown(self) -> None:
++    def shutdown(self) -> bool:
+         if self.shutdown_prepared:
+-            return
+-
+-        if (
+-            hasattr(self, 'lifecycle_component')
+-            and self.lifecycle_component.state == LifecycleState.FINALIZED
+-        ):
+-            self.shutdown_prepared = True
+-            return
++            return self.shutdown_success is True
+ 
+         self.shutdown_prepared = True
+-
++        stages = []
++        for timer_name in ('monitor_timer', 'lifecycle_state_timer'):
++            timer = getattr(self, timer_name, None)
++            if timer is not None:
++                stages.append((f'cancel {timer_name}', timer.cancel))
++        if (hasattr(self, 'lifecycle_component')
++                and self.lifecycle_component.state == LifecycleState.FINALIZED):
++            self.shutdown_success = run_teardown(stages)
++            return self.shutdown_success
++        stages.append(('simulation resources and lifecycle',
++                       self._shutdown_resources))
++        self.shutdown_success = run_teardown(stages)
++        return self.shutdown_success
++
++    def _shutdown_resources(self) -> bool:
+         if rclpy.ok(context=self.context):
+-            self.get_logger().info(
+-                'Simulation manager shutting down'
+-            )
++            self.get_logger().info('Simulation manager shutting down')
+ 
+         if hasattr(self, 'lifecycle_component'):
+             result = self.lifecycle_component.transition(
+@@ -1142,46 +1213,67 @@ class SimulationManagerNode(Node):
+             success, message = result.success, result.reason
+         else:
+             success, message = self.stop_simulation()
++            result = None
+ 
+-        if hasattr(self, 'publish_lifecycle_result'):
++        if (result is not None and hasattr(self, 'publish_lifecycle_result')
++                and rclpy.ok(context=self.context)):
+             self.publish_lifecycle_result(result)
+ 
+-        if (
+-            not success
+-            and rclpy.ok(context=self.context)
+-        ):
++        if not success and rclpy.ok(context=self.context):
+             self.get_logger().error(message)
++        elif success and rclpy.ok(context=self.context):
++            self.get_logger().info('Simulation shutdown cleanup complete')
++        return bool(success)
+ 
+-        if rclpy.ok(context=self.context):
+-            self.get_logger().info(
+-                'Simulation shutdown cleanup complete'
+-            )
+ 
+-
+-def main(args=None) -> None:
+-    rclpy.init(args=args)
++def main(args=None) -> int:
++    # Let Python interrupt spin with KeyboardInterrupt so owned resources and
++    # lifecycle publications are cleaned up before the ROS context is closed.
++    rclpy.init(args=args, signal_handler_options=SignalHandlerOptions.NO)
+ 
+     node: Optional[SimulationManagerNode] = None
+ 
++    failure = None
++    cleanup_success = True
+     try:
+         node = SimulationManagerNode()
+         rclpy.spin(node)
+ 
+-    except (
+-        KeyboardInterrupt,
+-        ExternalShutdownException,
+-    ):
++    except KeyboardInterrupt:
++        if node is not None and rclpy.ok(context=node.context):
++            node.get_logger().info(
++                'SIGINT received; rclpy.spin exited and manager cleanup begins '
++                'with ROS context valid'
++            )
++    except ExternalShutdownException:
+         pass
++    except BaseException as error:
++        failure = error
+ 
+     finally:
+         with defer_termination_signals():
++            stages = []
+             if node is not None:
+-                node.shutdown()
+-                node.destroy_node()
++                stages.extend((
++                    ('manager cleanup', node.shutdown),
++                    ('node destruction', node.destroy_node),
++                ))
++
++            context = node.context if node is not None else None
++
++            def shutdown_context():
++                if context is None:
++                    if rclpy.ok():
++                        rclpy.shutdown()
++                elif rclpy.ok(context=context):
++                    rclpy.shutdown(context=context)
++                return True
++
++            stages.append(('ROS context shutdown', shutdown_context))
++            cleanup_success = run_teardown(stages, primary_error=failure)
+ 
+-            if rclpy.ok():
+-                rclpy.shutdown()
++    return 0 if cleanup_success else 1
+ 
+ 
+ if __name__ == '__main__':
+-    main()
++    raise SystemExit(main())
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/scripts/v012_lifecycle_acceptance.py b/ros2_ws/src/cpp_robotics_sim_ros/scripts/v012_lifecycle_acceptance.py
+index 576ac41..e91d9aa 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/scripts/v012_lifecycle_acceptance.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/scripts/v012_lifecycle_acceptance.py
+@@ -27,7 +27,7 @@ from nav2_msgs.action import NavigateToPose
+ from nav_msgs.msg import OccupancyGrid
+ import rclpy
+ from rclpy.action import ActionClient
+-from rclpy.executors import MultiThreadedExecutor
++from rclpy.executors import MultiThreadedExecutor, SingleThreadedExecutor
+ from rclpy.node import Node
+ from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
+ from rclpy.time import Time
+@@ -55,6 +55,7 @@ REQUIRED_LIFECYCLE_MANAGERS = (
+     '/simulation_manager', '/mapping_manager',
+     '/localization_manager', '/navigation_goal_manager',
+ )
++RUNTIME_GRAPH_CONVERGENCE_TIMEOUT_SECONDS = 30.0
+ 
+ 
+ def ros_mapping(message):
+@@ -173,6 +174,10 @@ def main(args=None):
+     executor = None
+     executor_thread = None
+     late = None
++    graph_context = None
++    graph_node = None
++    graph_executor = None
++    graph_thread = None
+     launch_log = None
+     launch_log_path = evidence / 'web_interface_launch.log'
+ 
+@@ -237,7 +242,7 @@ def main(args=None):
+     def runtime_graph_clean():
+         names = [
+             namespace.rstrip('/') + '/' + name
+-            for name, namespace in node.get_node_names_and_namespaces()
++            for name, namespace in graph_node.get_node_names_and_namespaces()
+         ]
+         counts = count_ros_nodes(names)
+         clean = (
+@@ -350,7 +355,7 @@ def main(args=None):
+         launch_log = launch_log_path.open('w', encoding='utf-8')
+         launch = subprocess.Popen(
+             ['ros2', 'launch', 'cpp_robotics_sim_ros', 'web_interface.launch.py',
+-             'open_browser:=false', 'mode_startup_grace_period:=8.0'],
++             'open_browser:=false'],
+             stdout=launch_log, stderr=subprocess.STDOUT, start_new_session=True,
+         )
+         if not wait_until(lambda: set(node.states) == set(COMPONENT_ORDER)):
+@@ -766,13 +771,6 @@ def main(args=None):
+ 
+         try:
+             mode_trigger('stop', required=False)
+-            report['navigation_launch_configuration'] = {
+-                'launch_argument': 'mode_startup_grace_period:=8.0',
+-                'rationale': (
+-                    'nav2_navigation.launch.py contains a 4.0 s TimerAction; '
+-                    'the mode manager default descendant-capture grace is 3.0 s'
+-                ),
+-            }
+             mode_trigger('navigation')
+             action_server_ready = wait_until(
+                 lambda: node.navigation_action_client.wait_for_server(
+@@ -985,14 +983,35 @@ def main(args=None):
+         ]
+         report['registry_final_state'] = registry_records
+         record('19_process_registry_clean', not registry_records, registry_records)
++
++        # Use a fresh DDS participant for the final graph snapshot. The long-
++        # lived acceptance observer sees every short-lived launch participant;
++        # some RMW graph caches retain those departed node names. A fresh
++        # context observes the current domain while retaining the same exact
++        # duplicate and required-manager checks below.
++        graph_context = rclpy.Context()
++        graph_context.init(args=None)
++        graph_node = Node(
++            'v012_runtime_graph_verifier', context=graph_context,
++        )
++        graph_executor = SingleThreadedExecutor(context=graph_context)
++        graph_executor.add_node(graph_node)
++        graph_thread = threading.Thread(
++            target=graph_executor.spin, daemon=True,
++        )
++        graph_thread.start()
++
+         node_lines = sorted(
+             namespace.rstrip('/') + '/' + name
+-            for name, namespace in node.get_node_names_and_namespaces()
++            for name, namespace in graph_node.get_node_names_and_namespaces()
++        )
++        graph_complete = wait_until(
++            runtime_graph_clean,
++            timeout=RUNTIME_GRAPH_CONVERGENCE_TIMEOUT_SECONDS,
+         )
+-        graph_complete = wait_until(runtime_graph_clean, timeout=8.0)
+         node_lines = sorted(
+             namespace.rstrip('/') + '/' + name
+-            for name, namespace in node.get_node_names_and_namespaces()
++            for name, namespace in graph_node.get_node_names_and_namespaces()
+         )
+         report['runtime_nodes'] = node_lines
+         node_counts = count_ros_nodes(node_lines)
+@@ -1010,6 +1029,11 @@ def main(args=None):
+                 'duplicate_critical_nodes': duplicate_critical_nodes,
+                 'critical_node_source': 'runtime_verification.CRITICAL_ROS_NODES',
+                 'graph_nodes': node_lines,
++                'graph_convergence_timeout_seconds': (
++                    RUNTIME_GRAPH_CONVERGENCE_TIMEOUT_SECONDS
++                ),
++                'consecutive_clean_samples_required': 3,
++                'graph_observer': 'fresh_rclpy_context',
+             },
+         )
+         record(
+@@ -1037,12 +1061,20 @@ def main(args=None):
+                     os.killpg(launch.pid, signal.SIGKILL)
+         if executor is not None:
+             executor.shutdown(timeout_sec=3.0)
++        if graph_executor is not None:
++            graph_executor.shutdown(timeout_sec=3.0)
+         if late is not None:
+             late.destroy_node()
++        if graph_node is not None:
++            graph_node.destroy_node()
+         if node is not None:
+             node.destroy_node()
+         if executor_thread is not None:
+             executor_thread.join(timeout=3.0)
++        if graph_thread is not None:
++            graph_thread.join(timeout=3.0)
++        if graph_context is not None and graph_context.ok():
++            graph_context.shutdown()
+         if rclpy.ok():
+             rclpy.shutdown()
+         if launch_log is not None:
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/test/test_environment_validation.py b/ros2_ws/src/cpp_robotics_sim_ros/test/test_environment_validation.py
+index bd87f53..1d130f5 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/test/test_environment_validation.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/test/test_environment_validation.py
+@@ -219,7 +219,8 @@ def make_parameter_validation_manager():
+         'hospital': 'hospital_world.sdf',
+     }
+ 
+-    manager.startup_grace_period = 4.0
++    manager.readiness_timeout = 45.0
++    manager.descendant_identity_timeout = 4.0
+     manager.shutdown_timeout = 10.0
+     manager.kill_timeout = 3.0
+ 
+@@ -235,8 +236,10 @@ def test_parameter_validation_accepts_valid_values() -> None:
+ @pytest.mark.parametrize(
+     ('attribute', 'value'),
+     [
+-        ('startup_grace_period', float('nan')),
+-        ('startup_grace_period', float('inf')),
++        ('readiness_timeout', float('nan')),
++        ('readiness_timeout', float('inf')),
++        ('descendant_identity_timeout', float('nan')),
++        ('descendant_identity_timeout', float('inf')),
+         ('shutdown_timeout', float('nan')),
+         ('shutdown_timeout', float('inf')),
+         ('kill_timeout', float('nan')),
+@@ -336,15 +339,23 @@ def test_parameter_validation_rejects_empty_world_filename(
+ 
+ def test_parameter_validation_rejects_negative_startup_period() -> None:
+     manager = make_parameter_validation_manager()
+-    manager.startup_grace_period = -0.1
++    manager.readiness_timeout = -0.1
+ 
+     with pytest.raises(
+         ValueError,
+-        match='startup_grace_period',
++        match='readiness_timeout',
+     ):
+         manager.validate_parameters()
+ 
+ 
++def test_parameter_validation_rejects_nonpositive_identity_timeout() -> None:
++    manager = make_parameter_validation_manager()
++    manager.descendant_identity_timeout = 0.0
++
++    with pytest.raises(ValueError, match='descendant_identity_timeout'):
++        manager.validate_parameters()
++
++
+ @pytest.mark.parametrize(
+     'attribute',
+     [
+@@ -651,6 +662,9 @@ def make_start_manager():
+     )
+     manager.release_exited_process_record = lambda _registry, _record: True
+     manager.refresh_process_record = lambda _registry, record: record
++    manager.wait_for_process_record = (
++        lambda _registry, record, **_kwargs: record
++    )
+     manager.persist_shutdown_report = lambda _report: None
+     manager.process_lock = threading.RLock()
+     manager.state = SimulationState.STOPPED
+@@ -658,6 +672,9 @@ def make_start_manager():
+     manager.shutdown_prepared = False
+     manager.stop_in_progress = False
+     manager.publish_emergency_stop = lambda _enabled: None
++    manager.wait_for_runtime_readiness = lambda: SimpleNamespace(
++        ready=True, to_mapping=lambda: {'ready': True}
++    )
+ 
+     manager.launch_package = 'cpp_robotics_sim_ros'
+     manager.launch_file = (
+@@ -665,7 +682,8 @@ def make_start_manager():
+     )
+     manager.managed_use_sim_time = True
+     manager.selected_environment = 'warehouse'
+-    manager.startup_grace_period = 4.0
++    manager.readiness_timeout = 45.0
++    manager.descendant_identity_timeout = 4.0
+     manager.shutdown_timeout = 4.0
+     manager.kill_timeout = 1.5
+ 
+@@ -787,15 +805,6 @@ def test_start_simulation_builds_expected_command(
+         'Popen',
+         fake_popen,
+     )
+-    monkeypatch.setattr(
+-        MODULE.time,
+-        'sleep',
+-        lambda duration: recorded.setdefault(
+-            'sleep',
+-            duration,
+-        ),
+-    )
+-
+     success, message = manager.start_simulation()
+ 
+     assert success is True
+@@ -811,7 +820,7 @@ def test_start_simulation_builds_expected_command(
+         'use_sim_time:=true',
+     ]
+     assert recorded['start_new_session'] is True
+-    assert recorded['sleep'] == 4.0
++    assert manager.state == SimulationState.RUNNING
+     assert manager.state == SimulationState.RUNNING
+     assert manager.states == [
+         SimulationState.STARTING,
+@@ -850,12 +859,6 @@ def test_start_simulation_uses_false_sim_time_argument(
+         'Popen',
+         fake_popen,
+     )
+-    monkeypatch.setattr(
+-        MODULE.time,
+-        'sleep',
+-        lambda duration: None,
+-    )
+-
+     success, _ = manager.start_simulation()
+ 
+     assert success is True
+@@ -912,12 +915,6 @@ def test_start_simulation_detects_early_exit(
+         'Popen',
+         lambda *args, **kwargs: process,
+     )
+-    monkeypatch.setattr(
+-        MODULE.time,
+-        'sleep',
+-        lambda duration: None,
+-    )
+-
+     success, message = manager.start_simulation()
+ 
+     assert success is False
+@@ -931,6 +928,66 @@ def test_start_simulation_detects_early_exit(
+     ]
+ 
+ 
++def test_start_simulation_cleans_up_if_descendant_identity_never_stabilizes(
++    monkeypatch,
++) -> None:
++    manager = make_start_manager()
++    manager.resolve_selected_world_path = lambda: '/tmp/warehouse_world.sdf'
++    process = ProcessStub(pid=4242, poll_result=None)
++    monkeypatch.setattr(
++        MODULE.subprocess, 'Popen', lambda *args, **kwargs: process
++    )
++    manager.wait_for_process_record = lambda *_args, **_kwargs: (
++        (_ for _ in ()).throw(
++            RuntimeError('timed out waiting for stable descendant identities')
++        )
++    )
++    cleanup = []
++    manager.terminate_process_record = lambda *args, **kwargs: (
++        cleanup.append((args, kwargs)) or SimpleNamespace(success=True)
++    )
++
++    success, message = manager.start_simulation()
++
++    assert not success
++    assert 'timed out waiting for stable descendant identities' in message
++    assert len(cleanup) == 1
++    assert manager.process is None
++    assert manager.process_record is None
++    assert SimulationState.RUNNING not in manager.states
++
++
++def test_live_launch_missing_dependency_is_cleaned_without_running_state(
++    monkeypatch,
++) -> None:
++    manager = make_start_manager()
++    manager.resolve_selected_world_path = lambda: '/tmp/warehouse_world.sdf'
++    process = ProcessStub(pid=4242, poll_result=None)
++    monkeypatch.setattr(MODULE.subprocess, 'Popen',
++                        lambda *args, **kwargs: process)
++    cleanup = []
++    manager.terminate_process_record = lambda *args, **kwargs: (
++        cleanup.append(True) or SimpleNamespace(success=True)
++    )
++    manager.wait_for_runtime_readiness = lambda: SimpleNamespace(
++        ready=False,
++        to_mapping=lambda: {
++            'ready': False,
++            'blocked_dependencies': ['/clock'],
++            'checks': [{'name': '/clock', 'reason': 'clock_stopped'}],
++        },
++    )
++
++    success, message = manager.start_simulation()
++
++    assert not success
++    assert 'clock_stopped' in message
++    assert cleanup == [True]
++    assert manager.process is None
++    assert SimulationState.RUNNING not in manager.states
++    assert manager.state == SimulationState.ERROR
++
++
+ class StopProcessStub:
+     def __init__(
+         self,
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/test/test_lifecycle_ros_interfaces.py b/ros2_ws/src/cpp_robotics_sim_ros/test/test_lifecycle_ros_interfaces.py
+index ceb8308..55f3429 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/test/test_lifecycle_ros_interfaces.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/test/test_lifecycle_ros_interfaces.py
+@@ -10,7 +10,9 @@ from pathlib import Path
+ import sys
+ 
+ from cpp_robotics_sim_ros.msg import LifecycleTransitionEvent, ManagedLifecycleState
+-from cpp_robotics_sim_ros.srv import TransitionManagedComponent
++from cpp_robotics_sim_ros.srv import (
++    GetManagedComponentState, TransitionManagedComponent,
++)
+ 
+ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
+ 
+@@ -57,8 +59,48 @@ def test_transport_failure_requires_new_state_snapshot():
+     adapter = object.__new__(transport.RemoteComponent)
+     adapter.name = 'simulation'
+     adapter._state = lifecycle.LifecycleState.INACTIVE
++    adapter._received_at = 0.0
++    adapter._last_transition_id = ''
++    adapter._verified_activation_id = ''
+     adapter._client = MissingClient()
+     result = adapter.transition(lifecycle.LifecycleTransition.ACTIVATE)
+     assert result.code == 'TRANSPORT_FAILED'
+     assert not result.success
+     assert adapter.state is None
++
++
++def test_read_only_state_service_carries_transition_provenance():
++    response = GetManagedComponentState.Response()
++    response.component = 'mapping'
++    response.state = 'active'
++    response.last_transition = 'activate'
++    response.last_transition_id = 'activate-42'
++    response.observed_at = '2026-09-25T00:00:00+00:00'
++    assert response.state == 'active'
++    assert response.last_transition == 'activate'
++    assert response.last_transition_id == 'activate-42'
++
++
++def test_remote_active_target_requires_matching_activation_provenance(monkeypatch):
++    adapter = object.__new__(transport.RemoteComponent)
++    adapter.name = 'mapping'
++    adapter._state = lifecycle.LifecycleState.ACTIVE
++    adapter._received_at = 100.0
++    adapter._last_transition_id = 'activate-42'
++    adapter._verified_activation_id = 'activate-42'
++    monkeypatch.setattr(transport.time, 'monotonic', lambda: 100.1)
++    assert adapter.target_satisfied(lifecycle.LifecycleState.ACTIVE)
++    adapter._verified_activation_id = 'different-id'
++    assert not adapter.target_satisfied(lifecycle.LifecycleState.ACTIVE)
++
++
++def test_remote_snapshot_expires_after_monotonic_lease(monkeypatch):
++    adapter = object.__new__(transport.RemoteComponent)
++    adapter.name = 'mapping'
++    adapter._state = lifecycle.LifecycleState.ACTIVE
++    adapter._received_at = 100.0
++    adapter._last_transition_id = 'activate-42'
++    adapter._verified_activation_id = 'activate-42'
++    monkeypatch.setattr(transport.time, 'monotonic', lambda: 104.0)
++    assert adapter.state is None
++    assert not adapter.target_satisfied(lifecycle.LifecycleState.ACTIVE)
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/test/test_mode_transition_rules.py b/ros2_ws/src/cpp_robotics_sim_ros/test/test_mode_transition_rules.py
+index 92c044b..4bc4127 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/test/test_mode_transition_rules.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/test/test_mode_transition_rules.py
+@@ -84,7 +84,11 @@ def make_manager(
+     manager.process_group_id = None
+ 
+     manager.managed_use_sim_time = True
+-    manager.startup_grace_period = 0.0
++    manager.readiness_timeout = 45.0
++    manager.descendant_identity_timeout = 4.0
++    manager.shutdown_timeout = 4.0
++    manager.kill_timeout = 1.5
++    manager.wait_for_mode_readiness = lambda _mode: SimpleNamespace(ready=True)
+ 
+     manager.launch_package = (
+         'cpp_robotics_sim_ros'
+@@ -234,6 +238,52 @@ def test_failed_stop_prevents_mode_change() -> None:
+     assert published_modes == []
+ 
+ 
++def test_mode_launch_with_missing_readiness_dependency_never_becomes_active(
++    monkeypatch,
++) -> None:
++    manager, _, published_modes, _ = make_manager()
++    process = SimpleNamespace(pid=4242, poll=lambda: None)
++    record = SimpleNamespace(pgid=4242)
++    manager.process_registry = object()
++    manager.register_process = lambda *_args: record
++    identity_waits = []
++
++    def wait_for_process_record(_registry, _record, **kwargs):
++        identity_waits.append({
++            'timeout': kwargs['timeout'],
++            'should_continue': kwargs['should_continue'](),
++        })
++        return record
++
++    manager.wait_for_process_record = wait_for_process_record
++    manager.terminate_process_record = lambda *_args, **_kwargs: SimpleNamespace(
++        success=True, error=''
++    )
++    manager.persist_shutdown_report = lambda _report: None
++    manager.wait_for_mode_readiness = lambda _mode: SimpleNamespace(
++        ready=False,
++        to_mapping=lambda: {
++            'ready': False,
++            'blocked_dependencies': ['/scan'],
++            'checks': [{'name': '/scan', 'reason': 'no recent messages'}],
++        },
++    )
++    monkeypatch.setattr(MODULE.subprocess, 'Popen',
++                        lambda *_args, **_kwargs: process)
++
++    success, message = manager.activate_mode(OperatingMode.MAPPING)
++
++    assert not success
++    assert 'no recent messages' in message
++    assert process is not None
++    assert manager.process is None
++    assert OperatingMode.MAPPING not in published_modes
++    assert published_modes == [OperatingMode.STARTING, OperatingMode.ERROR]
++    assert len(identity_waits) == 1
++    assert identity_waits[0]['timeout'] == 4.0
++    assert identity_waits[0]['should_continue']
++
++
+ def test_parameter_validation_accepts_valid_values() -> None:
+     manager = object.__new__(ModeManagerNode)
+ 
+@@ -246,7 +296,8 @@ def test_parameter_validation_accepts_valid_values() -> None:
+         OperatingMode.NAVIGATION:
+             ' nav2_navigation.launch.py ',
+     }
+-    manager.startup_grace_period = 0.0
++    manager.readiness_timeout = 45.0
++    manager.descendant_identity_timeout = 4.0
+     manager.shutdown_timeout = 10.0
+     manager.kill_timeout = 3.0
+ 
+@@ -281,9 +332,10 @@ def test_parameter_validation_rejects_non_finite_values() -> None:
+             OperatingMode.NAVIGATION:
+                 'nav2_navigation.launch.py',
+         }
+-        manager.startup_grace_period = (
++        manager.readiness_timeout = (
+             invalid_value
+         )
++        manager.descendant_identity_timeout = 4.0
+         manager.shutdown_timeout = 10.0
+         manager.kill_timeout = 3.0
+ 
+@@ -309,7 +361,8 @@ def test_parameter_validation_rejects_empty_launch_values() -> None:
+         OperatingMode.NAVIGATION:
+             'nav2_navigation.launch.py',
+     }
+-    manager.startup_grace_period = 0.0
++    manager.readiness_timeout = 45.0
++    manager.descendant_identity_timeout = 4.0
+     manager.shutdown_timeout = 10.0
+     manager.kill_timeout = 3.0
+ 
+@@ -324,6 +377,28 @@ def test_parameter_validation_rejects_empty_launch_values() -> None:
+     )
+ 
+ 
++def test_parameter_validation_rejects_nonpositive_identity_timeout() -> None:
++    manager = object.__new__(ModeManagerNode)
++    manager.launch_package = 'cpp_robotics_sim_ros'
++    manager.launch_files = {
++        OperatingMode.MAPPING: 'slam_mapping.launch.py',
++        OperatingMode.LOCALIZATION: 'amcl_localization.launch.py',
++        OperatingMode.NAVIGATION: 'nav2_navigation.launch.py',
++    }
++    manager.readiness_timeout = 45.0
++    manager.descendant_identity_timeout = 0.0
++    manager.shutdown_timeout = 4.0
++    manager.kill_timeout = 1.5
++
++    try:
++        manager.validate_parameters()
++    except ValueError as error:
++        assert 'descendant_identity_timeout' in str(error)
++        return
++
++    raise AssertionError('Expected nonpositive identity timeout to fail')
++
++
+ def test_selected_map_callback_accepts_object_payload() -> None:
+     manager = object.__new__(ModeManagerNode)
+ 
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/test/test_navigation_goal_validation.py b/ros2_ws/src/cpp_robotics_sim_ros/test/test_navigation_goal_validation.py
+index fff0559..e915477 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/test/test_navigation_goal_validation.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/test/test_navigation_goal_validation.py
+@@ -13,6 +13,8 @@ from pathlib import Path
+ import threading
+ from types import ModuleType
+ 
++import pytest
++
+ 
+ def load_navigation_manager_module() -> ModuleType:
+     script_path = (
+@@ -797,7 +799,7 @@ def test_navigation_result_uses_nav2_error_message() -> None:
+     )
+ 
+ 
+-def test_navigation_result_failure_resets_state() -> None:
++def test_navigation_result_failure_preserves_unconfirmed_goal_state() -> None:
+     node = make_navigation_result_node()
+ 
+     node.navigation_result_callback(
+@@ -809,9 +811,13 @@ def test_navigation_result_failure_resets_state() -> None:
+         ),
+     )
+ 
+-    assert node.current_request_id is None
+-    assert node.current_goal is None
+-    assert node.active_goal_handle is None
++    assert node.current_request_id == 7
++    assert node.current_goal == {
++        'x': 1.0,
++        'y': 2.0,
++        'yaw': 0.5,
++    }
++    assert node.active_goal_handle is not None
+     assert node.cancel_requested is False
+     assert node.status_messages[-1]['state'] == 'aborted'
+     assert node.status_messages[-1]['result'] == 'aborted'
+@@ -1032,18 +1038,15 @@ def test_prepare_shutdown_handles_cancellation_failure() -> None:
+     )
+     node.active_goal_handle = goal_handle
+ 
+-    node.prepare_shutdown()
++    with pytest.raises(RuntimeError, match='Shutdown cancellation failed'):
++        node.prepare_shutdown()
+ 
+     assert goal_handle.cancel_call_count == 1
+-    assert (
+-        'exception',
+-        'Unable to cancel navigation goal during shutdown',
+-    ) in node.test_logger.messages
+     assert node.goal_request_in_progress is False
+-    assert node.active_goal_handle is None
++    assert node.active_goal_handle is goal_handle
+     assert node.cancel_requested is False
+-    assert node.current_request_id is None
+-    assert node.current_goal is None
++    assert node.current_request_id == 7
++    assert node.current_goal == {'x': 1.0, 'y': 2.0, 'yaw': 0.5}
+     assert node.last_feedback == {}
+ 
+ 
+@@ -1058,7 +1061,7 @@ def test_prepare_shutdown_is_idempotent() -> None:
+     assert goal_handle.cancel_call_count == 1
+ 
+ 
+-def test_prepare_shutdown_resets_goal_runtime_state() -> None:
++def test_prepare_shutdown_keeps_goal_state_until_terminal_result() -> None:
+     node = make_shutdown_node()
+     goal_handle = ShutdownGoalHandle()
+     node.active_goal_handle = goal_handle
+@@ -1071,8 +1074,25 @@ def test_prepare_shutdown_resets_goal_runtime_state() -> None:
+ 
+     assert node.shutdown_prepared is True
+     assert node.goal_request_in_progress is False
++    assert node.active_goal_handle is goal_handle
++    assert node.cancel_requested is True
++    assert node.current_request_id == 7
++    assert node.current_goal == {'x': 1.0, 'y': 2.0, 'yaw': 0.5}
++    assert node.last_feedback == {'distance_remaining': 1.25}
++
++    node.navigation_result_callback(
++        7,
++        CompletedFuture(
++            result=WrappedNavigationResult(
++                status=MODULE.GoalStatus.STATUS_CANCELED,
++            )
++        ),
++    )
++
+     assert node.active_goal_handle is None
+     assert node.cancel_requested is False
+     assert node.current_request_id is None
+     assert node.current_goal is None
+     assert node.last_feedback == {}
++    assert node.status_messages[-1]['state'] == 'canceled'
++    assert node.goal_is_active() is False
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/test/test_platform_lifecycle_orchestrator.py b/ros2_ws/src/cpp_robotics_sim_ros/test/test_platform_lifecycle_orchestrator.py
+index a5c87a7..3ab8d8e 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/test/test_platform_lifecycle_orchestrator.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/test/test_platform_lifecycle_orchestrator.py
+@@ -152,3 +152,242 @@ def test_adapter_exception_stops_downstream_and_preserves_rollback_report():
+         'mapping', 'simulation',
+     ]
+     assert components['navigation'].state == State.UNCONFIGURED
++
++
++def test_stale_remote_active_snapshot_cannot_satisfy_platform_noop():
++    platform, components, _ = make_platform()
++    assert platform.transition(Transition.CONFIGURE).success
++    assert platform.transition(Transition.ACTIVATE).success
++
++    class ExpiredRemote:
++        state = None
++
++        def target_satisfied(self, target):
++            return False
++
++        def transition(self, operation):
++            raise AssertionError('expired publisher must not be called')
++
++    platform.components['localization'] = ExpiredRemote()
++    repeated = platform.transition(Transition.ACTIVATE)
++    assert not repeated.success
++    assert repeated.code == 'STATE_UNAVAILABLE'
++    assert repeated.failed_dependency == 'localization'
++
++
++def test_active_state_without_matching_activation_provenance_is_rejected():
++    platform, components, _ = make_platform()
++    assert platform.transition(Transition.CONFIGURE).success
++    assert platform.transition(Transition.ACTIVATE).success
++
++    class UnprovenRemote:
++        state = State.ACTIVE
++        last_transition_id = ''
++        verified_activation_id = 'different-transition'
++
++        def target_satisfied(self, target):
++            return (target != State.ACTIVE
++                    or bool(self.last_transition_id)
++                    and self.last_transition_id == self.verified_activation_id)
++
++        def transition(self, operation):
++            raise AssertionError('unproven ACTIVE state must not be trusted')
++
++    platform.components['localization'] = UnprovenRemote()
++    result = platform.transition(Transition.ACTIVATE)
++    assert not result.success
++    assert result.code == 'STATE_UNVERIFIED'
++    assert result.failed_dependency == 'localization'
++
++
++def test_direct_component_transition_during_platform_request_is_detected():
++    platform, components, _ = make_platform()
++    assert platform.transition(Transition.CONFIGURE).success
++
++    navigation = components['navigation']
++    original_transition = navigation.transition
++
++    def racing_transition(operation, **kwargs):
++        report = original_transition(operation, **kwargs)
++        if operation == Transition.ACTIVATE and report.success:
++            direct = components['simulation'].transition(Transition.DEACTIVATE)
++            assert direct.success
++        return report
++
++    navigation.transition = racing_transition
++    result = platform.transition(Transition.ACTIVATE)
++    assert not result.success
++    assert result.code == 'STATE_CHANGED'
++    assert result.failed_dependency == 'simulation'
++    assert components['simulation'].state == State.INACTIVE
++
++
++def test_delayed_ros_snapshot_cannot_hide_authoritative_direct_transition():
++    platform, components, _ = make_platform()
++    assert platform.transition(Transition.CONFIGURE).success
++
++    class DelayedRemote:
++        def __init__(self, authoritative):
++            self.authoritative = authoritative
++            self.cached_state = authoritative.state
++
++        @property
++        def state(self):
++            return self.cached_state
++
++        def refresh_state(self):
++            self.cached_state = self.authoritative.state
++            return True
++
++        def target_satisfied(self, target):
++            return self.cached_state == target
++
++        def transition(self, operation, **kwargs):
++            return self.authoritative.transition(operation, **kwargs)
++
++    authoritative = components['simulation']
++    remote = DelayedRemote(authoritative)
++    platform.components['simulation'] = remote
++    navigation = components['navigation']
++    original_transition = navigation.transition
++
++    def race_on_last_component(operation, **kwargs):
++        result = original_transition(operation, **kwargs)
++        if operation == Transition.ACTIVATE and result.success:
++            assert authoritative.transition(Transition.DEACTIVATE).success
++            # The transient-local state callback remains delayed; only the
++            # authoritative read can observe the manager's current state.
++        return result
++
++    navigation.transition = race_on_last_component
++    result = platform.transition(Transition.ACTIVATE)
++    assert not result.success
++    assert result.code == 'STATE_CHANGED'
++    assert result.failed_dependency == 'simulation'
++    assert remote.state == State.INACTIVE
++
++
++def test_direct_transition_between_final_component_refreshes_is_not_success():
++    platform, components, _ = make_platform()
++    assert platform.transition(Transition.CONFIGURE).success
++
++    class RemoteSnapshot:
++        def __init__(self, authoritative):
++            self.authoritative = authoritative
++            self.cached_state = authoritative.state
++
++        @property
++        def state(self):
++            return self.cached_state
++
++        def target_satisfied(self, target):
++            return self.cached_state == target
++
++        def refresh_state(self):
++            self.cached_state = self.authoritative.state
++            return True
++
++        def transition(self, operation, **kwargs):
++            return self.authoritative.transition(operation, **kwargs)
++
++    authoritative = components['simulation']
++    simulation_remote = RemoteSnapshot(authoritative)
++    platform.components['simulation'] = simulation_remote
++
++    localization = components['localization']
++    original_refresh = getattr(localization, 'refresh_state', None)
++
++    def deactivate_simulation_after_localization_read():
++        if original_refresh is not None:
++            assert original_refresh()
++        if authoritative.state == State.ACTIVE:
++            assert authoritative.transition(Transition.DEACTIVATE).success
++        return True
++
++    localization.refresh_state = deactivate_simulation_after_localization_read
++    result = platform.transition(Transition.ACTIVATE)
++    assert not result.success
++    assert result.code == 'STATE_CHANGED'
++    assert authoritative.state == State.INACTIVE
++
++
++def test_stable_authoritative_state_and_version_across_both_passes_succeeds():
++    platform, components, _ = make_platform()
++    assert platform.transition(Transition.CONFIGURE).success
++    refresh_counts = {name: 0 for name in components}
++
++    class RemoteSnapshot:
++        def __init__(self, name, authoritative):
++            self.name = name
++            self.authoritative = authoritative
++            self.cached_state = authoritative.state
++
++        @property
++        def state(self):
++            return self.cached_state
++
++        @property
++        def last_transition_id(self):
++            return self.authoritative.last_transition_id
++
++        @property
++        def last_transition(self):
++            return self.authoritative.last_transition
++
++        def target_satisfied(self, target):
++            return self.cached_state == target
++
++        def refresh_state(self):
++            refresh_counts[self.name] += 1
++            self.cached_state = self.authoritative.state
++            return True
++
++        def transition(self, operation, **kwargs):
++            return self.authoritative.transition(operation, **kwargs)
++
++    platform.components = {
++        name: RemoteSnapshot(name, component)
++        for name, component in components.items()
++    }
++    result = platform.transition(Transition.ACTIVATE)
++    assert result.success
++    # One request preflight plus the two complete final verification passes.
++    assert all(count >= 3 for count in refresh_counts.values())
++
++
++def test_second_pass_authoritative_refresh_failure_fails_closed():
++    platform, components, _ = make_platform()
++    assert platform.transition(Transition.CONFIGURE).success
++    simulation = components['simulation']
++    original_transition = simulation.transition
++    reads = 0
++
++    class RemoteSnapshot:
++        @property
++        def state(self):
++            return simulation.state
++
++        @property
++        def last_transition_id(self):
++            return simulation.last_transition_id
++
++        @property
++        def last_transition(self):
++            return simulation.last_transition
++
++        def refresh_state(self):
++            nonlocal reads
++            reads += 1
++            return reads < 3
++
++        def target_satisfied(self, target):
++            return simulation.state == target
++
++        def transition(self, operation, **kwargs):
++            return original_transition(operation, **kwargs)
++
++    platform.components['simulation'] = RemoteSnapshot()
++    result = platform.transition(Transition.ACTIVATE)
++    assert not result.success
++    assert result.code == 'STATE_UNAVAILABLE'
++    assert result.failed_dependency == 'simulation'
+diff --git a/ros2_ws/src/cpp_robotics_sim_ros/test/test_process_registry.py b/ros2_ws/src/cpp_robotics_sim_ros/test/test_process_registry.py
+index 0c6ef41..b9580a6 100644
+--- a/ros2_ws/src/cpp_robotics_sim_ros/test/test_process_registry.py
++++ b/ros2_ws/src/cpp_robotics_sim_ros/test/test_process_registry.py
+@@ -59,6 +59,29 @@ def _record(instance_id: str = 'instance-a', *, pid: int = 101):
+     )
+ 
+ 
++def _member(pid: int, *, pgid: int = 202, session_id: int = 202):
++    return MODULE.ProcessIdentity(
++        pid=pid,
++        pgid=pgid,
++        session_id=session_id,
++        parent_pid=202,
++        proc_start_time=1000 + pid,
++        exe='/usr/bin/python3',
++        cmdline_fingerprint=f'["python3","child-{pid}.py"]',
++    )
++
++
++class _ControlledClock:
++    def __init__(self):
++        self.now = 0.0
++
++    def monotonic(self):
++        return self.now
++
++    def sleep(self, duration):
++        self.now += duration
++
++
+ def _stop_helper(process: subprocess.Popen) -> None:
+     if process.poll() is not None:
+         return
+@@ -284,6 +307,163 @@ def test_refresh_group_members_rechecks_leader_after_proc_scan(
+     assert registry.list_records() == [record]
+ 
+ 
++def test_wait_for_group_members_accepts_progressive_descendant_startup(
++    tmp_path, monkeypatch,
++) -> None:
++    registry = MODULE.ProcessRegistry(_paths(tmp_path))
++    record = _record('progressive', pid=202)
++    registry.register(record)
++    first = _member(203)
++    second = _member(204, pgid=204)
++    scans = iter(((), (first,), (first, second), (first, second)))
++    clock = _ControlledClock()
++    monkeypatch.setattr(MODULE, 'verify_process_identity', lambda _record: True)
++    monkeypatch.setattr(MODULE, 'verify_captured_identity', lambda _identity: True)
++    monkeypatch.setattr(
++        MODULE, 'capture_process_session_members',
++        lambda *_args, **_kwargs: next(scans),
++    )
++    monkeypatch.setattr(MODULE.time, 'monotonic', clock.monotonic)
++    monkeypatch.setattr(MODULE.time, 'sleep', clock.sleep)
++
++    result = registry.wait_for_group_members(
++        record, timeout=1.0, poll_interval=0.1,
++    )
++
++    assert result.member_identities == (first, second)
++    assert registry.list_records() == [result]
++    assert clock.now == pytest.approx(0.2)
++
++
++def test_wait_for_group_members_retries_transient_unavailable_scan(
++    tmp_path, monkeypatch,
++) -> None:
++    registry = MODULE.ProcessRegistry(_paths(tmp_path))
++    record = _record('transient-scan', pid=202)
++    registry.register(record)
++    member = _member(203)
++    scans = iter((OSError('temporary /proc scan failure'), (member,), (member,)))
++    clock = _ControlledClock()
++
++    def scan_members(*_args, **_kwargs):
++        result = next(scans)
++        if isinstance(result, OSError):
++            raise result
++        return result
++
++    monkeypatch.setattr(MODULE, 'verify_process_identity', lambda _record: True)
++    monkeypatch.setattr(MODULE, 'verify_captured_identity', lambda _identity: True)
++    monkeypatch.setattr(
++        MODULE, 'capture_process_session_members',
++        scan_members,
++    )
++    monkeypatch.setattr(MODULE.time, 'monotonic', clock.monotonic)
++    monkeypatch.setattr(MODULE.time, 'sleep', clock.sleep)
++
++    result = registry.wait_for_group_members(
++        record, timeout=1.0, poll_interval=0.1,
++    )
++
++    assert result.member_identities == (member,)
++    assert clock.now == pytest.approx(0.2)
++
++
++def test_wait_for_group_members_retries_identity_change_during_scan(
++    tmp_path, monkeypatch,
++) -> None:
++    registry = MODULE.ProcessRegistry(_paths(tmp_path))
++    record = _record('changing-set', pid=202)
++    registry.register(record)
++    original = _member(203)
++    added = _member(204, pgid=204)
++    scans = iter(((original,), (original, added)))
++    clock = _ControlledClock()
++    monkeypatch.setattr(MODULE, 'verify_process_identity', lambda _record: True)
++    monkeypatch.setattr(MODULE, 'verify_captured_identity', lambda _identity: True)
++    monkeypatch.setattr(
++        MODULE, 'capture_process_session_members',
++        lambda *_args, **_kwargs: next(scans),
++    )
++    monkeypatch.setattr(MODULE.time, 'monotonic', clock.monotonic)
++    monkeypatch.setattr(MODULE.time, 'sleep', clock.sleep)
++
++    result = registry.wait_for_group_members(
++        record, timeout=1.0, poll_interval=0.1,
++    )
++
++    assert result.member_identities == (original, added)
++    assert registry.list_records() == [result]
++
++
++def test_wait_for_group_members_times_out_when_identities_never_validate(
++    tmp_path, monkeypatch,
++) -> None:
++    registry = MODULE.ProcessRegistry(_paths(tmp_path))
++    record = _record('never-stable', pid=202)
++    registry.register(record)
++    member = _member(203)
++    clock = _ControlledClock()
++    monkeypatch.setattr(MODULE, 'verify_process_identity', lambda _record: True)
++    monkeypatch.setattr(MODULE, 'verify_captured_identity', lambda _identity: False)
++    monkeypatch.setattr(
++        MODULE, 'capture_process_session_members',
++        lambda *_args, **_kwargs: (member,),
++    )
++    monkeypatch.setattr(MODULE.time, 'monotonic', clock.monotonic)
++    monkeypatch.setattr(MODULE.time, 'sleep', clock.sleep)
++
++    with pytest.raises(MODULE.DescendantIdentityTimeout, match='after 3 scans'):
++        registry.wait_for_group_members(
++            record, timeout=0.25, poll_interval=0.1,
++        )
++
++    assert registry.list_records() == [record]
++    assert clock.now == pytest.approx(0.25)
++
++
++def test_wait_for_group_members_fails_immediately_when_leader_exits(
++    tmp_path, monkeypatch,
++) -> None:
++    registry = MODULE.ProcessRegistry(_paths(tmp_path))
++    record = _record('leader-exits', pid=202)
++    registry.register(record)
++    scans = []
++    monkeypatch.setattr(MODULE, 'verify_process_identity', lambda _record: True)
++    monkeypatch.setattr(
++        MODULE, 'capture_process_session_members',
++        lambda *_args, **_kwargs: scans.append(True) or (),
++    )
++    continuing = iter((True, False))
++
++    with pytest.raises(RuntimeError, match='leader exited'):
++        registry.wait_for_group_members(
++            record, timeout=1.0,
++            should_continue=lambda: next(continuing),
++        )
++
++    assert len(scans) == 1
++    assert registry.list_records() == [record]
++
++
++def test_wait_for_group_members_rejects_out_of_session_identity(
++    tmp_path, monkeypatch,
++) -> None:
++    registry = MODULE.ProcessRegistry(_paths(tmp_path))
++    record = _record('wrong-session', pid=202)
++    registry.register(record)
++    foreign = _member(203, session_id=999)
++    monkeypatch.setattr(MODULE, 'verify_process_identity', lambda _record: True)
++    monkeypatch.setattr(
++        MODULE, 'capture_process_session_members',
++        lambda *_args, **_kwargs: (foreign,),
++    )
++
++    with pytest.raises(RuntimeError, match='outside the owned session'):
++        registry.wait_for_group_members(record, timeout=1.0)
++
++    assert registry.list_records() == [record]
++
++
+ def test_malformed_manifest_is_rejected(tmp_path) -> None:
+     paths = _paths(tmp_path)
+     paths.directory.mkdir(parents=True)

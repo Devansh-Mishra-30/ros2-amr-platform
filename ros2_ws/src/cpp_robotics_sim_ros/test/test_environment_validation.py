@@ -219,7 +219,8 @@ def make_parameter_validation_manager():
         'hospital': 'hospital_world.sdf',
     }
 
-    manager.startup_grace_period = 4.0
+    manager.readiness_timeout = 45.0
+    manager.descendant_identity_timeout = 4.0
     manager.shutdown_timeout = 10.0
     manager.kill_timeout = 3.0
 
@@ -235,8 +236,10 @@ def test_parameter_validation_accepts_valid_values() -> None:
 @pytest.mark.parametrize(
     ('attribute', 'value'),
     [
-        ('startup_grace_period', float('nan')),
-        ('startup_grace_period', float('inf')),
+        ('readiness_timeout', float('nan')),
+        ('readiness_timeout', float('inf')),
+        ('descendant_identity_timeout', float('nan')),
+        ('descendant_identity_timeout', float('inf')),
         ('shutdown_timeout', float('nan')),
         ('shutdown_timeout', float('inf')),
         ('kill_timeout', float('nan')),
@@ -336,12 +339,20 @@ def test_parameter_validation_rejects_empty_world_filename(
 
 def test_parameter_validation_rejects_negative_startup_period() -> None:
     manager = make_parameter_validation_manager()
-    manager.startup_grace_period = -0.1
+    manager.readiness_timeout = -0.1
 
     with pytest.raises(
         ValueError,
-        match='startup_grace_period',
+        match='readiness_timeout',
     ):
+        manager.validate_parameters()
+
+
+def test_parameter_validation_rejects_nonpositive_identity_timeout() -> None:
+    manager = make_parameter_validation_manager()
+    manager.descendant_identity_timeout = 0.0
+
+    with pytest.raises(ValueError, match='descendant_identity_timeout'):
         manager.validate_parameters()
 
 
@@ -651,6 +662,9 @@ def make_start_manager():
     )
     manager.release_exited_process_record = lambda _registry, _record: True
     manager.refresh_process_record = lambda _registry, record: record
+    manager.wait_for_process_record = (
+        lambda _registry, record, **_kwargs: record
+    )
     manager.persist_shutdown_report = lambda _report: None
     manager.process_lock = threading.RLock()
     manager.state = SimulationState.STOPPED
@@ -658,6 +672,9 @@ def make_start_manager():
     manager.shutdown_prepared = False
     manager.stop_in_progress = False
     manager.publish_emergency_stop = lambda _enabled: None
+    manager.wait_for_runtime_readiness = lambda: SimpleNamespace(
+        ready=True, to_mapping=lambda: {'ready': True}
+    )
 
     manager.launch_package = 'cpp_robotics_sim_ros'
     manager.launch_file = (
@@ -665,7 +682,8 @@ def make_start_manager():
     )
     manager.managed_use_sim_time = True
     manager.selected_environment = 'warehouse'
-    manager.startup_grace_period = 4.0
+    manager.readiness_timeout = 45.0
+    manager.descendant_identity_timeout = 4.0
     manager.shutdown_timeout = 4.0
     manager.kill_timeout = 1.5
 
@@ -787,15 +805,6 @@ def test_start_simulation_builds_expected_command(
         'Popen',
         fake_popen,
     )
-    monkeypatch.setattr(
-        MODULE.time,
-        'sleep',
-        lambda duration: recorded.setdefault(
-            'sleep',
-            duration,
-        ),
-    )
-
     success, message = manager.start_simulation()
 
     assert success is True
@@ -811,7 +820,7 @@ def test_start_simulation_builds_expected_command(
         'use_sim_time:=true',
     ]
     assert recorded['start_new_session'] is True
-    assert recorded['sleep'] == 4.0
+    assert manager.state == SimulationState.RUNNING
     assert manager.state == SimulationState.RUNNING
     assert manager.states == [
         SimulationState.STARTING,
@@ -850,12 +859,6 @@ def test_start_simulation_uses_false_sim_time_argument(
         'Popen',
         fake_popen,
     )
-    monkeypatch.setattr(
-        MODULE.time,
-        'sleep',
-        lambda duration: None,
-    )
-
     success, _ = manager.start_simulation()
 
     assert success is True
@@ -912,12 +915,6 @@ def test_start_simulation_detects_early_exit(
         'Popen',
         lambda *args, **kwargs: process,
     )
-    monkeypatch.setattr(
-        MODULE.time,
-        'sleep',
-        lambda duration: None,
-    )
-
     success, message = manager.start_simulation()
 
     assert success is False
@@ -929,6 +926,66 @@ def test_start_simulation_detects_early_exit(
         SimulationState.STARTING,
         SimulationState.ERROR,
     ]
+
+
+def test_start_simulation_cleans_up_if_descendant_identity_never_stabilizes(
+    monkeypatch,
+) -> None:
+    manager = make_start_manager()
+    manager.resolve_selected_world_path = lambda: '/tmp/warehouse_world.sdf'
+    process = ProcessStub(pid=4242, poll_result=None)
+    monkeypatch.setattr(
+        MODULE.subprocess, 'Popen', lambda *args, **kwargs: process
+    )
+    manager.wait_for_process_record = lambda *_args, **_kwargs: (
+        (_ for _ in ()).throw(
+            RuntimeError('timed out waiting for stable descendant identities')
+        )
+    )
+    cleanup = []
+    manager.terminate_process_record = lambda *args, **kwargs: (
+        cleanup.append((args, kwargs)) or SimpleNamespace(success=True)
+    )
+
+    success, message = manager.start_simulation()
+
+    assert not success
+    assert 'timed out waiting for stable descendant identities' in message
+    assert len(cleanup) == 1
+    assert manager.process is None
+    assert manager.process_record is None
+    assert SimulationState.RUNNING not in manager.states
+
+
+def test_live_launch_missing_dependency_is_cleaned_without_running_state(
+    monkeypatch,
+) -> None:
+    manager = make_start_manager()
+    manager.resolve_selected_world_path = lambda: '/tmp/warehouse_world.sdf'
+    process = ProcessStub(pid=4242, poll_result=None)
+    monkeypatch.setattr(MODULE.subprocess, 'Popen',
+                        lambda *args, **kwargs: process)
+    cleanup = []
+    manager.terminate_process_record = lambda *args, **kwargs: (
+        cleanup.append(True) or SimpleNamespace(success=True)
+    )
+    manager.wait_for_runtime_readiness = lambda: SimpleNamespace(
+        ready=False,
+        to_mapping=lambda: {
+            'ready': False,
+            'blocked_dependencies': ['/clock'],
+            'checks': [{'name': '/clock', 'reason': 'clock_stopped'}],
+        },
+    )
+
+    success, message = manager.start_simulation()
+
+    assert not success
+    assert 'clock_stopped' in message
+    assert cleanup == [True]
+    assert manager.process is None
+    assert SimulationState.RUNNING not in manager.states
+    assert manager.state == SimulationState.ERROR
 
 
 class StopProcessStub:

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "release": "v0.1.3",
+  "defect_id": "DEF-002",
+  "severity": "Critical",
+  "feature_id": "F-READY-010",
+  "requirement_id": "REQ-030",
+  "title": "Fixed-delay sequencing can assume readiness prematurely",
+  "previous_status": "Open",
+  "disposition": "Closed",
+  "resolution": "Resolved by replacing elapsed-time readiness assumptions with explicit readiness contracts and dependency evidence.",
+  "verification": {
+    "TC-0041": "PASSED",
+    "TC-0042": "PASSED",
+    "MET-005": {
+      "value": 0,
+      "unit": "count"
+    },
+    "broad_gate": "PASSED",
+    "runtime_acceptance": "34/34 PASSED"
+  },
+  "engineering_basis": [
+    "Mode/runtime activation waits for explicit readiness evidence.",
+    "A missing or failed dependency prevents readiness/activation.",
+    "Failure and recovery behavior is exercised by accepted evidence.",
+    "Blind-delay activation count is zero."
+  ],
+  "raw_evidence": [
+    {
+      "path": "working_tree.patch",
+      "sha256": "2db4803d45f142121ab1cf924461ed5ad7d855426619a3efaf66072a6946d127"
+    },
+    {
+      "path": "broad_gate.log",
+      "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+    },
+    {
+      "path": "runtime_acceptance/summary.json",
+      "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+    },
+    {
+      "path": "acceptance_summary.md",
+      "sha256": "8136f0cae3a41d5482793a82e25639203f81774cdb0954f2b36edb194fc31bed"
+    }
+  ],
+  "tracker_phase1_sha256": "ffbd5abd3e2396782cc72fb1c305e093c170b7c0936ab1a00cbdcd9f8da55427",
+  "decision": {
+    "approved_by": "Devansh",
+    "evaluated_at_utc": "2026-09-26T04:00:36.159353+00:00",
+    "basis": "REQ-030 evidence present; TC-0041 and TC-0042 passed; MET-005=0; broad and runtime acceptance passed."
+  },
+  "tracker_final_sha256": "990b78d7fbdb64c1404a827c6aa517a767a5b6992a99af0e257674418e9f607f"
+}

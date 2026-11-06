@@ -5,9 +5,6 @@
 What requirement, issue, bug, or engineering objective does this PR address?
 
 <!--
-Example:
-Implement duplicate-process protection for the simulation manager
-as part of v0.1.1 Runtime Reliability.
 -->
 
 ---

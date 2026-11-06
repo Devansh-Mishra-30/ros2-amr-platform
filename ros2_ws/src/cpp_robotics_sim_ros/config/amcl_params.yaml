@@ -47,8 +47,9 @@ amcl:
     beam_skip_error_threshold: 0.9
 
     # Update thresholds
-    update_min_d: 0.10
-    update_min_a: 0.10
+    # Publish fresh localization evidence while the simulated robot is idle.
+    update_min_d: 0.0
+    update_min_a: 0.0
 
     # Recovery behavior
     recovery_alpha_fast: 0.0
@@ -56,7 +57,7 @@ amcl:
 
     # TF and pose publication
     tf_broadcast: true
-    transform_tolerance: 1.0
+    transform_tolerance: 0.0
     save_pose_rate: 0.5
 
     # Initial pose near the simulated spawn position

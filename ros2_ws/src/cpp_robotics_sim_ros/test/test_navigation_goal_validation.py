@@ -13,6 +13,8 @@ from pathlib import Path
 import threading
 from types import ModuleType
 
+import pytest
+
 
 def load_navigation_manager_module() -> ModuleType:
     script_path = (
@@ -797,7 +799,7 @@ def test_navigation_result_uses_nav2_error_message() -> None:
     )
 
 
-def test_navigation_result_failure_resets_state() -> None:
+def test_navigation_result_failure_preserves_unconfirmed_goal_state() -> None:
     node = make_navigation_result_node()
 
     node.navigation_result_callback(
@@ -809,9 +811,13 @@ def test_navigation_result_failure_resets_state() -> None:
         ),
     )
 
-    assert node.current_request_id is None
-    assert node.current_goal is None
-    assert node.active_goal_handle is None
+    assert node.current_request_id == 7
+    assert node.current_goal == {
+        'x': 1.0,
+        'y': 2.0,
+        'yaw': 0.5,
+    }
+    assert node.active_goal_handle is not None
     assert node.cancel_requested is False
     assert node.status_messages[-1]['state'] == 'aborted'
     assert node.status_messages[-1]['result'] == 'aborted'
@@ -1032,18 +1038,15 @@ def test_prepare_shutdown_handles_cancellation_failure() -> None:
     )
     node.active_goal_handle = goal_handle
 
-    node.prepare_shutdown()
+    with pytest.raises(RuntimeError, match='Shutdown cancellation failed'):
+        node.prepare_shutdown()
 
     assert goal_handle.cancel_call_count == 1
-    assert (
-        'exception',
-        'Unable to cancel navigation goal during shutdown',
-    ) in node.test_logger.messages
     assert node.goal_request_in_progress is False
-    assert node.active_goal_handle is None
+    assert node.active_goal_handle is goal_handle
     assert node.cancel_requested is False
-    assert node.current_request_id is None
-    assert node.current_goal is None
+    assert node.current_request_id == 7
+    assert node.current_goal == {'x': 1.0, 'y': 2.0, 'yaw': 0.5}
     assert node.last_feedback == {}
 
 
@@ -1058,7 +1061,7 @@ def test_prepare_shutdown_is_idempotent() -> None:
     assert goal_handle.cancel_call_count == 1
 
 
-def test_prepare_shutdown_resets_goal_runtime_state() -> None:
+def test_prepare_shutdown_keeps_goal_state_until_terminal_result() -> None:
     node = make_shutdown_node()
     goal_handle = ShutdownGoalHandle()
     node.active_goal_handle = goal_handle
@@ -1071,8 +1074,25 @@ def test_prepare_shutdown_resets_goal_runtime_state() -> None:
 
     assert node.shutdown_prepared is True
     assert node.goal_request_in_progress is False
+    assert node.active_goal_handle is goal_handle
+    assert node.cancel_requested is True
+    assert node.current_request_id == 7
+    assert node.current_goal == {'x': 1.0, 'y': 2.0, 'yaw': 0.5}
+    assert node.last_feedback == {'distance_remaining': 1.25}
+
+    node.navigation_result_callback(
+        7,
+        CompletedFuture(
+            result=WrappedNavigationResult(
+                status=MODULE.GoalStatus.STATUS_CANCELED,
+            )
+        ),
+    )
+
     assert node.active_goal_handle is None
     assert node.cancel_requested is False
     assert node.current_request_id is None
     assert node.current_goal is None
     assert node.last_feedback == {}
+    assert node.status_messages[-1]['state'] == 'canceled'
+    assert node.goal_is_active() is False

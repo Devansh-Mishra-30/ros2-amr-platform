@@ -10,8 +10,11 @@
 from datetime import datetime, timezone
 
 from cpp_robotics_sim_ros.msg import LifecycleTransitionEvent, ManagedLifecycleState
-from cpp_robotics_sim_ros.srv import TransitionManagedComponent
+from cpp_robotics_sim_ros.srv import (
+    GetManagedComponentState, TransitionManagedComponent,
+)
 from managed_component import LifecycleTransition, ManagedComponent
+import rclpy
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 
 
@@ -33,6 +36,8 @@ def bind_lifecycle(node, component_name, hooks):
     )
 
     def publish_state():
+        if not rclpy.ok(context=node.context):
+            return
         snapshot = ManagedLifecycleState()
         snapshot.component = component_name
         snapshot.state = component.state.value
@@ -41,6 +46,8 @@ def bind_lifecycle(node, component_name, hooks):
         state_publisher.publish(snapshot)
 
     def publish_result(result, orchestration_id=''):
+        if not rclpy.ok(context=node.context):
+            return None
         event = LifecycleTransitionEvent()
         for field, value in result.to_mapping().items():
             setattr(event, field, value)
@@ -67,7 +74,25 @@ def bind_lifecycle(node, component_name, hooks):
         f'/lifecycle/{component_name}/transition',
         callback,
     )
+
+    def get_state(_request, response):
+        response.component = component_name
+        response.state = component.state.value
+        response.last_transition = component.last_transition
+        response.last_transition_id = component.last_transition_id
+        response.observed_at = datetime.now(timezone.utc).isoformat()
+        return response
+
+    node.create_service(
+        GetManagedComponentState,
+        f'/lifecycle/{component_name}/state_snapshot',
+        get_state,
+    )
     node.publish_lifecycle_state = publish_state
     node.publish_lifecycle_result = publish_result
+    # Transient-local state communicates the last value to late joiners, but
+    # cannot prove the publisher is still alive. Periodic snapshots provide a
+    # small lease for remote consumers without adding readiness to lifecycle.
+    node.lifecycle_state_timer = node.create_timer(1.0, publish_state)
     publish_state()
     return component

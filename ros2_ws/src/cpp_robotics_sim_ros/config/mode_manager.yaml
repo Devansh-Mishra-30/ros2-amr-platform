@@ -8,6 +8,7 @@ mode_manager:
 
     managed_use_sim_time: true
 
-    startup_grace_period: 3.0
+    readiness_timeout: 45.0
+    descendant_identity_timeout: 4.0
     shutdown_timeout: 4.0
     kill_timeout: 1.5

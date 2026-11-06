@@ -1,0 +1,357 @@
+
+=== Source validation ===
+
+Checking Python syntax...
+PASS: 48 Python files passed syntax checks.
+
+Checking JavaScript syntax...
+PASS: 1 JavaScript files passed syntax checks.
+
+Checking Bash syntax...
+PASS: 13 Bash files passed syntax checks.
+
+All syntax checks passed.
+
+=== ROS 2 build ===
+Distribution: jazzy
+Workspace:    /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws
+Package:      cpp_robotics_sim_ros
+
+Starting >>> cpp_robotics_sim_ros
+[  1%] Built target cpp_robotics_sim_ros__rosidl_generator_type_description
+[  2%] Built target cpp_robotics_sim_ros__rs
+[  5%] Built target gtest_main
+[  8%] Built target gtest
+[ 10%] Built target sim_node
+[ 12%] Built target cpp_robotics_sim_ros__cpp
+[ 31%] Built target cpp_robotics_sim_ros__rosidl_generator_c
+[ 31%] Built target ament_cmake_python_copy_cpp_robotics_sim_ros
+[ 34%] Built target test_core_math
+[ 42%] Built target cpp_robotics_sim_ros__rosidl_typesupport_c
+[ 50%] Built target cpp_robotics_sim_ros__rosidl_typesupport_introspection_c
+[ 58%] Built target cpp_robotics_sim_ros__rosidl_typesupport_fastrtps_c
+[ 71%] Built target cpp_robotics_sim_ros__rosidl_typesupport_introspection_cpp
+[ 78%] Built target cpp_robotics_sim_ros__rosidl_typesupport_cpp
+[ 83%] Built target cpp_robotics_sim_ros__rosidl_typesupport_fastrtps_cpp
+[ 83%] Built target cpp_robotics_sim_ros
+[ 84%] Built target cpp_robotics_sim_ros__py
+[ 91%] Built target cpp_robotics_sim_ros__rosidl_generator_py
+[ 94%] Built target cpp_robotics_sim_ros_s__rosidl_typesupport_fastrtps_c
+[ 97%] Built target cpp_robotics_sim_ros_s__rosidl_typesupport_c
+[100%] Built target cpp_robotics_sim_ros_s__rosidl_typesupport_introspection_c
+running egg_info
+writing cpp_robotics_sim_ros.egg-info/PKG-INFO
+writing dependency_links to cpp_robotics_sim_ros.egg-info/dependency_links.txt
+writing top-level names to cpp_robotics_sim_ros.egg-info/top_level.txt
+reading manifest file 'cpp_robotics_sim_ros.egg-info/SOURCES.txt'
+writing manifest file 'cpp_robotics_sim_ros.egg-info/SOURCES.txt'
+[100%] Built target ament_cmake_python_build_cpp_robotics_sim_ros_egg
+-- Install configuration: ""
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/ament_index/resource_index/rosidl_interfaces/cpp_robotics_sim_ros
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/msg/ManagedLifecycleState.json
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/msg/LifecycleTransitionEvent.json
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/srv/TransitionManagedComponent.json
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/srv/GetManagedComponentState.json
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/lifecycle_transition_event.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/managed_lifecycle_state.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/rosidl_generator_c__visibility_control.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/managed_lifecycle_state__type_support.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/lifecycle_transition_event__struct.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/lifecycle_transition_event__functions.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/managed_lifecycle_state__description.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/lifecycle_transition_event__type_support.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/managed_lifecycle_state__struct.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/lifecycle_transition_event__description.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/managed_lifecycle_state__type_support.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/managed_lifecycle_state__functions.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/lifecycle_transition_event__functions.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/managed_lifecycle_state__functions.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/lifecycle_transition_event__type_support.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/transition_managed_component.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/get_managed_component_state.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/get_managed_component_state__type_support.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/transition_managed_component__struct.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/get_managed_component_state__type_support.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/transition_managed_component__functions.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/transition_managed_component__type_support.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/get_managed_component_state__struct.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/get_managed_component_state__functions.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/transition_managed_component__functions.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/transition_managed_component__description.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/get_managed_component_state__description.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/get_managed_component_state__functions.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/transition_managed_component__type_support.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/environment/library_path.sh
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/environment/library_path.dsv
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/libcpp_robotics_sim_ros__rosidl_generator_c.so
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/rosidl_typesupport_fastrtps_c__visibility_control.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/lifecycle_transition_event__rosidl_typesupport_fastrtps_c.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/managed_lifecycle_state__rosidl_typesupport_fastrtps_c.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/transition_managed_component__rosidl_typesupport_fastrtps_c.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/get_managed_component_state__rosidl_typesupport_fastrtps_c.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/libcpp_robotics_sim_ros__rosidl_typesupport_fastrtps_c.so
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/rosidl_typesupport_introspection_c__visibility_control.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/managed_lifecycle_state__type_support.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/lifecycle_transition_event__type_support.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/lifecycle_transition_event__rosidl_typesupport_introspection_c.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/managed_lifecycle_state__rosidl_typesupport_introspection_c.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/get_managed_component_state__type_support.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/transition_managed_component__type_support.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/get_managed_component_state__rosidl_typesupport_introspection_c.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/transition_managed_component__rosidl_typesupport_introspection_c.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/libcpp_robotics_sim_ros__rosidl_typesupport_introspection_c.so
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/libcpp_robotics_sim_ros__rosidl_typesupport_c.so
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/lifecycle_transition_event.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/managed_lifecycle_state.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/rosidl_generator_cpp__visibility_control.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/lifecycle_transition_event__struct.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/managed_lifecycle_state__struct.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/lifecycle_transition_event__traits.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/managed_lifecycle_state__builder.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/lifecycle_transition_event__type_support.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/lifecycle_transition_event__builder.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/managed_lifecycle_state__traits.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/managed_lifecycle_state__type_support.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/get_managed_component_state.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/transition_managed_component.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/transition_managed_component__struct.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/transition_managed_component__builder.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/transition_managed_component__type_support.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/get_managed_component_state__builder.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/get_managed_component_state__type_support.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/transition_managed_component__traits.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/get_managed_component_state__traits.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/get_managed_component_state__struct.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/dds_fastrtps
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/lifecycle_transition_event__rosidl_typesupport_fastrtps_cpp.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/managed_lifecycle_state__rosidl_typesupport_fastrtps_cpp.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/transition_managed_component__rosidl_typesupport_fastrtps_cpp.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/dds_fastrtps
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/get_managed_component_state__rosidl_typesupport_fastrtps_cpp.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/libcpp_robotics_sim_ros__rosidl_typesupport_fastrtps_cpp.so
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/lifecycle_transition_event__type_support.cpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/managed_lifecycle_state__rosidl_typesupport_introspection_cpp.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/lifecycle_transition_event__rosidl_typesupport_introspection_cpp.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/msg/detail/managed_lifecycle_state__type_support.cpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/transition_managed_component__type_support.cpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/get_managed_component_state__type_support.cpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/transition_managed_component__rosidl_typesupport_introspection_cpp.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/cpp_robotics_sim_ros/srv/detail/get_managed_component_state__rosidl_typesupport_introspection_cpp.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/libcpp_robotics_sim_ros__rosidl_typesupport_introspection_cpp.so
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/libcpp_robotics_sim_ros__rosidl_typesupport_cpp.so
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/environment/pythonpath.sh
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/environment/pythonpath.dsv
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros-0.1.3-py3.12.egg-info
+-- Installing: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros-0.1.3-py3.12.egg-info/PKG-INFO
+-- Installing: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros-0.1.3-py3.12.egg-info/SOURCES.txt
+-- Installing: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros-0.1.3-py3.12.egg-info/top_level.txt
+-- Installing: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros-0.1.3-py3.12.egg-info/dependency_links.txt
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/__init__.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/_cpp_robotics_sim_ros_s.ep.rosidl_typesupport_c.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/_cpp_robotics_sim_ros_s.ep.rosidl_typesupport_fastrtps_c.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/_cpp_robotics_sim_ros_s.ep.rosidl_typesupport_introspection_c.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/cpp_robotics_sim_ros_s__rosidl_typesupport_fastrtps_c.so
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/msg
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/msg/_lifecycle_transition_event.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/msg/__init__.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/msg/_lifecycle_transition_event_s.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/msg/_managed_lifecycle_state_s.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/msg/_managed_lifecycle_state.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/srv
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/srv/__init__.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/srv/_get_managed_component_state.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/srv/_get_managed_component_state_s.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/srv/_transition_managed_component.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/srv/_transition_managed_component_s.c
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/cpp_robotics_sim_ros_s__rosidl_typesupport_c.so
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/cpp_robotics_sim_ros_s__rosidl_typesupport_introspection_c.so
+Listing '/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros'...
+Listing '/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/msg'...
+Listing '/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/srv'...
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/cpp_robotics_sim_ros_s__rosidl_typesupport_fastrtps_c.so
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/cpp_robotics_sim_ros_s__rosidl_typesupport_introspection_c.so
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/python3.12/site-packages/cpp_robotics_sim_ros/cpp_robotics_sim_ros_s__rosidl_typesupport_c.so
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/libcpp_robotics_sim_ros__rosidl_generator_py.so
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/ament_index/resource_index/rust_packages/cpp_robotics_sim_ros
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/rust
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/rust/Cargo.toml
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/rust/src
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/rust/src/srv.rs
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/rust/src/lib.rs
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/rust/src/msg.rs
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/rust/src/msg
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/rust/src/msg/rmw.rs
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/rust/src/srv
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/rust/src/srv/rmw.rs
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/rust/build.rs
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/msg/ManagedLifecycleState.idl
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/msg/LifecycleTransitionEvent.idl
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/srv/TransitionManagedComponent.idl
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/srv/GetManagedComponentState.idl
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/msg/ManagedLifecycleState.msg
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/msg/LifecycleTransitionEvent.msg
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/srv/TransitionManagedComponent.srv
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/srv/GetManagedComponentState.srv
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/sim_node
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/include/cpp_robotics_sim_ros/core_math.hpp
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/map_server.launch.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/description.launch.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/__pycache__
+-- Installing: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/__pycache__/ekf_localization.launch.cpython-312.pyc
+-- Installing: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/__pycache__/description.launch.cpython-312.pyc
+-- Installing: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/__pycache__/sim.launch.cpython-312.pyc
+-- Installing: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/__pycache__/interactive_control.launch.cpython-312.pyc
+-- Installing: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/__pycache__/robot_model_viz.launch.cpython-312.pyc
+-- Installing: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/__pycache__/amcl_localization.launch.cpython-312.pyc
+-- Installing: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/__pycache__/nav2_navigation.launch.cpython-312.pyc
+-- Installing: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/__pycache__/map_server.launch.cpython-312.pyc
+-- Installing: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/__pycache__/slam_mapping.launch.cpython-312.pyc
+-- Installing: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/__pycache__/ros2_control.launch.cpython-312.pyc
+-- Installing: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/__pycache__/web_interface.launch.cpython-312.pyc
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/slam_mapping.launch.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/web_interface.launch.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/sim.launch.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/robot_model_viz.launch.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/ros2_control.launch.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/amcl_localization.launch.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/interactive_control.launch.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/ekf_localization.launch.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/launch/nav2_navigation.launch.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/sim_params.yaml
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/slam_toolbox.yaml
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/mode_manager.yaml
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/environment_registry.yaml
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/ekf_localization.yaml
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/ros2_control.yaml
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/localization_manager.yaml
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/simulation_manager.yaml
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/command_mux.yaml
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/amcl_params.yaml
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/config/mapping_manager.yaml
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/rviz
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/rviz/sim_debug.rviz
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/rviz/diffbot_robot_model.rviz
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/urdf
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/urdf/diffbot.urdf
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/xacro
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/xacro/diffbot.xacro
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/worlds
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/worlds/hospital_world.sdf
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/worlds/warehouse_world.sdf
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/worlds/empty_diffbot_world.sdf
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/nav2
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/nav2/diffbot_nav2_params.yaml
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/maps
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/maps/default_diffbot_map.pgm
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/maps/default_diffbot_map.yaml
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/web
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/web/dashboard
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/web/dashboard/styles.css
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/web/dashboard/index.html
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/web/dashboard/app.js
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/noisy_odom_node.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/cmd_vel_twist_bridge.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/nav2_lifecycle_check.sh
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/nav2_costmap_check.sh
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/nav2_planner_controller_check.sh
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/command_mux_node.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/keyboard_teleop_node.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/simulation_manager_node.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/mode_manager_node.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/localization_manager_node.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/mapping_manager_node.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/navigation_goal_manager_node.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/process_registry.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/process_lifecycle.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/teardown.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/runtime_verification.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/managed_component.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/platform_lifecycle_orchestrator.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/platform_lifecycle_orchestrator_node.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/lifecycle_ros_adapter.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/v012_lifecycle_acceptance.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/readiness_contract.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/lib/cpp_robotics_sim_ros/ros_runtime_readiness.py
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/ament_index/resource_index/package_run_dependencies/cpp_robotics_sim_ros
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/ament_index/resource_index/parent_prefix_path/cpp_robotics_sim_ros
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/environment/ament_prefix_path.sh
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/environment/ament_prefix_path.dsv
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/environment/path.sh
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/environment/path.dsv
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/local_setup.bash
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/local_setup.sh
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/local_setup.zsh
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/local_setup.dsv
+-- Installing: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/package.dsv
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/ament_index/resource_index/packages/cpp_robotics_sim_ros
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/export_cpp_robotics_sim_ros__rosidl_generator_cExport.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/export_cpp_robotics_sim_ros__rosidl_generator_cExport-noconfig.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/export_cpp_robotics_sim_ros__rosidl_typesupport_fastrtps_cExport.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/export_cpp_robotics_sim_ros__rosidl_typesupport_fastrtps_cExport-noconfig.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/cpp_robotics_sim_ros__rosidl_typesupport_introspection_cExport.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/cpp_robotics_sim_ros__rosidl_typesupport_introspection_cExport-noconfig.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/cpp_robotics_sim_ros__rosidl_typesupport_cExport.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/cpp_robotics_sim_ros__rosidl_typesupport_cExport-noconfig.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/export_cpp_robotics_sim_ros__rosidl_generator_cppExport.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/export_cpp_robotics_sim_ros__rosidl_typesupport_fastrtps_cppExport.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/export_cpp_robotics_sim_ros__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/cpp_robotics_sim_ros__rosidl_typesupport_introspection_cppExport.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/cpp_robotics_sim_ros__rosidl_typesupport_introspection_cppExport-noconfig.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/cpp_robotics_sim_ros__rosidl_typesupport_cppExport.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/cpp_robotics_sim_ros__rosidl_typesupport_cppExport-noconfig.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/export_cpp_robotics_sim_ros__rosidl_generator_pyExport.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/export_cpp_robotics_sim_ros__rosidl_generator_pyExport-noconfig.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/rosidl_cmake-extras.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/ament_cmake_export_dependencies-extras.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/ament_cmake_export_include_directories-extras.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/ament_cmake_export_libraries-extras.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/ament_cmake_export_targets-extras.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/rosidl_cmake_aggregate_target-extras.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/cpp_robotics_sim_rosConfig.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/cmake/cpp_robotics_sim_rosConfig-version.cmake
+-- Up-to-date: /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/package.xml
+Finished <<< cpp_robotics_sim_ros [0.74s]
+
+Summary: 1 package finished [1.02s]
+
+Build completed successfully.
+Source the workspace with:
+  source /home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/setup.bash

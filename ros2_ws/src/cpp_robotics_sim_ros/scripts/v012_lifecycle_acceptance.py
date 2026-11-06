@@ -27,7 +27,7 @@ from nav2_msgs.action import NavigateToPose
 from nav_msgs.msg import OccupancyGrid
 import rclpy
 from rclpy.action import ActionClient
-from rclpy.executors import MultiThreadedExecutor
+from rclpy.executors import MultiThreadedExecutor, SingleThreadedExecutor
 from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from rclpy.time import Time
@@ -55,6 +55,7 @@ REQUIRED_LIFECYCLE_MANAGERS = (
     '/simulation_manager', '/mapping_manager',
     '/localization_manager', '/navigation_goal_manager',
 )
+RUNTIME_GRAPH_CONVERGENCE_TIMEOUT_SECONDS = 30.0
 
 
 def ros_mapping(message):
@@ -173,6 +174,10 @@ def main(args=None):
     executor = None
     executor_thread = None
     late = None
+    graph_context = None
+    graph_node = None
+    graph_executor = None
+    graph_thread = None
     launch_log = None
     launch_log_path = evidence / 'web_interface_launch.log'
 
@@ -237,7 +242,7 @@ def main(args=None):
     def runtime_graph_clean():
         names = [
             namespace.rstrip('/') + '/' + name
-            for name, namespace in node.get_node_names_and_namespaces()
+            for name, namespace in graph_node.get_node_names_and_namespaces()
         ]
         counts = count_ros_nodes(names)
         clean = (
@@ -350,7 +355,7 @@ def main(args=None):
         launch_log = launch_log_path.open('w', encoding='utf-8')
         launch = subprocess.Popen(
             ['ros2', 'launch', 'cpp_robotics_sim_ros', 'web_interface.launch.py',
-             'open_browser:=false', 'mode_startup_grace_period:=8.0'],
+             'open_browser:=false'],
             stdout=launch_log, stderr=subprocess.STDOUT, start_new_session=True,
         )
         if not wait_until(lambda: set(node.states) == set(COMPONENT_ORDER)):
@@ -766,13 +771,6 @@ def main(args=None):
 
         try:
             mode_trigger('stop', required=False)
-            report['navigation_launch_configuration'] = {
-                'launch_argument': 'mode_startup_grace_period:=8.0',
-                'rationale': (
-                    'nav2_navigation.launch.py contains a 4.0 s TimerAction; '
-                    'the mode manager default descendant-capture grace is 3.0 s'
-                ),
-            }
             mode_trigger('navigation')
             action_server_ready = wait_until(
                 lambda: node.navigation_action_client.wait_for_server(
@@ -985,14 +983,35 @@ def main(args=None):
         ]
         report['registry_final_state'] = registry_records
         record('19_process_registry_clean', not registry_records, registry_records)
-        node_lines = sorted(
-            namespace.rstrip('/') + '/' + name
-            for name, namespace in node.get_node_names_and_namespaces()
+
+        # Use a fresh DDS participant for the final graph snapshot. The long-
+        # lived acceptance observer sees every short-lived launch participant;
+        # some RMW graph caches retain those departed node names. A fresh
+        # context observes the current domain while retaining the same exact
+        # duplicate and required-manager checks below.
+        graph_context = rclpy.Context()
+        graph_context.init(args=None)
+        graph_node = Node(
+            'v012_runtime_graph_verifier', context=graph_context,
         )
-        graph_complete = wait_until(runtime_graph_clean, timeout=8.0)
+        graph_executor = SingleThreadedExecutor(context=graph_context)
+        graph_executor.add_node(graph_node)
+        graph_thread = threading.Thread(
+            target=graph_executor.spin, daemon=True,
+        )
+        graph_thread.start()
+
         node_lines = sorted(
             namespace.rstrip('/') + '/' + name
-            for name, namespace in node.get_node_names_and_namespaces()
+            for name, namespace in graph_node.get_node_names_and_namespaces()
+        )
+        graph_complete = wait_until(
+            runtime_graph_clean,
+            timeout=RUNTIME_GRAPH_CONVERGENCE_TIMEOUT_SECONDS,
+        )
+        node_lines = sorted(
+            namespace.rstrip('/') + '/' + name
+            for name, namespace in graph_node.get_node_names_and_namespaces()
         )
         report['runtime_nodes'] = node_lines
         node_counts = count_ros_nodes(node_lines)
@@ -1010,6 +1029,11 @@ def main(args=None):
                 'duplicate_critical_nodes': duplicate_critical_nodes,
                 'critical_node_source': 'runtime_verification.CRITICAL_ROS_NODES',
                 'graph_nodes': node_lines,
+                'graph_convergence_timeout_seconds': (
+                    RUNTIME_GRAPH_CONVERGENCE_TIMEOUT_SECONDS
+                ),
+                'consecutive_clean_samples_required': 3,
+                'graph_observer': 'fresh_rclpy_context',
             },
         )
         record(
@@ -1037,12 +1061,20 @@ def main(args=None):
                     os.killpg(launch.pid, signal.SIGKILL)
         if executor is not None:
             executor.shutdown(timeout_sec=3.0)
+        if graph_executor is not None:
+            graph_executor.shutdown(timeout_sec=3.0)
         if late is not None:
             late.destroy_node()
+        if graph_node is not None:
+            graph_node.destroy_node()
         if node is not None:
             node.destroy_node()
         if executor_thread is not None:
             executor_thread.join(timeout=3.0)
+        if graph_thread is not None:
+            graph_thread.join(timeout=3.0)
+        if graph_context is not None and graph_context.ok():
+            graph_context.shutdown()
         if rclpy.ok():
             rclpy.shutdown()
         if launch_log is not None:

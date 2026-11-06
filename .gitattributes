@@ -38,3 +38,9 @@ Dockerfile text eol=lf
 *.db3 binary
 *.mcap binary
 *.bag binary
+*.tar.gz binary
+*.xlsx binary
+
+# Immutable release-evidence patches must retain their captured bytes.
+docs/evidence/**/*.log binary
+docs/evidence/**/*.patch binary

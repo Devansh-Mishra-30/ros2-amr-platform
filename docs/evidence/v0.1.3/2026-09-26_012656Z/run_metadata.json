@@ -1,0 +1,653 @@
+{
+  "schema_version": 1,
+  "release": "v0.1.3",
+  "run_id": "2026-09-26_012656Z",
+  "created_at_utc": "2026-09-26T01:26:56+00:00",
+  "git": {
+    "commit": "7764c3683387c966873e00195d0417810624f33c",
+    "base_commit": "7764c3683387c966873e00195d0417810624f33c",
+    "branch": "feature/v0.1.3-readiness-contracts",
+    "dirty": true,
+    "diff_sha256": "2db4803d45f142121ab1cf924461ed5ad7d855426619a3efaf66072a6946d127",
+    "diff_path": "working_tree.patch"
+  },
+  "repository": {
+    "root": "/home/devansh/robotics_projects/ros2-amr-v013",
+    "remote": null
+  },
+  "environment": {
+    "ros_distro": "jazzy",
+    "os": "Ubuntu 24.04.4 LTS",
+    "architecture": "x86_64",
+    "python_version": null,
+    "simulator": "Gazebo Harmonic",
+    "runtime_environment": "WSL2; kernel 6.6.87.2-microsoft-standard-WSL2; RMW_IMPLEMENTATION=rmw_fastrtps_cpp; ROS_DOMAIN_ID=86"
+  },
+  "build": {
+    "build_command": "./scripts/build.sh",
+    "build_result": "PASSED",
+    "workspace": "ros2_ws",
+    "built_at_utc": null,
+    "started_at": null,
+    "finished_at": null,
+    "exit_code": 0,
+    "installed_package_hashes": []
+  },
+  "validation": {
+    "focused_tests": [
+      {
+        "command": "pytest: readiness probe remap regression and cancellation terminal-state semantics",
+        "started_at": null,
+        "finished_at": null,
+        "exit_code": 0,
+        "result": "PASSED",
+        "artifact_paths": [
+          {
+            "path": "metadata.json",
+            "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+          }
+        ]
+      }
+    ],
+    "broad_gate": {
+      "command": "./scripts/test.sh",
+      "started_at": null,
+      "finished_at": null,
+      "exit_code": 0,
+      "result": "PASSED",
+      "artifact_paths": [
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        }
+      ]
+    },
+    "runtime_acceptance": {
+      "command": "HOME=/tmp/v013-release-home ROS_LOG_DIR=/tmp/v013-release-home/.ros/log ROS_DOMAIN_ID=86 RMW_IMPLEMENTATION=rmw_fastrtps_cpp; source ROS Jazzy and workspace install; run scripts/v012_lifecycle_acceptance.py",
+      "started_at": "2026-09-26T01:23:38.787067+00:00",
+      "finished_at": "2026-09-26T01:24:31.613760+00:00",
+      "exit_code": 0,
+      "result": "PASSED",
+      "artifact_paths": [
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        },
+        {
+          "path": "acceptance_summary.md",
+          "sha256": "8136f0cae3a41d5482793a82e25639203f81774cdb0954f2b36edb194fc31bed"
+        }
+      ]
+    }
+  },
+  "runtime_acceptance_required": true,
+  "runtime": {
+    "acceptance_driver": "scripts/v012_lifecycle_acceptance.py",
+    "evidence_directory": "runtime_acceptance/",
+    "release_decision": "ACCEPTED"
+  },
+  "requirements": [
+    {
+      "id": "REQ-021",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "REQ-022",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "REQ-023",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "REQ-024",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "REQ-025",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "REQ-026",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "REQ-027",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "REQ-028",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "REQ-029",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "REQ-030",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "id": "TC-0026",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "TC-0027",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "TC-0028",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "TC-0029",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "TC-0030",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "TC-0031",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "TC-0032",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "TC-0033",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "TC-0034",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "TC-0035",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "TC-0036",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "TC-0037",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "TC-0038",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "TC-0039",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "TC-0040",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "TC-0041",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    {
+      "id": "TC-0042",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    }
+  ],
+  "metrics": [
+    {
+      "id": "MET-005",
+      "value": 0,
+      "unit": "count",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "id": "GATE-009",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        },
+        {
+          "path": "acceptance_summary.md",
+          "sha256": "8136f0cae3a41d5482793a82e25639203f81774cdb0954f2b36edb194fc31bed"
+        }
+      ]
+    },
+    {
+      "id": "GATE-010",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "broad_gate.log",
+          "sha256": "3418813b3abcdb5d46ef696050a1903012b95404aa1e0b1a2e2bb4412e828a2e"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        },
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        }
+      ]
+    },
+    {
+      "id": "GATE-011",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "defect_disposition.json",
+          "sha256": "a4625a286cf50fcc1057c8579628a0c05fa44ca44dcb3430d1fe7e7652be1b40"
+        }
+      ]
+    },
+    {
+      "id": "GATE-012",
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        },
+        {
+          "path": "acceptance_summary.md",
+          "sha256": "8136f0cae3a41d5482793a82e25639203f81774cdb0954f2b36edb194fc31bed"
+        }
+      ]
+    }
+  ],
+  "operational_checks": {
+    "cleanup": {
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "runtime_acceptance/orchestrator_results.json",
+          "sha256": "202dc3d0c75d34cf87be6467c1431394b9ee945524a98e676b542da83ccc034d"
+        },
+        {
+          "path": "runtime_acceptance/final_lifecycle_states.json",
+          "sha256": "6e6b64c9a4aff919267785ee10a7d79cfad04bce5efb20c5ad6c6c528896f8b8"
+        }
+      ]
+    },
+    "process": {
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "runtime_acceptance/registry_final_state.json",
+          "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+        },
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        }
+      ]
+    },
+    "duplicate": {
+      "result": "PASSED",
+      "evidence_paths": [
+        {
+          "path": "runtime_acceptance/summary.json",
+          "sha256": "2a7262c9c4d01ee5a51f3eb8b3fa9c22ae82b6d91a809c70c6a0cb8067b646d8"
+        },
+        {
+          "path": "metadata.json",
+          "sha256": "a11d9b32c86d8fb209f5494d961e57b6f8e5e78a080c4c309ce8fa00ea8cf922"
+        }
+      ]
+    }
+  },
+  "defects": [],
+  "config_files": [],
+  "known_limitations": [
+    "The final graph snapshot contains five entries named /simulation_readiness_probe, an internal transient probe excluded from runtime_verification.CRITICAL_ROS_NODES. Critical manager uniqueness passes; do not interpret the acceptance result as a claim that every noncritical node name is unique.",
+    "TC-0026..TC-0042 were evidenced through mapped registered tests and the full acceptance, not executed as separate workbook rows. The tracker was unchanged during runtime acceptance and was reconciled afterward from the accepted evidence.",
+    "The accepted evidence does not record execution timestamps for focused tests or ./scripts/test.sh; these remain null rather than being inferred from evidence-pack creation time.",
+    "No hashed configuration-file inventory was captured in the accepted run artifacts; config_files remains empty."
+  ]
+}

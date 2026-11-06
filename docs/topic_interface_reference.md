@@ -1,9 +1,9 @@
 # Topic and Interface Reference
 
-## C++ / ROS 2 Robotics Simulation Foundation
+## ROS 2 AMR Platform
 
-**Release:** `v0.1.0`
-**Release commit:** `28a080e72ee6e31baa25bcd2fdaa249706520361`
+**Release:** `v0.1.3` candidate (untagged)
+**Candidate base commit:** `7764c3683387c966873e00195d0417810624f33c`
 **Primary package:** `cpp_robotics_sim_ros`
 **Primary platform:** Ubuntu 24.04, ROS 2 Jazzy, Gazebo Harmonic
 
@@ -12,7 +12,7 @@
 ## 1. Document Purpose
 
 This document defines the public runtime interface contract for
-`cpp_robotics_sim_foundation` at release `v0.1.0`.
+`ros2-amr-platform` at the untagged `v0.1.3` release candidate.
 
 It covers:
 
@@ -28,8 +28,9 @@ It covers:
 - validation commands;
 - important implementation constraints.
 
-This document describes the tagged `v0.1.0` implementation. It does not
-describe uncommitted `v0.2.0` changes.
+The baseline interfaces established in `v0.1.0` remain part of this contract;
+later sections incorporate the additive v0.1.2 lifecycle and v0.1.3 readiness
+interfaces. Planned post-v0.1.3 work is not implemented behavior.
 
 ---
 
@@ -89,7 +90,19 @@ Unless stated otherwise:
 - state and status payloads are published as compact JSON objects;
 - malformed payloads are rejected or ignored without crashing the manager.
 
-### 2.4 Service type
+### 2.4 Readiness report (v0.1.3)
+
+Simulation and mode managers publish structured JSON as
+`std_msgs/msg/String` on `/platform/readiness` with transient-local, reliable
+QoS. The payload contains a readiness profile, per-dependency checks, all
+blocked dependency names, actionable reasons, a runtime ID, and monotonic
+observation/lease values. Consumers must reject reports from an earlier
+runtime ID and expired leases. Readiness does not replace or mutate lifecycle
+state, `/simulation/status`, or `/mode/status`. See
+[`readiness_contracts.md`](readiness_contracts.md) for exact profiles and
+payload fields.
+
+### 2.5 Service type
 
 All public simulation and mode services use:
 

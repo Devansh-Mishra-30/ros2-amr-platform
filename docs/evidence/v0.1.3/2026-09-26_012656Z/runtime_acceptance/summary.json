@@ -1,0 +1,4895 @@
+{
+  "started_at": "2026-09-26T01:23:38.787067+00:00",
+  "checks": {
+    "1_initial_unconfigured": {
+      "passed": true,
+      "detail": "{'mapping': {'component': 'mapping', 'state': 'unconfigured', 'last_transition_id': '', 'observed_at': '2026-09-26T01:23:39.494039+00:00'}, 'simulation': {'component': 'simulation', 'state': 'unconfigured', 'last_transition_id': '', 'observed_at': '2026-09-26T01:23:39.477271+00:00'}, 'localization': {'component': 'localization', 'state': 'unconfigured', 'last_transition_id': '', 'observed_at': '2026-09-26T01:23:39.510043+00:00'}, 'navigation': {'component': 'navigation', 'state': 'unconfigured', 'last_transition_id': '', 'observed_at': '2026-09-26T01:23:39.682646+00:00'}}"
+    },
+    "illegal_transition_unchanged": {
+      "passed": true,
+      "detail": "{'success': False, 'transition_id': 'ef56d1a2-ac88-480e-bf06-b8a235dcaa03', 'orchestration_id': '', 'component': 'localization', 'transition': 'activate', 'source_state': 'unconfigured', 'destination_state': 'unconfigured', 'code': 'ILLEGAL_TRANSITION', 'reason': 'activate is illegal from unconfigured', 'failed_dependency': '', 'started_at': '2026-09-26T01:23:40.141698+00:00', 'completed_at': '2026-09-26T01:23:40.141735+00:00', 'recovery_guidance': 'Resolve the cause; if in ERROR, run verified recover then configure.', 'rollback_performed': False, 'rollback_result': '', 'attempts': 0}"
+    },
+    "5_inactive_operational_rejection": {
+      "passed": true,
+      "detail": "['Simulation lifecycle is not ACTIVE (state=unconfigured)', '{\"status\": \"error\", \"message\": \"Mapping lifecycle is not ACTIVE (state=unconfigured)\", \"map_name\": \"\", \"environment\": \"\", \"yaml_path\": \"\", \"image_path\": \"\"}', '{\"status\": \"error\", \"message\": \"Localization lifecycle is not ACTIVE (state=unconfigured)\", \"map_name\": \"\", \"environment\": \"\", \"yaml_path\": \"\"}', '{\"state\": \"rejected\", \"message\": \"Navigation lifecycle is not ACTIVE (state=unconfigured)\", \"result\": \"rejected\", \"goal_active\": false, \"goal\": null, \"feedback\": {}, \"nav2_error_code\": 0, \"nav2_error_message\": \"\"}']"
+    },
+    "orchestrator_subscribed_to_all_component_states": {
+      "passed": true,
+      "detail": ""
+    },
+    "2_configure_inactive": {
+      "passed": true,
+      "detail": "{'success': True, 'transition_id': '3d613e6e-191f-4b13-9a3a-eab394cf2174', 'orchestration_id': '3d613e6e-191f-4b13-9a3a-eab394cf2174', 'component': 'platform', 'transition': 'configure', 'source_state': '', 'destination_state': '', 'code': 'SUCCESS', 'reason': 'platform transition completed', 'failed_dependency': '', 'started_at': '2026-09-26T01:23:40.292963+00:00', 'completed_at': '2026-09-26T01:23:40.323720+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 4}"
+    },
+    "configure_dependency_order": {
+      "passed": true,
+      "detail": "['simulation', 'mapping', 'localization', 'navigation']"
+    },
+    "3_dependency_order_activation": {
+      "passed": true,
+      "detail": "{'success': True, 'transition_id': '728116f4-0735-4e1e-a8c1-ba5705da08e0', 'orchestration_id': '728116f4-0735-4e1e-a8c1-ba5705da08e0', 'component': 'platform', 'transition': 'activate', 'source_state': '', 'destination_state': '', 'code': 'SUCCESS', 'reason': 'platform transition completed', 'failed_dependency': '', 'started_at': '2026-09-26T01:23:40.343064+00:00', 'completed_at': '2026-09-26T01:23:40.381271+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 4}"
+    },
+    "activate_dependency_order": {
+      "passed": true,
+      "detail": "['simulation', 'mapping', 'localization', 'navigation']"
+    },
+    "transition_event_order_and_correlation": {
+      "passed": true,
+      "detail": ""
+    },
+    "4_active_provenance": {
+      "passed": true,
+      "detail": "{'simulation': {'valid': True, 'snapshot': {'component': 'simulation', 'state': 'active', 'last_transition_id': '88b6c06b-e6db-407d-946a-362679e19a15', 'observed_at': '2026-09-26T01:23:40.347003+00:00'}, 'activate_event': {'success': True, 'transition_id': '88b6c06b-e6db-407d-946a-362679e19a15', 'orchestration_id': '728116f4-0735-4e1e-a8c1-ba5705da08e0', 'component': 'simulation', 'transition': 'activate', 'source_state': 'inactive', 'destination_state': 'active', 'code': 'SUCCESS', 'reason': 'requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0', 'failed_dependency': '', 'started_at': '2026-09-26T01:23:40.346880+00:00', 'completed_at': '2026-09-26T01:23:40.346906+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 1}}, 'mapping': {'valid': True, 'snapshot': {'component': 'mapping', 'state': 'active', 'last_transition_id': 'd2468df5-9ca0-428a-9a23-302a9bcadc39', 'observed_at': '2026-09-26T01:23:40.363919+00:00'}, 'activate_event': {'success': True, 'transition_id': 'd2468df5-9ca0-428a-9a23-302a9bcadc39', 'orchestration_id': '728116f4-0735-4e1e-a8c1-ba5705da08e0', 'component': 'mapping', 'transition': 'activate', 'source_state': 'inactive', 'destination_state': 'active', 'code': 'SUCCESS', 'reason': 'requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0', 'failed_dependency': '', 'started_at': '2026-09-26T01:23:40.363785+00:00', 'completed_at': '2026-09-26T01:23:40.363815+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 1}}, 'localization': {'valid': True, 'snapshot': {'component': 'localization', 'state': 'active', 'last_transition_id': '7340973f-997e-4d4d-b9e0-a715f314aff4', 'observed_at': '2026-09-26T01:23:40.365018+00:00'}, 'activate_event': {'success': True, 'transition_id': '7340973f-997e-4d4d-b9e0-a715f314aff4', 'orchestration_id': '728116f4-0735-4e1e-a8c1-ba5705da08e0', 'component': 'localization', 'transition': 'activate', 'source_state': 'inactive', 'destination_state': 'active', 'code': 'SUCCESS', 'reason': 'requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0', 'failed_dependency': '', 'started_at': '2026-09-26T01:23:40.364895+00:00', 'completed_at': '2026-09-26T01:23:40.364922+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 1}}, 'navigation': {'valid': True, 'snapshot': {'component': 'navigation', 'state': 'active', 'last_transition_id': 'b7aa4cc0-1856-4397-b5a7-603cfa8ed679', 'observed_at': '2026-09-26T01:23:40.366441+00:00'}, 'activate_event': {'success': True, 'transition_id': 'b7aa4cc0-1856-4397-b5a7-603cfa8ed679', 'orchestration_id': '728116f4-0735-4e1e-a8c1-ba5705da08e0', 'component': 'navigation', 'transition': 'activate', 'source_state': 'inactive', 'destination_state': 'active', 'code': 'SUCCESS', 'reason': 'requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0', 'failed_dependency': '', 'started_at': '2026-09-26T01:23:40.366303+00:00', 'completed_at': '2026-09-26T01:23:40.366338+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 1}}}"
+    },
+    "18_active_only_via_activate": {
+      "passed": true,
+      "detail": "{'simulation': {'valid': True, 'snapshot': {'component': 'simulation', 'state': 'active', 'last_transition_id': '88b6c06b-e6db-407d-946a-362679e19a15', 'observed_at': '2026-09-26T01:23:40.347003+00:00'}, 'activate_event': {'success': True, 'transition_id': '88b6c06b-e6db-407d-946a-362679e19a15', 'orchestration_id': '728116f4-0735-4e1e-a8c1-ba5705da08e0', 'component': 'simulation', 'transition': 'activate', 'source_state': 'inactive', 'destination_state': 'active', 'code': 'SUCCESS', 'reason': 'requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0', 'failed_dependency': '', 'started_at': '2026-09-26T01:23:40.346880+00:00', 'completed_at': '2026-09-26T01:23:40.346906+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 1}}, 'mapping': {'valid': True, 'snapshot': {'component': 'mapping', 'state': 'active', 'last_transition_id': 'd2468df5-9ca0-428a-9a23-302a9bcadc39', 'observed_at': '2026-09-26T01:23:40.363919+00:00'}, 'activate_event': {'success': True, 'transition_id': 'd2468df5-9ca0-428a-9a23-302a9bcadc39', 'orchestration_id': '728116f4-0735-4e1e-a8c1-ba5705da08e0', 'component': 'mapping', 'transition': 'activate', 'source_state': 'inactive', 'destination_state': 'active', 'code': 'SUCCESS', 'reason': 'requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0', 'failed_dependency': '', 'started_at': '2026-09-26T01:23:40.363785+00:00', 'completed_at': '2026-09-26T01:23:40.363815+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 1}}, 'localization': {'valid': True, 'snapshot': {'component': 'localization', 'state': 'active', 'last_transition_id': '7340973f-997e-4d4d-b9e0-a715f314aff4', 'observed_at': '2026-09-26T01:23:40.365018+00:00'}, 'activate_event': {'success': True, 'transition_id': '7340973f-997e-4d4d-b9e0-a715f314aff4', 'orchestration_id': '728116f4-0735-4e1e-a8c1-ba5705da08e0', 'component': 'localization', 'transition': 'activate', 'source_state': 'inactive', 'destination_state': 'active', 'code': 'SUCCESS', 'reason': 'requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0', 'failed_dependency': '', 'started_at': '2026-09-26T01:23:40.364895+00:00', 'completed_at': '2026-09-26T01:23:40.364922+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 1}}, 'navigation': {'valid': True, 'snapshot': {'component': 'navigation', 'state': 'active', 'last_transition_id': 'b7aa4cc0-1856-4397-b5a7-603cfa8ed679', 'observed_at': '2026-09-26T01:23:40.366441+00:00'}, 'activate_event': {'success': True, 'transition_id': 'b7aa4cc0-1856-4397-b5a7-603cfa8ed679', 'orchestration_id': '728116f4-0735-4e1e-a8c1-ba5705da08e0', 'component': 'navigation', 'transition': 'activate', 'source_state': 'inactive', 'destination_state': 'active', 'code': 'SUCCESS', 'reason': 'requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0', 'failed_dependency': '', 'started_at': '2026-09-26T01:23:40.366303+00:00', 'completed_at': '2026-09-26T01:23:40.366338+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 1}}}"
+    },
+    "6_lifecycle_active_simulation_stopped": {
+      "passed": true,
+      "detail": "no status received"
+    },
+    "6_simulation_active_distinct_from_running": {
+      "passed": true,
+      "detail": "Simulation started with PID 208438"
+    },
+    "7_simulation_operations_after_activation": {
+      "passed": true,
+      "detail": "Simulation started with PID 208438"
+    },
+    "mapping_deactivate_and_inactive_rejection": {
+      "passed": true,
+      "detail": "{'deactivate': {'success': True, 'transition_id': '57f62980-1c43-4c82-9045-10262a38c302', 'orchestration_id': '', 'component': 'mapping', 'transition': 'deactivate', 'source_state': 'active', 'destination_state': 'inactive', 'code': 'SUCCESS', 'reason': 'requested by client', 'failed_dependency': '', 'started_at': '2026-09-26T01:24:10.561337+00:00', 'completed_at': '2026-09-26T01:24:10.561395+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 1}, 'inactive_rejection': '{\"status\": \"error\", \"message\": \"Mapping lifecycle is not ACTIVE (state=inactive)\", \"map_name\": \"\", \"environment\": \"\", \"yaml_path\": \"\", \"image_path\": \"\"}', 'reactivate': {'success': True, 'transition_id': '503ab703-61c6-4d7c-8e9b-2166b0dce719', 'orchestration_id': '', 'component': 'mapping', 'transition': 'activate', 'source_state': 'inactive', 'destination_state': 'active', 'code': 'SUCCESS', 'reason': 'requested by client', 'failed_dependency': '', 'started_at': '2026-09-26T01:24:10.663471+00:00', 'completed_at': '2026-09-26T01:24:10.663531+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 1}}"
+    },
+    "localization_real_fixture_and_pose_workflow": {
+      "passed": true,
+      "detail": "{'lifecycle_active_at_start': True, 'fixture_selected': True, 'initial_pose_published': True, 'status': '{\"status\": \"success\", \"message\": \"Initial pose published: x=0.00, y=0.00, yaw=0.00 rad\", \"map_name\": \"v012_fixture_20260926_012338786749\", \"environment\": \"\", \"yaml_path\": \"/tmp/v013-release-home/.ros/cpp_robotics_sim/maps/warehouse/v012_fixture_20260926_012338786749.yaml\"}'}"
+    },
+    "localization_deactivate_and_inactive_rejection": {
+      "passed": true,
+      "detail": "{'deactivate': {'success': True, 'transition_id': '9275b204-1250-479d-aa6a-44ace8f6895b', 'orchestration_id': '', 'component': 'localization', 'transition': 'deactivate', 'source_state': 'active', 'destination_state': 'inactive', 'code': 'SUCCESS', 'reason': 'requested by client', 'failed_dependency': '', 'started_at': '2026-09-26T01:24:14.830902+00:00', 'completed_at': '2026-09-26T01:24:14.830953+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 1}, 'inactive_rejection': '{\"status\": \"error\", \"message\": \"Localization lifecycle is not ACTIVE (state=inactive)\", \"map_name\": \"\", \"environment\": \"\", \"yaml_path\": \"\"}', 'reactivate': {'success': True, 'transition_id': 'f8250ec5-c670-4a71-98a6-54f0c11645d8', 'orchestration_id': '', 'component': 'localization', 'transition': 'activate', 'source_state': 'inactive', 'destination_state': 'active', 'code': 'SUCCESS', 'reason': 'requested by client', 'failed_dependency': '', 'started_at': '2026-09-26T01:24:14.931587+00:00', 'completed_at': '2026-09-26T01:24:14.931629+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 1}}"
+    },
+    "navigation_localization_transform_ready": {
+      "passed": true,
+      "detail": "{'initial_pose_published': True, 'map_to_odom_available': True}"
+    },
+    "navigation_deactivation_cancels_goal": {
+      "passed": true,
+      "detail": "{'deactivate': {'success': True, 'transition_id': '0bab0756-2bde-48b9-b2cd-811f2cc129a8', 'orchestration_id': '', 'component': 'navigation', 'transition': 'deactivate', 'source_state': 'active', 'destination_state': 'inactive', 'code': 'SUCCESS', 'reason': 'requested by client', 'failed_dependency': '', 'started_at': '2026-09-26T01:24:21.592980+00:00', 'completed_at': '2026-09-26T01:24:21.597095+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 1}, 'goal_canceled': True, 'inactive_rejection': '{\"state\": \"rejected\", \"message\": \"Navigation lifecycle is not ACTIVE (state=inactive)\", \"result\": \"rejected\", \"goal_active\": false, \"goal\": null, \"feedback\": {}, \"nav2_error_code\": 0, \"nav2_error_message\": \"\"}', 'reactivate': {'success': True, 'transition_id': '4683e5df-4754-4b0a-afe3-eb39ff708ada', 'orchestration_id': '', 'component': 'navigation', 'transition': 'activate', 'source_state': 'inactive', 'destination_state': 'active', 'code': 'SUCCESS', 'reason': 'requested by client', 'failed_dependency': '', 'started_at': '2026-09-26T01:24:21.696550+00:00', 'completed_at': '2026-09-26T01:24:21.696620+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 1}}"
+    },
+    "navigation_real_goal_and_deactivation_workflow": {
+      "passed": true,
+      "detail": "{'lifecycle_active_at_start': True, 'goal_accepted': True, 'goal_canceled_by_deactivation': True, 'status': '{\"state\": \"rejected\", \"message\": \"Navigation lifecycle is not ACTIVE (state=inactive)\", \"result\": \"rejected\", \"goal_active\": false, \"goal\": null, \"feedback\": {}, \"nav2_error_code\": 0, \"nav2_error_message\": \"\"}'}"
+    },
+    "8_mapping_workflow": {
+      "passed": true,
+      "detail": "{\"status\": \"error\", \"message\": \"Mapping lifecycle is not ACTIVE (state=inactive)\", \"map_name\": \"\", \"environment\": \"\", \"yaml_path\": \"\", \"image_path\": \"\"}"
+    },
+    "9_localization_workflow": {
+      "passed": true,
+      "detail": "{\"status\": \"success\", \"message\": \"Initial pose published: x=0.00, y=0.00, yaw=0.00 rad\", \"map_name\": \"v012_fixture_20260926_012338786749\", \"environment\": \"\", \"yaml_path\": \"/tmp/v013-release-home/.ros/cpp_robotics_sim/maps/warehouse/v012_fixture_20260926_012338786749.yaml\"}"
+    },
+    "navigation_goal_cancel_workflow": {
+      "passed": true,
+      "detail": "{\"state\": \"rejected\", \"message\": \"There is no active navigation goal to cancel\", \"result\": \"rejected\", \"goal_active\": false, \"goal\": null, \"feedback\": {}, \"nav2_error_code\": 0, \"nav2_error_message\": \"\"}"
+    },
+    "11_middle_activation_failure_suppresses_downstream": {
+      "passed": true,
+      "detail": "{'success': False, 'transition_id': 'e604b7fd-9bef-4700-a37d-8758e2239204', 'orchestration_id': 'e604b7fd-9bef-4700-a37d-8758e2239204', 'component': 'platform', 'transition': 'activate', 'source_state': '', 'destination_state': '', 'code': 'DEPENDENCY_FAILED', 'reason': 'activate is illegal from error', 'failed_dependency': 'localization', 'started_at': '2026-09-26T01:24:24.250883+00:00', 'completed_at': '2026-09-26T01:24:24.292222+00:00', 'recovery_guidance': 'Inspect failed dependency and rollback results; recover ERROR components.', 'rollback_performed': True, 'rollback_result': 'SUCCESS', 'attempts': 3}"
+    },
+    "12_reverse_upstream_rollback": {
+      "passed": true,
+      "detail": "['mapping', 'simulation']"
+    },
+    "13_error_recovery_to_unconfigured": {
+      "passed": true,
+      "detail": "{'success': True, 'transition_id': 'e6042997-96ba-4545-b4d5-cc4592ea87d8', 'orchestration_id': '', 'component': 'localization', 'transition': 'recover', 'source_state': 'error', 'destination_state': 'unconfigured', 'code': 'SUCCESS', 'reason': 'requested by client', 'failed_dependency': '', 'started_at': '2026-09-26T01:24:24.301142+00:00', 'completed_at': '2026-09-26T01:24:24.301419+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 1}"
+    },
+    "14_reconfigure_reactivate_after_recovery": {
+      "passed": true,
+      "detail": "[{'success': True, 'transition_id': '02caa52e-c4ae-4e16-a43d-9230f55aac1c', 'orchestration_id': '02caa52e-c4ae-4e16-a43d-9230f55aac1c', 'component': 'platform', 'transition': 'configure', 'source_state': '', 'destination_state': '', 'code': 'SUCCESS', 'reason': 'platform transition completed', 'failed_dependency': '', 'started_at': '2026-09-26T01:24:24.351720+00:00', 'completed_at': '2026-09-26T01:24:24.370691+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 1}, {'success': True, 'transition_id': '7164dbae-34a9-44a1-ab2f-a02d8b80046e', 'orchestration_id': '7164dbae-34a9-44a1-ab2f-a02d8b80046e', 'component': 'platform', 'transition': 'activate', 'source_state': '', 'destination_state': '', 'code': 'SUCCESS', 'reason': 'platform transition completed', 'failed_dependency': '', 'started_at': '2026-09-26T01:24:24.402064+00:00', 'completed_at': '2026-09-26T01:24:24.462131+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 4}]"
+    },
+    "late_subscriber_state_replay": {
+      "passed": true,
+      "detail": "{'simulation': 'active', 'mapping': 'active', 'localization': 'active', 'navigation': 'active'}"
+    },
+    "15_reverse_deactivation": {
+      "passed": true,
+      "detail": "['navigation', 'localization', 'mapping', 'simulation']"
+    },
+    "16_cleanup_unconfigured": {
+      "passed": true,
+      "detail": "{'success': True, 'transition_id': 'ddcd629e-9746-4876-8519-ed148344ba77', 'orchestration_id': 'ddcd629e-9746-4876-8519-ed148344ba77', 'component': 'platform', 'transition': 'cleanup', 'source_state': '', 'destination_state': '', 'code': 'SUCCESS', 'reason': 'platform transition completed', 'failed_dependency': '', 'started_at': '2026-09-26T01:24:24.677977+00:00', 'completed_at': '2026-09-26T01:24:24.762433+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 4}"
+    },
+    "17_shutdown_finalized": {
+      "passed": true,
+      "detail": "{'success': True, 'transition_id': '79b67c9a-0b8f-44a2-ad44-e1a68b84394a', 'orchestration_id': '79b67c9a-0b8f-44a2-ad44-e1a68b84394a', 'component': 'platform', 'transition': 'shutdown', 'source_state': '', 'destination_state': '', 'code': 'SUCCESS', 'reason': 'platform transition completed', 'failed_dependency': '', 'started_at': '2026-09-26T01:24:24.778331+00:00', 'completed_at': '2026-09-26T01:24:24.822833+00:00', 'recovery_guidance': '', 'rollback_performed': False, 'rollback_result': '', 'attempts': 4}"
+    },
+    "19_process_registry_clean": {
+      "passed": true,
+      "detail": "[]"
+    },
+    "20_no_duplicate_critical_nodes": {
+      "passed": true,
+      "detail": "{'duplicate_critical_nodes': {}, 'critical_node_source': 'runtime_verification.CRITICAL_ROS_NODES', 'graph_nodes': ['/localization_manager', '/mapping_manager', '/mode_manager', '/navigation_goal_manager', '/platform_lifecycle_orchestrator', '/rosbridge_websocket', '/simulation_manager', '/simulation_readiness_probe', '/simulation_readiness_probe', '/simulation_readiness_probe', '/simulation_readiness_probe', '/simulation_readiness_probe', '/v012_late_lifecycle_subscriber', '/v012_lifecycle_acceptance', '/v012_runtime_graph_verifier'], 'graph_convergence_timeout_seconds': 30.0, 'consecutive_clean_samples_required': 3, 'graph_observer': 'fresh_rclpy_context'}"
+    },
+    "21_required_lifecycle_managers_present_once": {
+      "passed": true,
+      "detail": "{'manager_counts': {'/simulation_manager': 1, '/mapping_manager': 1, '/localization_manager': 1, '/navigation_goal_manager': 1}}"
+    }
+  },
+  "state_snapshots": [
+    {
+      "mapping": {
+        "component": "mapping",
+        "state": "unconfigured",
+        "last_transition_id": "",
+        "observed_at": "2026-09-26T01:23:39.494039+00:00"
+      },
+      "simulation": {
+        "component": "simulation",
+        "state": "unconfigured",
+        "last_transition_id": "",
+        "observed_at": "2026-09-26T01:23:39.477271+00:00"
+      },
+      "localization": {
+        "component": "localization",
+        "state": "unconfigured",
+        "last_transition_id": "",
+        "observed_at": "2026-09-26T01:23:39.510043+00:00"
+      },
+      "navigation": {
+        "component": "navigation",
+        "state": "unconfigured",
+        "last_transition_id": "",
+        "observed_at": "2026-09-26T01:23:39.682646+00:00"
+      }
+    },
+    {
+      "mapping": {
+        "component": "mapping",
+        "state": "inactive",
+        "last_transition_id": "d6eb3f29-4a43-49dc-899c-92b1b4832a47",
+        "observed_at": "2026-09-26T01:23:40.306207+00:00"
+      },
+      "simulation": {
+        "component": "simulation",
+        "state": "inactive",
+        "last_transition_id": "d37a689d-410f-4abe-aa06-f73b8d236f7f",
+        "observed_at": "2026-09-26T01:23:40.297156+00:00"
+      },
+      "localization": {
+        "component": "localization",
+        "state": "inactive",
+        "last_transition_id": "eca6baaa-423a-462e-a763-d2bfdbdc13d7",
+        "observed_at": "2026-09-26T01:23:40.308169+00:00"
+      },
+      "navigation": {
+        "component": "navigation",
+        "state": "inactive",
+        "last_transition_id": "bb91d2ec-d4cf-4592-98eb-6a845e31079c",
+        "observed_at": "2026-09-26T01:23:40.310816+00:00"
+      }
+    },
+    {
+      "mapping": {
+        "component": "mapping",
+        "state": "active",
+        "last_transition_id": "d2468df5-9ca0-428a-9a23-302a9bcadc39",
+        "observed_at": "2026-09-26T01:23:40.363919+00:00"
+      },
+      "simulation": {
+        "component": "simulation",
+        "state": "active",
+        "last_transition_id": "88b6c06b-e6db-407d-946a-362679e19a15",
+        "observed_at": "2026-09-26T01:23:40.347003+00:00"
+      },
+      "localization": {
+        "component": "localization",
+        "state": "active",
+        "last_transition_id": "7340973f-997e-4d4d-b9e0-a715f314aff4",
+        "observed_at": "2026-09-26T01:23:40.365018+00:00"
+      },
+      "navigation": {
+        "component": "navigation",
+        "state": "active",
+        "last_transition_id": "b7aa4cc0-1856-4397-b5a7-603cfa8ed679",
+        "observed_at": "2026-09-26T01:23:40.366441+00:00"
+      }
+    },
+    {
+      "mapping": {
+        "component": "mapping",
+        "state": "inactive",
+        "last_transition_id": "e7d813c2-301d-4069-a180-08596d18e16b",
+        "observed_at": "2026-09-26T01:24:24.280199+00:00"
+      },
+      "simulation": {
+        "component": "simulation",
+        "state": "inactive",
+        "last_transition_id": "b50a6736-b44b-469a-b377-3709c2fb2732",
+        "observed_at": "2026-09-26T01:24:24.288193+00:00"
+      },
+      "localization": {
+        "component": "localization",
+        "state": "unconfigured",
+        "last_transition_id": "e6042997-96ba-4545-b4d5-cc4592ea87d8",
+        "observed_at": "2026-09-26T01:24:24.301512+00:00"
+      },
+      "navigation": {
+        "component": "navigation",
+        "state": "inactive",
+        "last_transition_id": "becf292e-db7b-4a9f-8127-46dbe446711b",
+        "observed_at": "2026-09-26T01:24:24.105706+00:00"
+      }
+    },
+    {
+      "mapping": {
+        "component": "mapping",
+        "state": "active",
+        "last_transition_id": "1d005a51-6063-4823-ab82-e25504ec03b8",
+        "observed_at": "2026-09-26T01:24:24.494249+00:00"
+      },
+      "simulation": {
+        "component": "simulation",
+        "state": "active",
+        "last_transition_id": "d1436837-e214-4230-93b1-24d22a53cff5",
+        "observed_at": "2026-09-26T01:24:24.477447+00:00"
+      },
+      "localization": {
+        "component": "localization",
+        "state": "active",
+        "last_transition_id": "aa2105bd-fbf1-4560-b954-c91736e4072c",
+        "observed_at": "2026-09-26T01:24:24.437527+00:00"
+      },
+      "navigation": {
+        "component": "navigation",
+        "state": "active",
+        "last_transition_id": "de8d96a7-0a80-44f5-95d4-92f5e3f7ceb8",
+        "observed_at": "2026-09-26T01:24:24.450254+00:00"
+      }
+    },
+    {
+      "mapping": {
+        "component": "mapping",
+        "state": "finalized",
+        "last_transition_id": "fed8f840-6fd2-47ff-9513-17355dd123a4",
+        "observed_at": "2026-09-26T01:24:25.494226+00:00"
+      },
+      "simulation": {
+        "component": "simulation",
+        "state": "finalized",
+        "last_transition_id": "4586bbee-d37d-4ad6-868c-30eba89f9f4d",
+        "observed_at": "2026-09-26T01:24:25.477438+00:00"
+      },
+      "localization": {
+        "component": "localization",
+        "state": "finalized",
+        "last_transition_id": "ee259e11-e5d1-4938-8ad2-c79b602acea6",
+        "observed_at": "2026-09-26T01:24:25.510192+00:00"
+      },
+      "navigation": {
+        "component": "navigation",
+        "state": "finalized",
+        "last_transition_id": "2b206bde-9e04-401b-b06b-1438f629ac0a",
+        "observed_at": "2026-09-26T01:24:24.783149+00:00"
+      }
+    },
+    {
+      "mapping": {
+        "component": "mapping",
+        "state": "finalized",
+        "last_transition_id": "fed8f840-6fd2-47ff-9513-17355dd123a4",
+        "observed_at": "2026-09-26T01:24:25.494226+00:00"
+      },
+      "simulation": {
+        "component": "simulation",
+        "state": "finalized",
+        "last_transition_id": "4586bbee-d37d-4ad6-868c-30eba89f9f4d",
+        "observed_at": "2026-09-26T01:24:26.477441+00:00"
+      },
+      "localization": {
+        "component": "localization",
+        "state": "finalized",
+        "last_transition_id": "ee259e11-e5d1-4938-8ad2-c79b602acea6",
+        "observed_at": "2026-09-26T01:24:25.510192+00:00"
+      },
+      "navigation": {
+        "component": "navigation",
+        "state": "finalized",
+        "last_transition_id": "2b206bde-9e04-401b-b06b-1438f629ac0a",
+        "observed_at": "2026-09-26T01:24:24.783149+00:00"
+      }
+    }
+  ],
+  "transition_events": [
+    {
+      "success": false,
+      "transition_id": "ef56d1a2-ac88-480e-bf06-b8a235dcaa03",
+      "orchestration_id": "",
+      "component": "localization",
+      "transition": "activate",
+      "source_state": "unconfigured",
+      "destination_state": "unconfigured",
+      "code": "ILLEGAL_TRANSITION",
+      "reason": "activate is illegal from unconfigured",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.141698+00:00",
+      "completed_at": "2026-09-26T01:23:40.141735+00:00",
+      "recovery_guidance": "Resolve the cause; if in ERROR, run verified recover then configure.",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 0
+    },
+    {
+      "success": true,
+      "transition_id": "d37a689d-410f-4abe-aa06-f73b8d236f7f",
+      "orchestration_id": "3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "component": "simulation",
+      "transition": "configure",
+      "source_state": "unconfigured",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by 3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.297019+00:00",
+      "completed_at": "2026-09-26T01:23:40.297045+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "d6eb3f29-4a43-49dc-899c-92b1b4832a47",
+      "orchestration_id": "3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "component": "mapping",
+      "transition": "configure",
+      "source_state": "unconfigured",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by 3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.306059+00:00",
+      "completed_at": "2026-09-26T01:23:40.306087+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "eca6baaa-423a-462e-a763-d2bfdbdc13d7",
+      "orchestration_id": "3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "component": "localization",
+      "transition": "configure",
+      "source_state": "unconfigured",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by 3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.308019+00:00",
+      "completed_at": "2026-09-26T01:23:40.308048+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "bb91d2ec-d4cf-4592-98eb-6a845e31079c",
+      "orchestration_id": "3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "component": "navigation",
+      "transition": "configure",
+      "source_state": "unconfigured",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by 3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.310661+00:00",
+      "completed_at": "2026-09-26T01:23:40.310697+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "d37a689d-410f-4abe-aa06-f73b8d236f7f",
+      "orchestration_id": "3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "component": "simulation",
+      "transition": "configure",
+      "source_state": "unconfigured",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by 3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.297019+00:00",
+      "completed_at": "2026-09-26T01:23:40.297045+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "d6eb3f29-4a43-49dc-899c-92b1b4832a47",
+      "orchestration_id": "3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "component": "mapping",
+      "transition": "configure",
+      "source_state": "unconfigured",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by 3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.306059+00:00",
+      "completed_at": "2026-09-26T01:23:40.306087+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "eca6baaa-423a-462e-a763-d2bfdbdc13d7",
+      "orchestration_id": "3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "component": "localization",
+      "transition": "configure",
+      "source_state": "unconfigured",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by 3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.308019+00:00",
+      "completed_at": "2026-09-26T01:23:40.308048+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "bb91d2ec-d4cf-4592-98eb-6a845e31079c",
+      "orchestration_id": "3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "component": "navigation",
+      "transition": "configure",
+      "source_state": "unconfigured",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by 3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.310661+00:00",
+      "completed_at": "2026-09-26T01:23:40.310697+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "orchestration_id": "3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "component": "platform",
+      "transition": "configure",
+      "source_state": "",
+      "destination_state": "",
+      "code": "SUCCESS",
+      "reason": "platform transition completed",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.292963+00:00",
+      "completed_at": "2026-09-26T01:23:40.323720+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 4
+    },
+    {
+      "success": true,
+      "transition_id": "88b6c06b-e6db-407d-946a-362679e19a15",
+      "orchestration_id": "728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "component": "simulation",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.346880+00:00",
+      "completed_at": "2026-09-26T01:23:40.346906+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "d2468df5-9ca0-428a-9a23-302a9bcadc39",
+      "orchestration_id": "728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "component": "mapping",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.363785+00:00",
+      "completed_at": "2026-09-26T01:23:40.363815+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "7340973f-997e-4d4d-b9e0-a715f314aff4",
+      "orchestration_id": "728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "component": "localization",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.364895+00:00",
+      "completed_at": "2026-09-26T01:23:40.364922+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "b7aa4cc0-1856-4397-b5a7-603cfa8ed679",
+      "orchestration_id": "728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "component": "navigation",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.366303+00:00",
+      "completed_at": "2026-09-26T01:23:40.366338+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "88b6c06b-e6db-407d-946a-362679e19a15",
+      "orchestration_id": "728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "component": "simulation",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.346880+00:00",
+      "completed_at": "2026-09-26T01:23:40.346906+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "d2468df5-9ca0-428a-9a23-302a9bcadc39",
+      "orchestration_id": "728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "component": "mapping",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.363785+00:00",
+      "completed_at": "2026-09-26T01:23:40.363815+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "7340973f-997e-4d4d-b9e0-a715f314aff4",
+      "orchestration_id": "728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "component": "localization",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.364895+00:00",
+      "completed_at": "2026-09-26T01:23:40.364922+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "b7aa4cc0-1856-4397-b5a7-603cfa8ed679",
+      "orchestration_id": "728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "component": "navigation",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.366303+00:00",
+      "completed_at": "2026-09-26T01:23:40.366338+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "orchestration_id": "728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "component": "platform",
+      "transition": "activate",
+      "source_state": "",
+      "destination_state": "",
+      "code": "SUCCESS",
+      "reason": "platform transition completed",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.343064+00:00",
+      "completed_at": "2026-09-26T01:23:40.381271+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 4
+    },
+    {
+      "success": true,
+      "transition_id": "57f62980-1c43-4c82-9045-10262a38c302",
+      "orchestration_id": "",
+      "component": "mapping",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by client",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:10.561337+00:00",
+      "completed_at": "2026-09-26T01:24:10.561395+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "503ab703-61c6-4d7c-8e9b-2166b0dce719",
+      "orchestration_id": "",
+      "component": "mapping",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by client",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:10.663471+00:00",
+      "completed_at": "2026-09-26T01:24:10.663531+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "9275b204-1250-479d-aa6a-44ace8f6895b",
+      "orchestration_id": "",
+      "component": "localization",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by client",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:14.830902+00:00",
+      "completed_at": "2026-09-26T01:24:14.830953+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "f8250ec5-c670-4a71-98a6-54f0c11645d8",
+      "orchestration_id": "",
+      "component": "localization",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by client",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:14.931587+00:00",
+      "completed_at": "2026-09-26T01:24:14.931629+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "0bab0756-2bde-48b9-b2cd-811f2cc129a8",
+      "orchestration_id": "",
+      "component": "navigation",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by client",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:21.592980+00:00",
+      "completed_at": "2026-09-26T01:24:21.597095+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "4683e5df-4754-4b0a-afe3-eb39ff708ada",
+      "orchestration_id": "",
+      "component": "navigation",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by client",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:21.696550+00:00",
+      "completed_at": "2026-09-26T01:24:21.696620+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "becf292e-db7b-4a9f-8127-46dbe446711b",
+      "orchestration_id": "e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "component": "navigation",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.105580+00:00",
+      "completed_at": "2026-09-26T01:24:24.105614+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "219c3559-d9b1-4459-ba8b-eababecbbc09",
+      "orchestration_id": "e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "component": "localization",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.113333+00:00",
+      "completed_at": "2026-09-26T01:24:24.113367+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "68cbf394-9b58-41a0-9977-74952296fa69",
+      "orchestration_id": "e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "component": "mapping",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.127965+00:00",
+      "completed_at": "2026-09-26T01:24:24.128002+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "49664e35-3b4b-47fe-a5a7-675e98ef1cee",
+      "orchestration_id": "e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "component": "simulation",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.153188+00:00",
+      "completed_at": "2026-09-26T01:24:24.157038+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "becf292e-db7b-4a9f-8127-46dbe446711b",
+      "orchestration_id": "e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "component": "navigation",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.105580+00:00",
+      "completed_at": "2026-09-26T01:24:24.105614+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "219c3559-d9b1-4459-ba8b-eababecbbc09",
+      "orchestration_id": "e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "component": "localization",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.113333+00:00",
+      "completed_at": "2026-09-26T01:24:24.113367+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "68cbf394-9b58-41a0-9977-74952296fa69",
+      "orchestration_id": "e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "component": "mapping",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.127965+00:00",
+      "completed_at": "2026-09-26T01:24:24.128002+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "49664e35-3b4b-47fe-a5a7-675e98ef1cee",
+      "orchestration_id": "e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "component": "simulation",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.153188+00:00",
+      "completed_at": "2026-09-26T01:24:24.157038+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "orchestration_id": "e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "component": "platform",
+      "transition": "deactivate",
+      "source_state": "",
+      "destination_state": "",
+      "code": "SUCCESS",
+      "reason": "platform transition completed",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.101230+00:00",
+      "completed_at": "2026-09-26T01:24:24.182476+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 4
+    },
+    {
+      "success": true,
+      "transition_id": "6f6722bc-4435-4fa4-aca3-aa0d743027f1",
+      "orchestration_id": "",
+      "component": "localization",
+      "transition": "error",
+      "source_state": "inactive",
+      "destination_state": "error",
+      "code": "SUCCESS",
+      "reason": "requested by client",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.200268+00:00",
+      "completed_at": "2026-09-26T01:24:24.200299+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 0
+    },
+    {
+      "success": true,
+      "transition_id": "81e75d38-f5ed-4c7c-8f4e-74b8fc6df5ad",
+      "orchestration_id": "e604b7fd-9bef-4700-a37d-8758e2239204",
+      "component": "simulation",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by e604b7fd-9bef-4700-a37d-8758e2239204",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.256125+00:00",
+      "completed_at": "2026-09-26T01:24:24.256160+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "47d2ce17-1996-4bfa-b723-cce23bb4d755",
+      "orchestration_id": "e604b7fd-9bef-4700-a37d-8758e2239204",
+      "component": "mapping",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by e604b7fd-9bef-4700-a37d-8758e2239204",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.269310+00:00",
+      "completed_at": "2026-09-26T01:24:24.269351+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": false,
+      "transition_id": "ff32ea4c-c1a2-4622-ae70-42a04931b4c5",
+      "orchestration_id": "e604b7fd-9bef-4700-a37d-8758e2239204",
+      "component": "localization",
+      "transition": "activate",
+      "source_state": "error",
+      "destination_state": "error",
+      "code": "ILLEGAL_TRANSITION",
+      "reason": "activate is illegal from error",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.272397+00:00",
+      "completed_at": "2026-09-26T01:24:24.272435+00:00",
+      "recovery_guidance": "Resolve the cause; if in ERROR, run verified recover then configure.",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 0
+    },
+    {
+      "success": true,
+      "transition_id": "e7d813c2-301d-4069-a180-08596d18e16b",
+      "orchestration_id": "e604b7fd-9bef-4700-a37d-8758e2239204",
+      "component": "mapping",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by e604b7fd-9bef-4700-a37d-8758e2239204",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.280048+00:00",
+      "completed_at": "2026-09-26T01:24:24.280081+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "b50a6736-b44b-469a-b377-3709c2fb2732",
+      "orchestration_id": "e604b7fd-9bef-4700-a37d-8758e2239204",
+      "component": "simulation",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by e604b7fd-9bef-4700-a37d-8758e2239204",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.284382+00:00",
+      "completed_at": "2026-09-26T01:24:24.288041+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "81e75d38-f5ed-4c7c-8f4e-74b8fc6df5ad",
+      "orchestration_id": "e604b7fd-9bef-4700-a37d-8758e2239204",
+      "component": "simulation",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by e604b7fd-9bef-4700-a37d-8758e2239204",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.256125+00:00",
+      "completed_at": "2026-09-26T01:24:24.256160+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "47d2ce17-1996-4bfa-b723-cce23bb4d755",
+      "orchestration_id": "e604b7fd-9bef-4700-a37d-8758e2239204",
+      "component": "mapping",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by e604b7fd-9bef-4700-a37d-8758e2239204",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.269310+00:00",
+      "completed_at": "2026-09-26T01:24:24.269351+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": false,
+      "transition_id": "ff32ea4c-c1a2-4622-ae70-42a04931b4c5",
+      "orchestration_id": "e604b7fd-9bef-4700-a37d-8758e2239204",
+      "component": "localization",
+      "transition": "activate",
+      "source_state": "error",
+      "destination_state": "error",
+      "code": "ILLEGAL_TRANSITION",
+      "reason": "activate is illegal from error",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.272397+00:00",
+      "completed_at": "2026-09-26T01:24:24.272435+00:00",
+      "recovery_guidance": "Resolve the cause; if in ERROR, run verified recover then configure.",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 0
+    },
+    {
+      "success": true,
+      "transition_id": "e7d813c2-301d-4069-a180-08596d18e16b",
+      "orchestration_id": "e604b7fd-9bef-4700-a37d-8758e2239204",
+      "component": "mapping",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by e604b7fd-9bef-4700-a37d-8758e2239204",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.280048+00:00",
+      "completed_at": "2026-09-26T01:24:24.280081+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "b50a6736-b44b-469a-b377-3709c2fb2732",
+      "orchestration_id": "e604b7fd-9bef-4700-a37d-8758e2239204",
+      "component": "simulation",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by e604b7fd-9bef-4700-a37d-8758e2239204",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.284382+00:00",
+      "completed_at": "2026-09-26T01:24:24.288041+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": false,
+      "transition_id": "e604b7fd-9bef-4700-a37d-8758e2239204",
+      "orchestration_id": "e604b7fd-9bef-4700-a37d-8758e2239204",
+      "component": "platform",
+      "transition": "activate",
+      "source_state": "",
+      "destination_state": "",
+      "code": "DEPENDENCY_FAILED",
+      "reason": "activate is illegal from error",
+      "failed_dependency": "localization",
+      "started_at": "2026-09-26T01:24:24.250883+00:00",
+      "completed_at": "2026-09-26T01:24:24.292222+00:00",
+      "recovery_guidance": "Inspect failed dependency and rollback results; recover ERROR components.",
+      "rollback_performed": true,
+      "rollback_result": "SUCCESS",
+      "attempts": 3
+    },
+    {
+      "success": true,
+      "transition_id": "e6042997-96ba-4545-b4d5-cc4592ea87d8",
+      "orchestration_id": "",
+      "component": "localization",
+      "transition": "recover",
+      "source_state": "error",
+      "destination_state": "unconfigured",
+      "code": "SUCCESS",
+      "reason": "requested by client",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.301142+00:00",
+      "completed_at": "2026-09-26T01:24:24.301419+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "fe8698d6-388a-4ba8-b595-e77ee97c15bc",
+      "orchestration_id": "02caa52e-c4ae-4e16-a43d-9230f55aac1c",
+      "component": "localization",
+      "transition": "configure",
+      "source_state": "unconfigured",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by 02caa52e-c4ae-4e16-a43d-9230f55aac1c",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.356524+00:00",
+      "completed_at": "2026-09-26T01:24:24.356557+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "fe8698d6-388a-4ba8-b595-e77ee97c15bc",
+      "orchestration_id": "02caa52e-c4ae-4e16-a43d-9230f55aac1c",
+      "component": "localization",
+      "transition": "configure",
+      "source_state": "unconfigured",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by 02caa52e-c4ae-4e16-a43d-9230f55aac1c",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.356524+00:00",
+      "completed_at": "2026-09-26T01:24:24.356557+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "02caa52e-c4ae-4e16-a43d-9230f55aac1c",
+      "orchestration_id": "02caa52e-c4ae-4e16-a43d-9230f55aac1c",
+      "component": "platform",
+      "transition": "configure",
+      "source_state": "",
+      "destination_state": "",
+      "code": "SUCCESS",
+      "reason": "platform transition completed",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.351720+00:00",
+      "completed_at": "2026-09-26T01:24:24.370691+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "d1436837-e214-4230-93b1-24d22a53cff5",
+      "orchestration_id": "7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "component": "simulation",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by 7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.406914+00:00",
+      "completed_at": "2026-09-26T01:24:24.406938+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "1d005a51-6063-4823-ab82-e25504ec03b8",
+      "orchestration_id": "7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "component": "mapping",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by 7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.426280+00:00",
+      "completed_at": "2026-09-26T01:24:24.426314+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "aa2105bd-fbf1-4560-b954-c91736e4072c",
+      "orchestration_id": "7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "component": "localization",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by 7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.437370+00:00",
+      "completed_at": "2026-09-26T01:24:24.437403+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "de8d96a7-0a80-44f5-95d4-92f5e3f7ceb8",
+      "orchestration_id": "7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "component": "navigation",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by 7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.450078+00:00",
+      "completed_at": "2026-09-26T01:24:24.450123+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "d1436837-e214-4230-93b1-24d22a53cff5",
+      "orchestration_id": "7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "component": "simulation",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by 7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.406914+00:00",
+      "completed_at": "2026-09-26T01:24:24.406938+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "1d005a51-6063-4823-ab82-e25504ec03b8",
+      "orchestration_id": "7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "component": "mapping",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by 7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.426280+00:00",
+      "completed_at": "2026-09-26T01:24:24.426314+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "aa2105bd-fbf1-4560-b954-c91736e4072c",
+      "orchestration_id": "7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "component": "localization",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by 7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.437370+00:00",
+      "completed_at": "2026-09-26T01:24:24.437403+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "de8d96a7-0a80-44f5-95d4-92f5e3f7ceb8",
+      "orchestration_id": "7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "component": "navigation",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by 7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.450078+00:00",
+      "completed_at": "2026-09-26T01:24:24.450123+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "orchestration_id": "7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "component": "platform",
+      "transition": "activate",
+      "source_state": "",
+      "destination_state": "",
+      "code": "SUCCESS",
+      "reason": "platform transition completed",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.402064+00:00",
+      "completed_at": "2026-09-26T01:24:24.462131+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 4
+    },
+    {
+      "success": true,
+      "transition_id": "b88ec4e7-d04e-4e5c-b841-88c0bc1004ab",
+      "orchestration_id": "b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "component": "navigation",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.581725+00:00",
+      "completed_at": "2026-09-26T01:24:24.581760+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "732c461d-3d79-4382-a4ad-97555d5ccd5d",
+      "orchestration_id": "b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "component": "localization",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.597792+00:00",
+      "completed_at": "2026-09-26T01:24:24.597820+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "d2848fcb-b867-44d6-93b8-31b28e8e1b74",
+      "orchestration_id": "b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "component": "mapping",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.605039+00:00",
+      "completed_at": "2026-09-26T01:24:24.605068+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "e4ee8df9-839c-42c7-9628-54c368c3f6e3",
+      "orchestration_id": "b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "component": "simulation",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.614563+00:00",
+      "completed_at": "2026-09-26T01:24:24.617959+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "b88ec4e7-d04e-4e5c-b841-88c0bc1004ab",
+      "orchestration_id": "b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "component": "navigation",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.581725+00:00",
+      "completed_at": "2026-09-26T01:24:24.581760+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "732c461d-3d79-4382-a4ad-97555d5ccd5d",
+      "orchestration_id": "b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "component": "localization",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.597792+00:00",
+      "completed_at": "2026-09-26T01:24:24.597820+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "d2848fcb-b867-44d6-93b8-31b28e8e1b74",
+      "orchestration_id": "b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "component": "mapping",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.605039+00:00",
+      "completed_at": "2026-09-26T01:24:24.605068+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "e4ee8df9-839c-42c7-9628-54c368c3f6e3",
+      "orchestration_id": "b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "component": "simulation",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.614563+00:00",
+      "completed_at": "2026-09-26T01:24:24.617959+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "orchestration_id": "b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "component": "platform",
+      "transition": "deactivate",
+      "source_state": "",
+      "destination_state": "",
+      "code": "SUCCESS",
+      "reason": "platform transition completed",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.577007+00:00",
+      "completed_at": "2026-09-26T01:24:24.633187+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 4
+    },
+    {
+      "success": true,
+      "transition_id": "2edaa9ae-b97b-42f1-957d-e7837bcd94f9",
+      "orchestration_id": "ddcd629e-9746-4876-8519-ed148344ba77",
+      "component": "navigation",
+      "transition": "cleanup",
+      "source_state": "inactive",
+      "destination_state": "unconfigured",
+      "code": "SUCCESS",
+      "reason": "requested by ddcd629e-9746-4876-8519-ed148344ba77",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.687055+00:00",
+      "completed_at": "2026-09-26T01:24:24.687091+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "2e30b048-297b-4c8a-b54f-08d4bccbfd00",
+      "orchestration_id": "ddcd629e-9746-4876-8519-ed148344ba77",
+      "component": "localization",
+      "transition": "cleanup",
+      "source_state": "inactive",
+      "destination_state": "unconfigured",
+      "code": "SUCCESS",
+      "reason": "requested by ddcd629e-9746-4876-8519-ed148344ba77",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.699529+00:00",
+      "completed_at": "2026-09-26T01:24:24.699779+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "c45f3811-c510-4116-858d-3bbce1b6ff7d",
+      "orchestration_id": "ddcd629e-9746-4876-8519-ed148344ba77",
+      "component": "mapping",
+      "transition": "cleanup",
+      "source_state": "inactive",
+      "destination_state": "unconfigured",
+      "code": "SUCCESS",
+      "reason": "requested by ddcd629e-9746-4876-8519-ed148344ba77",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.719074+00:00",
+      "completed_at": "2026-09-26T01:24:24.719112+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "00a8c8ba-ceda-48b6-acb1-214ee93bc7d5",
+      "orchestration_id": "ddcd629e-9746-4876-8519-ed148344ba77",
+      "component": "simulation",
+      "transition": "cleanup",
+      "source_state": "inactive",
+      "destination_state": "unconfigured",
+      "code": "SUCCESS",
+      "reason": "requested by ddcd629e-9746-4876-8519-ed148344ba77",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.746645+00:00",
+      "completed_at": "2026-09-26T01:24:24.750071+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "2edaa9ae-b97b-42f1-957d-e7837bcd94f9",
+      "orchestration_id": "ddcd629e-9746-4876-8519-ed148344ba77",
+      "component": "navigation",
+      "transition": "cleanup",
+      "source_state": "inactive",
+      "destination_state": "unconfigured",
+      "code": "SUCCESS",
+      "reason": "requested by ddcd629e-9746-4876-8519-ed148344ba77",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.687055+00:00",
+      "completed_at": "2026-09-26T01:24:24.687091+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "2e30b048-297b-4c8a-b54f-08d4bccbfd00",
+      "orchestration_id": "ddcd629e-9746-4876-8519-ed148344ba77",
+      "component": "localization",
+      "transition": "cleanup",
+      "source_state": "inactive",
+      "destination_state": "unconfigured",
+      "code": "SUCCESS",
+      "reason": "requested by ddcd629e-9746-4876-8519-ed148344ba77",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.699529+00:00",
+      "completed_at": "2026-09-26T01:24:24.699779+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "c45f3811-c510-4116-858d-3bbce1b6ff7d",
+      "orchestration_id": "ddcd629e-9746-4876-8519-ed148344ba77",
+      "component": "mapping",
+      "transition": "cleanup",
+      "source_state": "inactive",
+      "destination_state": "unconfigured",
+      "code": "SUCCESS",
+      "reason": "requested by ddcd629e-9746-4876-8519-ed148344ba77",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.719074+00:00",
+      "completed_at": "2026-09-26T01:24:24.719112+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "00a8c8ba-ceda-48b6-acb1-214ee93bc7d5",
+      "orchestration_id": "ddcd629e-9746-4876-8519-ed148344ba77",
+      "component": "simulation",
+      "transition": "cleanup",
+      "source_state": "inactive",
+      "destination_state": "unconfigured",
+      "code": "SUCCESS",
+      "reason": "requested by ddcd629e-9746-4876-8519-ed148344ba77",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.746645+00:00",
+      "completed_at": "2026-09-26T01:24:24.750071+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "ddcd629e-9746-4876-8519-ed148344ba77",
+      "orchestration_id": "ddcd629e-9746-4876-8519-ed148344ba77",
+      "component": "platform",
+      "transition": "cleanup",
+      "source_state": "",
+      "destination_state": "",
+      "code": "SUCCESS",
+      "reason": "platform transition completed",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.677977+00:00",
+      "completed_at": "2026-09-26T01:24:24.762433+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 4
+    },
+    {
+      "success": true,
+      "transition_id": "2b206bde-9e04-401b-b06b-1438f629ac0a",
+      "orchestration_id": "79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "component": "navigation",
+      "transition": "shutdown",
+      "source_state": "unconfigured",
+      "destination_state": "finalized",
+      "code": "SUCCESS",
+      "reason": "requested by 79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.783016+00:00",
+      "completed_at": "2026-09-26T01:24:24.783052+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "ee259e11-e5d1-4938-8ad2-c79b602acea6",
+      "orchestration_id": "79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "component": "localization",
+      "transition": "shutdown",
+      "source_state": "unconfigured",
+      "destination_state": "finalized",
+      "code": "SUCCESS",
+      "reason": "requested by 79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.792432+00:00",
+      "completed_at": "2026-09-26T01:24:24.792472+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "fed8f840-6fd2-47ff-9513-17355dd123a4",
+      "orchestration_id": "79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "component": "mapping",
+      "transition": "shutdown",
+      "source_state": "unconfigured",
+      "destination_state": "finalized",
+      "code": "SUCCESS",
+      "reason": "requested by 79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.795671+00:00",
+      "completed_at": "2026-09-26T01:24:24.795731+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "4586bbee-d37d-4ad6-868c-30eba89f9f4d",
+      "orchestration_id": "79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "component": "simulation",
+      "transition": "shutdown",
+      "source_state": "unconfigured",
+      "destination_state": "finalized",
+      "code": "SUCCESS",
+      "reason": "requested by 79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.798800+00:00",
+      "completed_at": "2026-09-26T01:24:24.802869+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "2b206bde-9e04-401b-b06b-1438f629ac0a",
+      "orchestration_id": "79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "component": "navigation",
+      "transition": "shutdown",
+      "source_state": "unconfigured",
+      "destination_state": "finalized",
+      "code": "SUCCESS",
+      "reason": "requested by 79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.783016+00:00",
+      "completed_at": "2026-09-26T01:24:24.783052+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "ee259e11-e5d1-4938-8ad2-c79b602acea6",
+      "orchestration_id": "79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "component": "localization",
+      "transition": "shutdown",
+      "source_state": "unconfigured",
+      "destination_state": "finalized",
+      "code": "SUCCESS",
+      "reason": "requested by 79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.792432+00:00",
+      "completed_at": "2026-09-26T01:24:24.792472+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "fed8f840-6fd2-47ff-9513-17355dd123a4",
+      "orchestration_id": "79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "component": "mapping",
+      "transition": "shutdown",
+      "source_state": "unconfigured",
+      "destination_state": "finalized",
+      "code": "SUCCESS",
+      "reason": "requested by 79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.795671+00:00",
+      "completed_at": "2026-09-26T01:24:24.795731+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "4586bbee-d37d-4ad6-868c-30eba89f9f4d",
+      "orchestration_id": "79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "component": "simulation",
+      "transition": "shutdown",
+      "source_state": "unconfigured",
+      "destination_state": "finalized",
+      "code": "SUCCESS",
+      "reason": "requested by 79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.798800+00:00",
+      "completed_at": "2026-09-26T01:24:24.802869+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "orchestration_id": "79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "component": "platform",
+      "transition": "shutdown",
+      "source_state": "",
+      "destination_state": "",
+      "code": "SUCCESS",
+      "reason": "platform transition completed",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.778331+00:00",
+      "completed_at": "2026-09-26T01:24:24.822833+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 4
+    }
+  ],
+  "orchestrator_results": [
+    {
+      "success": true,
+      "transition_id": "3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "orchestration_id": "3d613e6e-191f-4b13-9a3a-eab394cf2174",
+      "component": "platform",
+      "transition": "configure",
+      "source_state": "",
+      "destination_state": "",
+      "code": "SUCCESS",
+      "reason": "platform transition completed",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.292963+00:00",
+      "completed_at": "2026-09-26T01:23:40.323720+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 4
+    },
+    {
+      "success": true,
+      "transition_id": "728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "orchestration_id": "728116f4-0735-4e1e-a8c1-ba5705da08e0",
+      "component": "platform",
+      "transition": "activate",
+      "source_state": "",
+      "destination_state": "",
+      "code": "SUCCESS",
+      "reason": "platform transition completed",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.343064+00:00",
+      "completed_at": "2026-09-26T01:23:40.381271+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 4
+    },
+    {
+      "success": true,
+      "transition_id": "e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "orchestration_id": "e0b64f29-8c8a-4024-ae73-d19b2e8c6375",
+      "component": "platform",
+      "transition": "deactivate",
+      "source_state": "",
+      "destination_state": "",
+      "code": "SUCCESS",
+      "reason": "platform transition completed",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.101230+00:00",
+      "completed_at": "2026-09-26T01:24:24.182476+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 4
+    },
+    {
+      "success": false,
+      "transition_id": "e604b7fd-9bef-4700-a37d-8758e2239204",
+      "orchestration_id": "e604b7fd-9bef-4700-a37d-8758e2239204",
+      "component": "platform",
+      "transition": "activate",
+      "source_state": "",
+      "destination_state": "",
+      "code": "DEPENDENCY_FAILED",
+      "reason": "activate is illegal from error",
+      "failed_dependency": "localization",
+      "started_at": "2026-09-26T01:24:24.250883+00:00",
+      "completed_at": "2026-09-26T01:24:24.292222+00:00",
+      "recovery_guidance": "Inspect failed dependency and rollback results; recover ERROR components.",
+      "rollback_performed": true,
+      "rollback_result": "SUCCESS",
+      "attempts": 3
+    },
+    {
+      "success": true,
+      "transition_id": "02caa52e-c4ae-4e16-a43d-9230f55aac1c",
+      "orchestration_id": "02caa52e-c4ae-4e16-a43d-9230f55aac1c",
+      "component": "platform",
+      "transition": "configure",
+      "source_state": "",
+      "destination_state": "",
+      "code": "SUCCESS",
+      "reason": "platform transition completed",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.351720+00:00",
+      "completed_at": "2026-09-26T01:24:24.370691+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "orchestration_id": "7164dbae-34a9-44a1-ab2f-a02d8b80046e",
+      "component": "platform",
+      "transition": "activate",
+      "source_state": "",
+      "destination_state": "",
+      "code": "SUCCESS",
+      "reason": "platform transition completed",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.402064+00:00",
+      "completed_at": "2026-09-26T01:24:24.462131+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 4
+    },
+    {
+      "success": true,
+      "transition_id": "b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "orchestration_id": "b7b379d3-c867-4c64-9c2f-d9a7f5a027c7",
+      "component": "platform",
+      "transition": "deactivate",
+      "source_state": "",
+      "destination_state": "",
+      "code": "SUCCESS",
+      "reason": "platform transition completed",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.577007+00:00",
+      "completed_at": "2026-09-26T01:24:24.633187+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 4
+    },
+    {
+      "success": true,
+      "transition_id": "ddcd629e-9746-4876-8519-ed148344ba77",
+      "orchestration_id": "ddcd629e-9746-4876-8519-ed148344ba77",
+      "component": "platform",
+      "transition": "cleanup",
+      "source_state": "",
+      "destination_state": "",
+      "code": "SUCCESS",
+      "reason": "platform transition completed",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.677977+00:00",
+      "completed_at": "2026-09-26T01:24:24.762433+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 4
+    },
+    {
+      "success": true,
+      "transition_id": "79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "orchestration_id": "79b67c9a-0b8f-44a2-ad44-e1a68b84394a",
+      "component": "platform",
+      "transition": "shutdown",
+      "source_state": "",
+      "destination_state": "",
+      "code": "SUCCESS",
+      "reason": "platform transition completed",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.778331+00:00",
+      "completed_at": "2026-09-26T01:24:24.822833+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 4
+    }
+  ],
+  "injected_failure_results": [
+    {
+      "success": false,
+      "transition_id": "ef56d1a2-ac88-480e-bf06-b8a235dcaa03",
+      "orchestration_id": "",
+      "component": "localization",
+      "transition": "activate",
+      "source_state": "unconfigured",
+      "destination_state": "unconfigured",
+      "code": "ILLEGAL_TRANSITION",
+      "reason": "activate is illegal from unconfigured",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:23:40.141698+00:00",
+      "completed_at": "2026-09-26T01:23:40.141735+00:00",
+      "recovery_guidance": "Resolve the cause; if in ERROR, run verified recover then configure.",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 0
+    },
+    {
+      "success": true,
+      "transition_id": "57f62980-1c43-4c82-9045-10262a38c302",
+      "orchestration_id": "",
+      "component": "mapping",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by client",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:10.561337+00:00",
+      "completed_at": "2026-09-26T01:24:10.561395+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "503ab703-61c6-4d7c-8e9b-2166b0dce719",
+      "orchestration_id": "",
+      "component": "mapping",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by client",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:10.663471+00:00",
+      "completed_at": "2026-09-26T01:24:10.663531+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "9275b204-1250-479d-aa6a-44ace8f6895b",
+      "orchestration_id": "",
+      "component": "localization",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by client",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:14.830902+00:00",
+      "completed_at": "2026-09-26T01:24:14.830953+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "f8250ec5-c670-4a71-98a6-54f0c11645d8",
+      "orchestration_id": "",
+      "component": "localization",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by client",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:14.931587+00:00",
+      "completed_at": "2026-09-26T01:24:14.931629+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "0bab0756-2bde-48b9-b2cd-811f2cc129a8",
+      "orchestration_id": "",
+      "component": "navigation",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by client",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:21.592980+00:00",
+      "completed_at": "2026-09-26T01:24:21.597095+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "4683e5df-4754-4b0a-afe3-eb39ff708ada",
+      "orchestration_id": "",
+      "component": "navigation",
+      "transition": "activate",
+      "source_state": "inactive",
+      "destination_state": "active",
+      "code": "SUCCESS",
+      "reason": "requested by client",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:21.696550+00:00",
+      "completed_at": "2026-09-26T01:24:21.696620+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "6f6722bc-4435-4fa4-aca3-aa0d743027f1",
+      "orchestration_id": "",
+      "component": "localization",
+      "transition": "error",
+      "source_state": "inactive",
+      "destination_state": "error",
+      "code": "SUCCESS",
+      "reason": "requested by client",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.200268+00:00",
+      "completed_at": "2026-09-26T01:24:24.200299+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 0
+    },
+    {
+      "success": true,
+      "transition_id": "e6042997-96ba-4545-b4d5-cc4592ea87d8",
+      "orchestration_id": "",
+      "component": "localization",
+      "transition": "recover",
+      "source_state": "error",
+      "destination_state": "unconfigured",
+      "code": "SUCCESS",
+      "reason": "requested by client",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.301142+00:00",
+      "completed_at": "2026-09-26T01:24:24.301419+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    }
+  ],
+  "rollback_results": [
+    {
+      "success": true,
+      "transition_id": "e7d813c2-301d-4069-a180-08596d18e16b",
+      "orchestration_id": "e604b7fd-9bef-4700-a37d-8758e2239204",
+      "component": "mapping",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by e604b7fd-9bef-4700-a37d-8758e2239204",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.280048+00:00",
+      "completed_at": "2026-09-26T01:24:24.280081+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    },
+    {
+      "success": true,
+      "transition_id": "b50a6736-b44b-469a-b377-3709c2fb2732",
+      "orchestration_id": "e604b7fd-9bef-4700-a37d-8758e2239204",
+      "component": "simulation",
+      "transition": "deactivate",
+      "source_state": "active",
+      "destination_state": "inactive",
+      "code": "SUCCESS",
+      "reason": "requested by e604b7fd-9bef-4700-a37d-8758e2239204",
+      "failed_dependency": "",
+      "started_at": "2026-09-26T01:24:24.284382+00:00",
+      "completed_at": "2026-09-26T01:24:24.288041+00:00",
+      "recovery_guidance": "",
+      "rollback_performed": false,
+      "rollback_result": "",
+      "attempts": 1
+    }
+  ],
+  "active_provenance": {
+    "simulation": {
+      "valid": true,
+      "snapshot": {
+        "component": "simulation",
+        "state": "active",
+        "last_transition_id": "88b6c06b-e6db-407d-946a-362679e19a15",
+        "observed_at": "2026-09-26T01:23:40.347003+00:00"
+      },
+      "activate_event": {
+        "success": true,
+        "transition_id": "88b6c06b-e6db-407d-946a-362679e19a15",
+        "orchestration_id": "728116f4-0735-4e1e-a8c1-ba5705da08e0",
+        "component": "simulation",
+        "transition": "activate",
+        "source_state": "inactive",
+        "destination_state": "active",
+        "code": "SUCCESS",
+        "reason": "requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0",
+        "failed_dependency": "",
+        "started_at": "2026-09-26T01:23:40.346880+00:00",
+        "completed_at": "2026-09-26T01:23:40.346906+00:00",
+        "recovery_guidance": "",
+        "rollback_performed": false,
+        "rollback_result": "",
+        "attempts": 1
+      }
+    },
+    "mapping": {
+      "valid": true,
+      "snapshot": {
+        "component": "mapping",
+        "state": "active",
+        "last_transition_id": "d2468df5-9ca0-428a-9a23-302a9bcadc39",
+        "observed_at": "2026-09-26T01:23:40.363919+00:00"
+      },
+      "activate_event": {
+        "success": true,
+        "transition_id": "d2468df5-9ca0-428a-9a23-302a9bcadc39",
+        "orchestration_id": "728116f4-0735-4e1e-a8c1-ba5705da08e0",
+        "component": "mapping",
+        "transition": "activate",
+        "source_state": "inactive",
+        "destination_state": "active",
+        "code": "SUCCESS",
+        "reason": "requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0",
+        "failed_dependency": "",
+        "started_at": "2026-09-26T01:23:40.363785+00:00",
+        "completed_at": "2026-09-26T01:23:40.363815+00:00",
+        "recovery_guidance": "",
+        "rollback_performed": false,
+        "rollback_result": "",
+        "attempts": 1
+      }
+    },
+    "localization": {
+      "valid": true,
+      "snapshot": {
+        "component": "localization",
+        "state": "active",
+        "last_transition_id": "7340973f-997e-4d4d-b9e0-a715f314aff4",
+        "observed_at": "2026-09-26T01:23:40.365018+00:00"
+      },
+      "activate_event": {
+        "success": true,
+        "transition_id": "7340973f-997e-4d4d-b9e0-a715f314aff4",
+        "orchestration_id": "728116f4-0735-4e1e-a8c1-ba5705da08e0",
+        "component": "localization",
+        "transition": "activate",
+        "source_state": "inactive",
+        "destination_state": "active",
+        "code": "SUCCESS",
+        "reason": "requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0",
+        "failed_dependency": "",
+        "started_at": "2026-09-26T01:23:40.364895+00:00",
+        "completed_at": "2026-09-26T01:23:40.364922+00:00",
+        "recovery_guidance": "",
+        "rollback_performed": false,
+        "rollback_result": "",
+        "attempts": 1
+      }
+    },
+    "navigation": {
+      "valid": true,
+      "snapshot": {
+        "component": "navigation",
+        "state": "active",
+        "last_transition_id": "b7aa4cc0-1856-4397-b5a7-603cfa8ed679",
+        "observed_at": "2026-09-26T01:23:40.366441+00:00"
+      },
+      "activate_event": {
+        "success": true,
+        "transition_id": "b7aa4cc0-1856-4397-b5a7-603cfa8ed679",
+        "orchestration_id": "728116f4-0735-4e1e-a8c1-ba5705da08e0",
+        "component": "navigation",
+        "transition": "activate",
+        "source_state": "inactive",
+        "destination_state": "active",
+        "code": "SUCCESS",
+        "reason": "requested by 728116f4-0735-4e1e-a8c1-ba5705da08e0",
+        "failed_dependency": "",
+        "started_at": "2026-09-26T01:23:40.366303+00:00",
+        "completed_at": "2026-09-26T01:23:40.366338+00:00",
+        "recovery_guidance": "",
+        "rollback_performed": false,
+        "rollback_result": "",
+        "attempts": 1
+      }
+    }
+  },
+  "manager_workflows": {
+    "mapping": {
+      "lifecycle_active_at_start": true,
+      "map_messages_received": 3,
+      "map_save_succeeded": true,
+      "save_status": "{\"status\": \"success\", \"message\": \"Map 'v012_20260926_012338786749' saved successfully for warehouse\", \"map_name\": \"v012_20260926_012338786749\", \"environment\": \"warehouse\", \"yaml_path\": \"/tmp/v013-release-home/.ros/cpp_robotics_sim/maps/warehouse/v012_20260926_012338786749.yaml\", \"image_path\": \"/tmp/v013-release-home/.ros/cpp_robotics_sim/maps/warehouse/v012_20260926_012338786749.pgm\"}"
+    },
+    "localization": {
+      "lifecycle_active_at_start": true,
+      "fixture_selected": true,
+      "initial_pose_published": true,
+      "status": "{\"status\": \"success\", \"message\": \"Initial pose published: x=0.00, y=0.00, yaw=0.00 rad\", \"map_name\": \"v012_fixture_20260926_012338786749\", \"environment\": \"\", \"yaml_path\": \"/tmp/v013-release-home/.ros/cpp_robotics_sim/maps/warehouse/v012_fixture_20260926_012338786749.yaml\"}"
+    },
+    "navigation_goal_accepted": true,
+    "navigation": {
+      "lifecycle_active_at_start": true,
+      "goal_accepted": true,
+      "goal_canceled_by_deactivation": true,
+      "status": "{\"state\": \"rejected\", \"message\": \"Navigation lifecycle is not ACTIVE (state=inactive)\", \"result\": \"rejected\", \"goal_active\": false, \"goal\": null, \"feedback\": {}, \"nav2_error_code\": 0, \"nav2_error_message\": \"\"}"
+    }
+  },
+  "mapping_diagnostics": [
+    {
+      "stage": "mapping_activated",
+      "captured_at": "2026-09-26T01:24:00.029283+00:00",
+      "simulation_lifecycle": {
+        "component": "simulation",
+        "state": "active",
+        "last_transition_id": "88b6c06b-e6db-407d-946a-362679e19a15",
+        "observed_at": "2026-09-26T01:23:59.477531+00:00"
+      },
+      "mapping_lifecycle": {
+        "component": "mapping",
+        "state": "active",
+        "last_transition_id": "d2468df5-9ca0-428a-9a23-302a9bcadc39",
+        "observed_at": "2026-09-26T01:23:59.494306+00:00"
+      },
+      "simulation_domain_state": "running",
+      "mode_state": "mapping",
+      "slam_node_present": true,
+      "slam_lifecycle_state": "not queried at this stage to preserve timing",
+      "map_publishers": [
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ],
+      "map_publisher_count": 1,
+      "map_subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        }
+      ],
+      "map_subscriber_count": 2,
+      "map_message_count": 0,
+      "occupancy_grid_received": false,
+      "map_receive_timestamps": [],
+      "graph_nodes": [
+        "/command_mux",
+        "/gz_ros_control",
+        "/controller_manager",
+        "/joint_state_broadcaster",
+        "/diff_drive_controller",
+        "/v012_lifecycle_acceptance",
+        "/slam_toolbox",
+        "/transform_listener_impl_5f9f1e5c8930",
+        "/simulation_manager",
+        "/simulation_readiness_probe",
+        "/simulation_readiness_probe",
+        "/mode_manager",
+        "/simulation_readiness_probe",
+        "/mapping_manager",
+        "/localization_manager",
+        "/navigation_goal_manager",
+        "/platform_lifecycle_orchestrator",
+        "/rosbridge_websocket",
+        "/clock_bridge",
+        "/scan_bridge",
+        "/imu_bridge",
+        "/robot_state_publisher",
+        "/joint_state_publisher"
+      ],
+      "exact_map_saver_command": [
+        "ros2",
+        "run",
+        "nav2_map_server",
+        "map_saver_cli",
+        "-f",
+        "/tmp/v013-release-home/.ros/cpp_robotics_sim/maps/warehouse/v012_20260926_012338786749",
+        "--free",
+        "0.25",
+        "--occ",
+        "0.65"
+      ]
+    },
+    {
+      "stage": "map_observed",
+      "captured_at": "2026-09-26T01:24:03.062105+00:00",
+      "simulation_lifecycle": {
+        "component": "simulation",
+        "state": "active",
+        "last_transition_id": "88b6c06b-e6db-407d-946a-362679e19a15",
+        "observed_at": "2026-09-26T01:24:02.477480+00:00"
+      },
+      "mapping_lifecycle": {
+        "component": "mapping",
+        "state": "active",
+        "last_transition_id": "d2468df5-9ca0-428a-9a23-302a9bcadc39",
+        "observed_at": "2026-09-26T01:24:02.494238+00:00"
+      },
+      "simulation_domain_state": "running",
+      "mode_state": "mapping",
+      "slam_node_present": true,
+      "slam_lifecycle_state": {
+        "state_id": 3,
+        "state_label": "active"
+      },
+      "map_publishers": [
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ],
+      "map_publisher_count": 1,
+      "map_subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        }
+      ],
+      "map_subscriber_count": 2,
+      "map_message_count": 1,
+      "occupancy_grid_received": true,
+      "map_receive_timestamps": [
+        "2026-09-26T01:24:01.390293+00:00"
+      ],
+      "graph_nodes": [
+        "/command_mux",
+        "/gz_ros_control",
+        "/controller_manager",
+        "/joint_state_broadcaster",
+        "/diff_drive_controller",
+        "/v012_lifecycle_acceptance",
+        "/scan_frame_bridge",
+        "/slam_toolbox",
+        "/transform_listener_impl_5f9f1e5c8930",
+        "/lifecycle_manager_slam",
+        "/simulation_manager",
+        "/simulation_readiness_probe",
+        "/simulation_readiness_probe",
+        "/mode_manager",
+        "/simulation_readiness_probe",
+        "/mapping_manager",
+        "/localization_manager",
+        "/navigation_goal_manager",
+        "/platform_lifecycle_orchestrator",
+        "/rosbridge_websocket",
+        "/clock_bridge",
+        "/scan_bridge",
+        "/imu_bridge",
+        "/robot_state_publisher",
+        "/joint_state_publisher"
+      ],
+      "exact_map_saver_command": [
+        "ros2",
+        "run",
+        "nav2_map_server",
+        "map_saver_cli",
+        "-f",
+        "/tmp/v013-release-home/.ros/cpp_robotics_sim/maps/warehouse/v012_20260926_012338786749",
+        "--free",
+        "0.25",
+        "--occ",
+        "0.65"
+      ],
+      "mapping_activation_at": "2026-09-26T01:23:58.221426+00:00",
+      "save_request_at": "2026-09-26T01:24:03.413930+00:00",
+      "map_manager_status": "{\"status\": \"success\", \"message\": \"Map 'v012_20260926_012338786749' saved successfully for warehouse\", \"map_name\": \"v012_20260926_012338786749\", \"environment\": \"warehouse\", \"yaml_path\": \"/tmp/v013-release-home/.ros/cpp_robotics_sim/maps/warehouse/v012_20260926_012338786749.yaml\", \"image_path\": \"/tmp/v013-release-home/.ros/cpp_robotics_sim/maps/warehouse/v012_20260926_012338786749.pgm\"}"
+    }
+  ],
+  "mapping_early_probe": {
+    "request_at": "2026-09-26T01:24:00.029361+00:00",
+    "map_messages_at_request": 0,
+    "status_received": true,
+    "status": "{\"status\": \"success\", \"message\": \"Map 'v012_20260926_012338786749_early' saved successfully for warehouse\", \"map_name\": \"v012_20260926_012338786749_early\", \"environment\": \"warehouse\", \"yaml_path\": \"/tmp/v013-release-home/.ros/cpp_robotics_sim/maps/warehouse/v012_20260926_012338786749_early.yaml\", \"image_path\": \"/tmp/v013-release-home/.ros/cpp_robotics_sim/maps/warehouse/v012_20260926_012338786749_early.pgm\"}"
+  },
+  "mapping_save_precondition": {
+    "map_messages_at_request": 2,
+    "latest_map_received_at": "2026-09-26T01:24:03.388532+00:00",
+    "save_request_at": "2026-09-26T01:24:03.413930+00:00",
+    "map_received_immediately_before_request": true
+  },
+  "mapping_saver_endpoint_samples": [
+    {
+      "at": "2026-09-26T01:24:03.414240+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:03.464675+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:03.515207+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:03.565582+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:03.616024+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:03.666499+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:03.716947+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:03.767407+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:03.817954+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:03.868440+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:03.918840+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:03.969227+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.019687+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.070204+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.120483+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.170890+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.221378+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.271724+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.322211+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.372752+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.423242+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.473628+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.524032+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.574539+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.625529+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.676116+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.726827+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.777131+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.827485+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.877851+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.928254+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:04.978623+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.029074+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.079784+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.130308+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.180640+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.231188+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.281652+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.332196+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.382645+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.433012+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.483393+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.534003+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.584739+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.635184+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.685598+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.736116+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.786598+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.837049+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.887765+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.938204+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:05.988601+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.038952+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.089431+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.139759+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.190209+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.240623+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.291174+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.341561+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.392046+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.442478+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.493006+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.543947+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.594446+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.644967+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.695441+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.745968+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.796254+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.846810+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.897154+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "_NODE_NAME_UNKNOWN_",
+          "node_namespace": "_NODE_NAMESPACE_UNKNOWN_",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "TRANSIENT_LOCAL",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.948737+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:06.999404+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:07.050079+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:07.100416+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "at": "2026-09-26T01:24:07.150968+00:00",
+      "subscribers": [
+        {
+          "node_name": "v012_lifecycle_acceptance",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        },
+        {
+          "node_name": "slam_toolbox",
+          "node_namespace": "/",
+          "topic_type": "nav_msgs/msg/OccupancyGrid",
+          "reliability": "RELIABLE",
+          "durability": "VOLATILE",
+          "history": "3",
+          "depth": 0
+        }
+      ]
+    }
+  ],
+  "fixture_map": {
+    "name": "v012_fixture_20260926_012338786749",
+    "environment": "warehouse",
+    "source": "/home/devansh/robotics_projects/ros2-amr-v013/ros2_ws/install/cpp_robotics_sim_ros/share/cpp_robotics_sim_ros/maps/default_diffbot_map",
+    "yaml": "/tmp/v013-release-home/.ros/cpp_robotics_sim/maps/warehouse/v012_fixture_20260926_012338786749.yaml",
+    "image": "/tmp/v013-release-home/.ros/cpp_robotics_sim/maps/warehouse/v012_fixture_20260926_012338786749.pgm"
+  },
+  "registry_final_state": [],
+  "runtime_nodes": [
+    "/localization_manager",
+    "/mapping_manager",
+    "/mode_manager",
+    "/navigation_goal_manager",
+    "/platform_lifecycle_orchestrator",
+    "/rosbridge_websocket",
+    "/simulation_manager",
+    "/simulation_readiness_probe",
+    "/simulation_readiness_probe",
+    "/simulation_readiness_probe",
+    "/simulation_readiness_probe",
+    "/simulation_readiness_probe",
+    "/v012_late_lifecycle_subscriber",
+    "/v012_lifecycle_acceptance",
+    "/v012_runtime_graph_verifier"
+  ],
+  "completed_at": "2026-09-26T01:24:31.613760+00:00",
+  "release_decision": "ACCEPTED",
+  "remaining_blockers": []
+}

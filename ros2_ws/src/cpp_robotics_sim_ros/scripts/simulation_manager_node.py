@@ -27,6 +27,7 @@ from rclpy.qos import (
     QoSProfile,
     ReliabilityPolicy,
 )
+from rclpy.signals import SignalHandlerOptions
 from std_msgs.msg import Bool
 from std_msgs.msg import String
 from std_srvs.srv import Trigger
@@ -43,6 +44,7 @@ from process_lifecycle import (  # noqa: E402,I100,I101
     terminate_owned_process,
 )
 from process_registry import ProcessRecord, ProcessRegistry  # noqa: E402,I100
+from teardown import run_teardown  # noqa: E402,I100
 from lifecycle_ros_adapter import bind_lifecycle  # noqa: E402,I100
 from managed_component import LifecycleState, LifecycleTransition  # noqa: E402,I100
 
@@ -94,10 +96,8 @@ class SimulationManagerNode(Node):
             'hospital_world.sdf',
         )
 
-        self.declare_parameter(
-            'startup_grace_period',
-            4.0,
-        )
+        self.declare_parameter('readiness_timeout', 45.0)
+        self.declare_parameter('descendant_identity_timeout', 4.0)
         self.declare_parameter(
             'shutdown_timeout',
             4.0,
@@ -150,8 +150,11 @@ class SimulationManagerNode(Node):
             )
         )
 
-        self.startup_grace_period = float(
-            self.get_parameter('startup_grace_period').value
+        self.readiness_timeout = float(
+            self.get_parameter('readiness_timeout').value
+        )
+        self.descendant_identity_timeout = float(
+            self.get_parameter('descendant_identity_timeout').value
         )
         self.shutdown_timeout = float(
             self.get_parameter('shutdown_timeout').value
@@ -173,6 +176,9 @@ class SimulationManagerNode(Node):
             String,
             '/simulation/status',
             status_qos,
+        )
+        self.readiness_publisher = self.create_publisher(
+            String, '/platform/readiness', status_qos,
         )
 
         self.environment_status_publisher = (
@@ -228,6 +234,7 @@ class SimulationManagerNode(Node):
         self.state = SimulationState.STOPPED
         self.last_error = ''
         self.shutdown_prepared = False
+        self.shutdown_success: Optional[bool] = None
         self.stop_in_progress = False
         self.last_shutdown_report: Optional[ShutdownResult] = None
 
@@ -320,15 +327,17 @@ class SimulationManagerNode(Node):
                     f'{environment}'
                 )
 
-        if (
-            not math.isfinite(
-                self.startup_grace_period
+        if not math.isfinite(self.readiness_timeout) or self.readiness_timeout <= 0.0:
+            raise ValueError(
+                'readiness_timeout must be finite and greater than zero'
             )
-            or self.startup_grace_period < 0.0
+
+        if (
+            not math.isfinite(self.descendant_identity_timeout)
+            or self.descendant_identity_timeout <= 0.0
         ):
             raise ValueError(
-                'startup_grace_period must be finite and '
-                'not negative'
+                'descendant_identity_timeout must be finite and greater than zero'
             )
 
         if (
@@ -535,8 +544,6 @@ class SimulationManagerNode(Node):
             )
             return response
 
-        time.sleep(1.0)
-
         started, start_message = self.start_simulation()
 
         response.success = started
@@ -617,8 +624,6 @@ class SimulationManagerNode(Node):
                 self.get_logger().error(message)
                 return False, message
 
-            time.sleep(self.startup_grace_period)
-
             if self.process.poll() is not None:
                 return_code = self.process.returncode
                 self.last_error = (
@@ -643,8 +648,14 @@ class SimulationManagerNode(Node):
                 return False, self.last_error
 
             try:
-                self.process_record = self.refresh_process_record(
-                    self.process_registry, self.process_record
+                self.process_record = self.wait_for_process_record(
+                    self.process_registry,
+                    self.process_record,
+                    timeout=self.descendant_identity_timeout,
+                    should_continue=lambda: (
+                        self.process is not None
+                        and self.process.poll() is None
+                    ),
                 )
             except (OSError, RuntimeError, ValueError) as error:
                 report = self.terminate_process_record(
@@ -668,6 +679,30 @@ class SimulationManagerNode(Node):
                 self.get_logger().error(self.last_error)
                 return False, self.last_error
 
+            readiness = self.wait_for_runtime_readiness()
+            self.publish_readiness(readiness)
+            if not readiness.ready:
+                self.last_error = (
+                    'Simulation runtime readiness failed: '
+                    + json.dumps(readiness.to_mapping(), sort_keys=True)
+                )
+                report = self.terminate_process_record(
+                    self.process_registry, self.process_record,
+                    process=self.process,
+                    sigint_timeout=self.shutdown_timeout,
+                    sigterm_timeout=self.kill_timeout,
+                    sigkill_timeout=self.kill_timeout,
+                )
+                self.last_shutdown_report = report
+                self.persist_shutdown_report(report)
+                if report.success:
+                    self.process = None
+                    self.process_record = None
+                self.set_state(SimulationState.ERROR)
+                self.publish_environment_status(state='error', message=self.last_error)
+                self.get_logger().error(self.last_error)
+                return False, self.last_error
+
             self.set_state(SimulationState.RUNNING)
             self.publish_emergency_stop(False)
             self.publish_environment_status(
@@ -684,6 +719,29 @@ class SimulationManagerNode(Node):
             )
             self.get_logger().info(message)
             return True, message
+
+    def wait_for_runtime_readiness(self):
+        """Wait for observed runtime dependencies; timeout only bounds waiting."""
+        from readiness_contract import wait_for_readiness
+        from ros_runtime_readiness import SimulationReadinessProbe
+
+        probe = SimulationReadinessProbe(use_sim_time=self.managed_use_sim_time)
+        try:
+            return wait_for_readiness(
+                probe, timeout=self.readiness_timeout,
+                process_alive=lambda: self.process is not None
+                and self.process.poll() is None,
+            )
+        finally:
+            probe.close()
+
+    def publish_readiness(self, report) -> None:
+        """Publish structured, lease-bound readiness evidence as JSON."""
+        if not hasattr(self, 'readiness_publisher'):
+            return
+        message = String()
+        message.data = json.dumps(report.to_mapping(), sort_keys=True)
+        self.readiness_publisher.publish(message)
 
     def lifecycle_accepts_operations(self) -> bool:
         return (
@@ -954,6 +1012,14 @@ class SimulationManagerNode(Node):
         return registry.refresh_group_members(record)
 
     @staticmethod
+    def wait_for_process_record(
+        registry, record, *, timeout, should_continue,
+    ):
+        return registry.wait_for_group_members(
+            record, timeout=timeout, should_continue=should_continue,
+        )
+
+    @staticmethod
     def release_exited_process_record(registry, record):
         return deregister_exited_process(registry, record)
 
@@ -1117,23 +1183,28 @@ class SimulationManagerNode(Node):
         """Reconcile exited records without process-name-based signaling."""
         self.process_registry.reconcile_stale_records()
 
-    def shutdown(self) -> None:
+    def shutdown(self) -> bool:
         if self.shutdown_prepared:
-            return
-
-        if (
-            hasattr(self, 'lifecycle_component')
-            and self.lifecycle_component.state == LifecycleState.FINALIZED
-        ):
-            self.shutdown_prepared = True
-            return
+            return self.shutdown_success is True
 
         self.shutdown_prepared = True
+        stages = []
+        for timer_name in ('monitor_timer', 'lifecycle_state_timer'):
+            timer = getattr(self, timer_name, None)
+            if timer is not None:
+                stages.append((f'cancel {timer_name}', timer.cancel))
+        if (hasattr(self, 'lifecycle_component')
+                and self.lifecycle_component.state == LifecycleState.FINALIZED):
+            self.shutdown_success = run_teardown(stages)
+            return self.shutdown_success
+        stages.append(('simulation resources and lifecycle',
+                       self._shutdown_resources))
+        self.shutdown_success = run_teardown(stages)
+        return self.shutdown_success
 
+    def _shutdown_resources(self) -> bool:
         if rclpy.ok(context=self.context):
-            self.get_logger().info(
-                'Simulation manager shutting down'
-            )
+            self.get_logger().info('Simulation manager shutting down')
 
         if hasattr(self, 'lifecycle_component'):
             result = self.lifecycle_component.transition(
@@ -1142,46 +1213,67 @@ class SimulationManagerNode(Node):
             success, message = result.success, result.reason
         else:
             success, message = self.stop_simulation()
+            result = None
 
-        if hasattr(self, 'publish_lifecycle_result'):
+        if (result is not None and hasattr(self, 'publish_lifecycle_result')
+                and rclpy.ok(context=self.context)):
             self.publish_lifecycle_result(result)
 
-        if (
-            not success
-            and rclpy.ok(context=self.context)
-        ):
+        if not success and rclpy.ok(context=self.context):
             self.get_logger().error(message)
-
-        if rclpy.ok(context=self.context):
-            self.get_logger().info(
-                'Simulation shutdown cleanup complete'
-            )
+        elif success and rclpy.ok(context=self.context):
+            self.get_logger().info('Simulation shutdown cleanup complete')
+        return bool(success)
 
 
-def main(args=None) -> None:
-    rclpy.init(args=args)
+def main(args=None) -> int:
+    # Let Python interrupt spin with KeyboardInterrupt so owned resources and
+    # lifecycle publications are cleaned up before the ROS context is closed.
+    rclpy.init(args=args, signal_handler_options=SignalHandlerOptions.NO)
 
     node: Optional[SimulationManagerNode] = None
 
+    failure = None
+    cleanup_success = True
     try:
         node = SimulationManagerNode()
         rclpy.spin(node)
 
-    except (
-        KeyboardInterrupt,
-        ExternalShutdownException,
-    ):
+    except KeyboardInterrupt:
+        if node is not None and rclpy.ok(context=node.context):
+            node.get_logger().info(
+                'SIGINT received; rclpy.spin exited and manager cleanup begins '
+                'with ROS context valid'
+            )
+    except ExternalShutdownException:
         pass
+    except BaseException as error:
+        failure = error
 
     finally:
         with defer_termination_signals():
+            stages = []
             if node is not None:
-                node.shutdown()
-                node.destroy_node()
+                stages.extend((
+                    ('manager cleanup', node.shutdown),
+                    ('node destruction', node.destroy_node),
+                ))
 
-            if rclpy.ok():
-                rclpy.shutdown()
+            context = node.context if node is not None else None
+
+            def shutdown_context():
+                if context is None:
+                    if rclpy.ok():
+                        rclpy.shutdown()
+                elif rclpy.ok(context=context):
+                    rclpy.shutdown(context=context)
+                return True
+
+            stages.append(('ROS context shutdown', shutdown_context))
+            cleanup_success = run_teardown(stages, primary_error=failure)
+
+    return 0 if cleanup_success else 1
 
 
 if __name__ == '__main__':
-    main()
+    raise SystemExit(main())

@@ -8,13 +8,19 @@ amcl:
     scan_topic: scan
 
     tf_broadcast: true
-    transform_tolerance: 1.0
+    transform_tolerance: 0.0
+    set_initial_pose: true
+    initial_pose:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      yaw: 0.0
 
     min_particles: 500
     max_particles: 2000
 
-    update_min_d: 0.10
-    update_min_a: 0.10
+    update_min_d: 0.0
+    update_min_a: 0.0
 
     laser_model_type: likelihood_field
     laser_max_range: 12.0

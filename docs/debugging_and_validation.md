@@ -12,7 +12,7 @@
 ## 1. Document Purpose
 
 This document defines the debugging, verification, and release-validation
-workflow for `cpp_robotics_sim_foundation` at release `v0.1.0`.
+workflow for `ros2-amr-platform` at release `v0.1.0`.
 
 It is intended for:
 
@@ -103,7 +103,7 @@ Release evidence must be associated with an exact commit or tag.
 Check the current revision:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 git branch --show-current
 git rev-parse HEAD
@@ -114,7 +114,7 @@ git status --short
 For the immutable release source:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 git rev-parse v0.1.0
 git show --no-patch --decorate --oneline v0.1.0
@@ -177,7 +177,7 @@ Every unexplained deviation must be investigated before release approval.
 ### 4.1 Working-tree inspection
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 git status --short
 git diff --check
@@ -202,7 +202,7 @@ A clean `git diff --check` produces no output.
 ### 4.2 Required directory layout
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 test -d ros2_ws
 test -d ros2_ws/src/cpp_robotics_sim_ros
@@ -217,7 +217,7 @@ printf 'Repository layout preflight passed.\n'
 ### 4.3 ROS 2 installation
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 test -f /opt/ros/jazzy/setup.bash
 source /opt/ros/jazzy/setup.bash
@@ -228,7 +228,7 @@ printf 'ROS 2 Jazzy setup passed.\n'
 ### 4.4 Tool availability
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 for command_name in \
   bash \
@@ -255,7 +255,7 @@ Gazebo, colcon build products, Docker layers, maps, logs, and rosbag files can
 consume substantial storage.
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 df -h .
 du -sh ros2_ws/build ros2_ws/install ros2_ws/log 2>/dev/null || true
@@ -269,7 +269,7 @@ docker system df 2>/dev/null || true
 ### 5.1 Build
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ./scripts/build.sh
 ```
@@ -285,7 +285,7 @@ ros2_ws/install/setup.bash
 Confirm:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 test -f ros2_ws/install/setup.bash
 printf 'Workspace setup exists.\n'
@@ -294,7 +294,7 @@ printf 'Workspace setup exists.\n'
 ### 5.2 Full test gate
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ./scripts/test.sh
 ```
@@ -350,7 +350,7 @@ and confirm that no earlier warning represents a skipped or bypassed gate.
 ### 6.1 Run the project syntax gate
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ./scripts/check_syntax.sh
 ```
@@ -368,7 +368,7 @@ Bash
 Targeted validation:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 find ros2_ws/src/cpp_robotics_sim_ros \
   -type f -name '*.py' -print0 \
@@ -386,7 +386,7 @@ Failures usually indicate:
 ### 6.3 JavaScript syntax
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 find ros2_ws/src/cpp_robotics_sim_ros/web \
   -type f -name '*.js' -print0 \
@@ -404,7 +404,7 @@ Failures usually indicate:
 ### 6.4 Bash syntax
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 find scripts \
   -type f -name '*.sh' -print0 \
@@ -424,7 +424,7 @@ ROS 2 Python executables and project shell scripts must retain executable
 permissions where required.
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 find scripts \
   -maxdepth 1 \
@@ -453,7 +453,7 @@ executables.
 Use the repository cleanup script for generated build state:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ./scripts/clean.sh
 ./scripts/build.sh
@@ -465,7 +465,7 @@ It does not terminate active ROS 2 or Gazebo processes.
 ### 7.2 Manual package build
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 
@@ -479,7 +479,7 @@ colcon build \
 ### 7.3 Verify package discovery
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -493,7 +493,7 @@ ros2 pkg executables cpp_robotics_sim_ros | sort
 Check:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 find ros2_ws/src -maxdepth 3 -name package.xml -print
 grep -n '<name>' \
@@ -516,7 +516,7 @@ package import behavior inconsistent
 Recovery:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ./scripts/clean.sh
 ./scripts/build.sh
@@ -527,7 +527,7 @@ cd ~/robotics_projects/cpp_robotics_sim_foundation
 Correct sequence:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -542,7 +542,7 @@ ros2 pkg prefix cpp_robotics_sim_ros
 ### 8.1 Run package tests directly
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -562,7 +562,7 @@ colcon test-result --verbose
 Summary only:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -574,7 +574,7 @@ colcon test-result
 Verbose:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -586,7 +586,7 @@ colcon test-result --verbose
 ### 8.3 Locate test logs
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 find ros2_ws/log/latest_test \
   -type f \
@@ -597,7 +597,7 @@ find ros2_ws/log/latest_test \
 Search failures:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 grep -RniE \
   'fail|error|exception|traceback' \
@@ -610,7 +610,7 @@ grep -RniE \
 List tests:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -622,7 +622,7 @@ ctest -N
 Run matching tests:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -705,7 +705,7 @@ features.
 ### 10.1 Run the regression gate
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ./scripts/launch_regression.sh
 ```
@@ -733,7 +733,7 @@ It is intended to catch:
 First inspect the script:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 sed -n '1,260p' scripts/launch_regression.sh
 ```
@@ -741,7 +741,7 @@ sed -n '1,260p' scripts/launch_regression.sh
 Then inspect recent ROS logs:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 find ~/.ros/log \
   -maxdepth 2 \
@@ -755,7 +755,7 @@ find ~/.ros/log \
 Check residual processes:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ps -ef \
   | grep -E \
@@ -781,7 +781,7 @@ matches, never for the actual release gate.
 ### 11.1 Run the integration gate
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ./scripts/headless_smoke_test.sh
 ```
@@ -813,7 +813,7 @@ WebSocket: 9090
 Inspect:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ss -ltnp | grep -E ':8080|:9090' || true
 ```
@@ -821,7 +821,7 @@ ss -ltnp | grep -E ':8080|:9090' || true
 ### 11.4 Dashboard nodes
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -847,7 +847,7 @@ The exact rosbridge node name should be inspected at runtime.
 ### 11.5 Public services
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -860,7 +860,7 @@ ros2 service list \
 ### 11.6 Public topics
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -891,7 +891,7 @@ When the page loads but controls do not work:
 ### 12.1 Run the lifecycle gate
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ./scripts/run_lifecycle_test.sh
 ```
@@ -915,7 +915,7 @@ It is intended to verify:
 ### 12.3 Post-test residue check
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 printf '\n===== PORTS =====\n'
 ss -ltnp | grep -E ':8080|:9090' || true
@@ -935,7 +935,7 @@ runtime processes should remain.
 A lifecycle validation is stronger when run twice:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ./scripts/run_lifecycle_test.sh
 ./scripts/run_lifecycle_test.sh
@@ -950,7 +950,7 @@ The second run catches residue that the first run may have left behind.
 ### 13.1 Build image
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 docker build \
   --tag cpp-robotics-sim:v0.1.0 \
@@ -960,7 +960,7 @@ docker build \
 ### 13.2 Run the full gate
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 docker run --rm \
   --name cpp-robotics-sim-v010-test \
@@ -995,7 +995,7 @@ It is not the primary GUI Gazebo runtime entry point.
 ### 13.4 Diagnose image build failure
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 docker build \
   --no-cache \
@@ -1007,7 +1007,7 @@ docker build \
 ### 13.5 Inspect the container
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 docker run --rm -it \
   cpp-robotics-sim:v0.1.0 \
@@ -1027,7 +1027,7 @@ script permissions
 ### 13.6 Remove stale named container
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 docker rm -f cpp-robotics-sim-v010-test 2>/dev/null || true
 ```
@@ -1048,7 +1048,7 @@ Workflow:
 Inspect the tagged workflow:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 git show v0.1.0:.github/workflows/ros2_jazzy_ci.yml \
   | sed -n '1,280p'
@@ -1076,7 +1076,7 @@ required for the release.
 ### 15.1 Source environment
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1085,7 +1085,7 @@ source ros2_ws/install/setup.bash
 ### 15.2 Node inventory
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1096,7 +1096,7 @@ ros2 node list | sort
 ### 15.3 Topic inventory
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1107,7 +1107,7 @@ ros2 topic list -t | sort
 ### 15.4 Service inventory
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1118,7 +1118,7 @@ ros2 service list -t | sort
 ### 15.5 Action inventory
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1129,7 +1129,7 @@ ros2 action list -t | sort
 ### 15.6 Parameters
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1150,7 +1150,7 @@ Node:
 ### 16.1 Status
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1171,7 +1171,7 @@ error
 ### 16.2 Environment status
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1193,7 +1193,7 @@ selection_locked
 ### 16.3 Select environment
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1214,7 +1214,7 @@ hospital
 ### 16.4 Start, stop, and reset
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1226,7 +1226,7 @@ ros2 service call \
 ```
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1238,7 +1238,7 @@ ros2 service call \
 ```
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1278,7 +1278,7 @@ dashboard restart -> not required
 Check:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1300,7 +1300,7 @@ Node:
 ### 17.1 Mode status
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1324,7 +1324,7 @@ error
 ### 17.2 Activate modes
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1351,7 +1351,7 @@ no stale managed mode process remains
 Inspect:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1389,7 +1389,7 @@ Output:
 ### 18.2 Inspect active source
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1411,7 +1411,7 @@ none
 ### 18.3 Test GUI source
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1441,7 +1441,7 @@ after the 0.75-second GUI timeout.
 ### 18.4 Inspect final controller command
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1454,7 +1454,7 @@ ros2 topic echo /diff_drive_controller/cmd_vel
 Engage:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1468,7 +1468,7 @@ ros2 topic pub --once \
 Release:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1507,7 +1507,7 @@ A rejected message must not propagate to the controller.
 ### 19.1 Controller state
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1525,7 +1525,7 @@ diff_drive_controller
 ### 19.2 Hardware interfaces
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1536,7 +1536,7 @@ ros2 control list_hardware_interfaces
 ### 19.3 Odometry
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1554,7 +1554,7 @@ child_frame_id: base_link
 ### 19.4 Joint state
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1579,7 +1579,7 @@ joint state updates
 Commands:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1598,7 +1598,7 @@ ros2 topic echo /joint_states --once
 ### 20.1 LiDAR
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1617,7 +1617,7 @@ sensor_msgs/msg/LaserScan
 ### 20.2 Scan frequency
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1628,7 +1628,7 @@ ros2 topic hz /scan
 ### 20.3 Clock
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1645,7 +1645,7 @@ rosgraph_msgs/msg/Clock
 ### 20.4 Nodes using simulation time
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1709,7 +1709,7 @@ robot_state_publisher:
 ### 21.3 Inspect transforms
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1718,7 +1718,7 @@ ros2 run tf2_ros tf2_echo map odom
 ```
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1727,7 +1727,7 @@ ros2 run tf2_ros tf2_echo odom base_link
 ```
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1738,7 +1738,7 @@ ros2 run tf2_ros tf2_echo map base_link
 ### 21.4 Generate frame graph
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1751,7 +1751,7 @@ ros2 run tf2_tools view_frames
 Check active nodes:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1809,7 +1809,7 @@ map name is valid
 ### 22.2 SLAM lifecycle
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1826,7 +1826,7 @@ active
 ### 22.3 Map publication
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1839,7 +1839,7 @@ ros2 topic echo /map_metadata --once
 ### 22.4 Save request
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1853,7 +1853,7 @@ ros2 topic pub --once \
 ### 22.5 Observe save result
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1879,7 +1879,7 @@ error
 ### 22.6 Inspect inventory
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1903,7 +1903,7 @@ complete
 ### 22.7 Inspect files
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 find ~/.ros/cpp_robotics_sim/maps \
   -maxdepth 3 \
@@ -1977,7 +1977,7 @@ Nodes and interfaces:
 Plain request:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -1991,7 +1991,7 @@ ros2 topic pub --once \
 Environment-specific JSON:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -2005,7 +2005,7 @@ ros2 topic pub --once \
 ### 23.2 Confirm selected map
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -2024,7 +2024,7 @@ yaml_path
 ### 23.3 Activate localization
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -2038,7 +2038,7 @@ ros2 service call \
 ### 23.4 Lifecycle state
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -2056,7 +2056,7 @@ active
 ### 23.5 Publish initial pose
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -2080,7 +2080,7 @@ x, y, yaw finite
 ### 23.6 Observe AMCL
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -2156,7 +2156,7 @@ initial pose has already been published.
 ### 24.2 Lifecycle checks
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -2179,7 +2179,7 @@ done
 ### 24.3 Action server
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -2190,7 +2190,7 @@ ros2 action info /navigate_to_pose
 ### 24.4 Submit goal through manager
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -2204,7 +2204,7 @@ ros2 topic pub --once \
 ### 24.5 Observe status and feedback
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -2213,7 +2213,7 @@ ros2 topic echo /navigation/status
 ```
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -2236,7 +2236,7 @@ recovery_count
 ### 24.6 Cancel active goal
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -2250,7 +2250,7 @@ ros2 topic pub --once \
 ### 24.7 Inspect command path
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -2279,7 +2279,7 @@ controller_server or behavior_server
 Run:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -2332,7 +2332,7 @@ This is a release-blocking safety failure.
 Check:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -2369,7 +2369,7 @@ controller output becomes zero
 ### 25.1 Project process inventory
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ps -eo pid,ppid,pgid,sid,stat,etime,cmd \
   | grep -E \
@@ -2380,7 +2380,7 @@ ps -eo pid,ppid,pgid,sid,stat,etime,cmd \
 ### 25.2 Port inventory
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ss -ltnp | grep -E ':8080|:9090' || true
 ```
@@ -2388,7 +2388,7 @@ ss -ltnp | grep -E ':8080|:9090' || true
 ### 25.3 Process tree
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 command -v pstree >/dev/null \
   && pstree -ap \
@@ -2402,7 +2402,7 @@ A process whose parent is PID 1 may have survived its original launcher.
 Inspect:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 pgrep -af 'gz sim|gzserver|gzclient|ruby.*gz' || true
 ```
@@ -2436,7 +2436,7 @@ it was required.
 ### 26.1 High-level status
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -2458,7 +2458,7 @@ simulation: stopped
 ### 26.2 Runtime-node cleanup
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -2474,7 +2474,7 @@ After mode stop, mode-owned nodes should no longer remain.
 ### 26.3 Gazebo cleanup
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 pgrep -af 'gz sim|gzserver|gzclient|ruby.*gz' || true
 ```
@@ -2484,7 +2484,7 @@ After simulation stop, no project-owned Gazebo processes should remain.
 ### 26.4 Launcher cleanup
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ss -ltnp | grep -E ':8080|:9090' || true
 ```
@@ -2496,7 +2496,7 @@ After the public launcher exits, both ports should be released.
 While the dashboard launcher is active:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 source /opt/ros/jazzy/setup.bash
 source ros2_ws/install/setup.bash
@@ -2541,7 +2541,7 @@ Default root:
 Recent files:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 find ~/.ros/log \
   -type f \
@@ -2560,7 +2560,7 @@ ros2_ws/log
 Latest build:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 find ros2_ws/log/latest_build \
   -type f \
@@ -2571,7 +2571,7 @@ find ros2_ws/log/latest_build \
 Latest tests:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 find ros2_ws/log/latest_test \
   -type f \
@@ -2582,7 +2582,7 @@ find ros2_ws/log/latest_test \
 ### 27.3 Capture validation transcript
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 mkdir -p validation_evidence
 
@@ -2610,7 +2610,7 @@ report.
 ### 27.4 Capture runtime inventory
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 mkdir -p validation_evidence
 
@@ -2656,7 +2656,7 @@ Use this order when a full gate fails.
 ### Step 1: Record revision
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 git branch --show-current
 git rev-parse HEAD
@@ -2719,7 +2719,7 @@ attempt.
 Use:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ./scripts/clean.sh
 ./scripts/build.sh
@@ -2734,7 +2734,7 @@ Confirm the fix is real.
 ### Step 8: Rerun the complete native gate
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ./scripts/test.sh
 ```
@@ -2760,7 +2760,7 @@ build failed before installation
 Recovery:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ./scripts/build.sh
 ./scripts/test.sh
@@ -2771,7 +2771,7 @@ cd ~/robotics_projects/cpp_robotics_sim_foundation
 Check:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ss -ltnp | grep -E ':8080|:9090'
 ros2 node list
@@ -2784,7 +2784,7 @@ Restart the launcher when rosbridge or manager nodes are missing.
 Find owner:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ss -ltnp | grep -E ':8080|:9090' || true
 ```
@@ -3098,7 +3098,7 @@ environment-aware location
 For a small, isolated documentation or implementation change:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 git diff --check
 ./scripts/check_syntax.sh
@@ -3120,7 +3120,7 @@ workflow.
 Run from a clean, controlled checkout of the intended release revision:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 git status --short
 git rev-parse HEAD
@@ -3173,7 +3173,7 @@ production deployment platform.
 The authoritative native gate is:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 ./scripts/build.sh
 ./scripts/test.sh
@@ -3182,7 +3182,7 @@ cd ~/robotics_projects/cpp_robotics_sim_foundation
 The authoritative Docker reproduction is:
 
 ```bash
-cd ~/robotics_projects/cpp_robotics_sim_foundation
+cd ~/robotics_projects/ros2-amr-platform
 
 docker build \
   --tag cpp-robotics-sim:v0.1.0 \

@@ -64,6 +64,10 @@ Concurrent platform requests return `BUSY` immediately.
 Each manager adapter publishes a transient-local
 `ManagedLifecycleState` on `/lifecycle/<component>/state` and offers
 `TransitionManagedComponent` on `/lifecycle/<component>/transition`.
+v0.1.3 also provides the read-only
+`GetManagedComponentState` service at
+`/lifecycle/<component>/state_snapshot`, used to verify authoritative current
+state and transition provenance before an aggregate result is returned.
 Component transition events and aggregate orchestration events are published
 on `/platform/lifecycle/transition_events`. Manager service requests carry an
 `orchestration_id`; the manager event repeats it, allowing the orchestrator to

@@ -29,6 +29,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/ManagedLifecycleState.msg"
   "msg/LifecycleTransitionEvent.msg"
   "srv/TransitionManagedComponent.srv"
+  "srv/GetManagedComponentState.srv"
 )
 
 find_package(rclcpp REQUIRED)
@@ -125,12 +126,15 @@ install(
     scripts/navigation_goal_manager_node.py
     scripts/process_registry.py
     scripts/process_lifecycle.py
+    scripts/teardown.py
     scripts/runtime_verification.py
     scripts/managed_component.py
     scripts/platform_lifecycle_orchestrator.py
     scripts/platform_lifecycle_orchestrator_node.py
     scripts/lifecycle_ros_adapter.py
     scripts/v012_lifecycle_acceptance.py
+    scripts/readiness_contract.py
+    scripts/ros_runtime_readiness.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -176,6 +180,24 @@ if(BUILD_TESTING)
   ament_add_pytest_test(
     test_lifecycle_ros_interfaces
     test/test_lifecycle_ros_interfaces.py
+    TIMEOUT 30
+  )
+
+  ament_add_pytest_test(
+    test_readiness_contract
+    test/test_readiness_contract.py
+    TIMEOUT 30
+  )
+
+  ament_add_pytest_test(
+    test_package_manifest
+    test/test_package_manifest.py
+    TIMEOUT 30
+  )
+
+  ament_add_pytest_test(
+    test_manager_shutdown
+    test/test_manager_shutdown.py
     TIMEOUT 30
   )
 

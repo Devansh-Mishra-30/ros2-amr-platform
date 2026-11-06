@@ -14,7 +14,6 @@ from pathlib import Path
 import subprocess
 import sys
 import threading
-import time
 from typing import Optional
 
 import rclpy
@@ -87,10 +86,8 @@ class ModeManagerNode(Node):
             'managed_use_sim_time',
             True,
         )
-        self.declare_parameter(
-            'startup_grace_period',
-            3.0,
-        )
+        self.declare_parameter('readiness_timeout', 45.0)
+        self.declare_parameter('descendant_identity_timeout', 4.0)
         self.declare_parameter(
             'shutdown_timeout',
             4.0,
@@ -108,10 +105,11 @@ class ModeManagerNode(Node):
                 'managed_use_sim_time'
             ).value
         )
-        self.startup_grace_period = float(
-            self.get_parameter(
-                'startup_grace_period'
-            ).value
+        self.readiness_timeout = float(
+            self.get_parameter('readiness_timeout').value
+        )
+        self.descendant_identity_timeout = float(
+            self.get_parameter('descendant_identity_timeout').value
         )
         self.shutdown_timeout = float(
             self.get_parameter('shutdown_timeout').value
@@ -151,6 +149,9 @@ class ModeManagerNode(Node):
             String,
             '/mode/status',
             status_qos,
+        )
+        self.readiness_publisher = self.create_publisher(
+            String, '/platform/readiness', status_qos,
         )
 
         self.simulation_subscription = (
@@ -243,9 +244,10 @@ class ModeManagerNode(Node):
 
             self.launch_files[mode] = normalized_launch_file
 
-        self.require_nonnegative_finite(
-            'startup_grace_period',
-            self.startup_grace_period,
+        self.require_positive_finite('readiness_timeout', self.readiness_timeout)
+        self.require_positive_finite(
+            'descendant_identity_timeout',
+            self.descendant_identity_timeout,
         )
         self.require_positive_finite(
             'shutdown_timeout',
@@ -526,8 +528,6 @@ class ModeManagerNode(Node):
                 self.get_logger().error(message)
                 return False, message
 
-            time.sleep(self.startup_grace_period)
-
             if self.process.poll() is not None:
                 return_code = self.process.returncode
                 self.process = None
@@ -555,8 +555,14 @@ class ModeManagerNode(Node):
                 return False, self.last_error
 
             try:
-                self.process_record = self.refresh_process_record(
-                    self.process_registry, self.process_record
+                self.process_record = self.wait_for_process_record(
+                    self.process_registry,
+                    self.process_record,
+                    timeout=self.descendant_identity_timeout,
+                    should_continue=lambda: (
+                        self.process is not None
+                        and self.process.poll() is None
+                    ),
                 )
                 self.process_group_id = self.process_record.pgid
             except (OSError, RuntimeError, ValueError) as error:
@@ -582,6 +588,30 @@ class ModeManagerNode(Node):
                 self.get_logger().error(self.last_error)
                 return False, self.last_error
 
+            readiness = self.wait_for_mode_readiness(requested_mode)
+            self.publish_readiness(readiness)
+            if not readiness.ready:
+                self.last_error = (
+                    f'{requested_mode.value} readiness failed: '
+                    + json.dumps(readiness.to_mapping(), sort_keys=True)
+                )
+                report = self.terminate_process_record(
+                    self.process_registry, self.process_record,
+                    process=self.process,
+                    sigint_timeout=self.shutdown_timeout,
+                    sigterm_timeout=self.kill_timeout,
+                    sigkill_timeout=self.kill_timeout,
+                )
+                self.last_shutdown_report = report
+                self.persist_shutdown_report(report)
+                if report.success:
+                    self.process = None
+                    self.process_record = None
+                    self.process_group_id = None
+                self.publish_mode(OperatingMode.ERROR)
+                self.get_logger().error(self.last_error)
+                return False, self.last_error
+
             self.publish_mode(requested_mode)
 
             message = (
@@ -591,6 +621,37 @@ class ModeManagerNode(Node):
             )
             self.get_logger().info(message)
             return True, message
+
+    def wait_for_mode_readiness(self, mode):
+        """Wait for mode-specific dependency evidence before reporting active."""
+        from readiness_contract import ReadinessProfile, wait_for_readiness
+        from ros_runtime_readiness import SimulationReadinessProbe
+
+        profile = {
+            OperatingMode.MAPPING: ReadinessProfile.MAPPING_READY,
+            OperatingMode.LOCALIZATION: ReadinessProfile.LOCALIZATION_READY,
+            OperatingMode.NAVIGATION: ReadinessProfile.NAVIGATION_READY,
+        }[mode]
+        probe = SimulationReadinessProbe(
+            use_sim_time=self.managed_use_sim_time,
+            profile=profile, map_path=self.selected_map_path,
+        )
+        try:
+            return wait_for_readiness(
+                probe, timeout=self.readiness_timeout,
+                process_alive=lambda: self.process is not None
+                and self.process.poll() is None,
+            )
+        finally:
+            probe.close()
+
+    def publish_readiness(self, report) -> None:
+        """Publish structured, lease-bound readiness evidence as JSON."""
+        if not hasattr(self, 'readiness_publisher'):
+            return
+        message = String()
+        message.data = json.dumps(report.to_mapping(), sort_keys=True)
+        self.readiness_publisher.publish(message)
 
     def process_group_exists(
         self,
@@ -673,6 +734,27 @@ class ModeManagerNode(Node):
                     f'{process_group_id}'
                 )
 
+            try:
+                # Launch files may add same-session children after the initial
+                # stable identity snapshot. Persist the complete live session
+                # immediately before signaling so shutdown stays fail-closed
+                # without rejecting later Nav2 or SLAM descendants.
+                self.process_record = self.refresh_process_record(
+                    self.process_registry, self.process_record
+                )
+            except (OSError, RuntimeError, ValueError) as error:
+                self.last_error = (
+                    'Failed to refresh mode descendant identities: '
+                    + str(error)
+                )
+                self.requested_mode = OperatingMode.ERROR
+                self.publish_mode(OperatingMode.ERROR)
+
+                if rclpy.ok(context=self.context):
+                    self.get_logger().error(self.last_error)
+
+                return False, self.last_error
+
             report = self.terminate_process_record(
                 self.process_registry,
                 self.process_record,
@@ -720,6 +802,14 @@ class ModeManagerNode(Node):
     @staticmethod
     def refresh_process_record(registry, record):
         return registry.refresh_group_members(record)
+
+    @staticmethod
+    def wait_for_process_record(
+        registry, record, *, timeout, should_continue,
+    ):
+        return registry.wait_for_group_members(
+            record, timeout=timeout, should_continue=should_continue,
+        )
 
     @staticmethod
     def release_exited_process_record(registry, record):

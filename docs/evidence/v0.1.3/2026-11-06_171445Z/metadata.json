@@ -1,0 +1,32 @@
+{
+  "release": "v0.1.3",
+  "candidate_state": "uncommitted staged release candidate",
+  "base_commit": "7764c3683387c966873e00195d0417810624f33c",
+  "branch": "feature/v0.1.3-readiness-contracts",
+  "captured_at_utc": "2026-11-06T17:14:45.609773Z",
+  "runtime": {
+    "ros_domain_id": 90,
+    "rmw_implementation": "rmw_fastrtps_cpp"
+  },
+  "validation": {
+    "python_tests": 565,
+    "ctest_targets": 26,
+    "runtime_checks_passed": 34,
+    "runtime_checks_total": 34,
+    "release_decision": "ACCEPTED",
+    "final_registry_empty": true,
+    "remaining_managed_processes": 0
+  },
+  "source_identity": {
+    "patch_file": "source_candidate.patch",
+    "patch_sha256": "d7a08b877fe3353cb76a433f366af104a58286f51957ead5649247dd9b7e1aca",
+    "scope": "git diff --cached --binary HEAD excluding docs/evidence/v0.1.3/2026-11-06_171445Z",
+    "reconciliation": "After commit, diff the release commit against base_commit while excluding this evidence directory; it must reproduce this patch."
+  },
+  "tracker_sha256": "e6fec17d114fdd744b520d5b4da7671968c83db031b24f6e433b56e018cfd6fc",
+  "limitations": [
+    "The acceptance driver retains its historical v0.1.2 output subdirectory name; this bundle records it as v0.1.3 evidence without modifying raw output.",
+    "Five noncritical /simulation_readiness_probe graph entries may be present and are excluded from the critical-node uniqueness oracle.",
+    "No physical hardware or hardware-in-the-loop validation was performed."
+  ]
+}
