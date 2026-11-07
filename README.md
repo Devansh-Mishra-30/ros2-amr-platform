@@ -3,36 +3,33 @@
 [![ROS 2 Jazzy CI](https://github.com/Devansh-Mishra-30/ros2-amr-platform/actions/workflows/ros2_jazzy_ci.yml/badge.svg)](https://github.com/Devansh-Mishra-30/ros2-amr-platform/actions/workflows/ros2_jazzy_ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A browser-controlled autonomous mobile robot (AMR) simulation and verification
-platform built with ROS 2 Jazzy, Gazebo Harmonic, ros2_control, SLAM Toolbox,
-AMCL, Nav2, and rosbridge.
+A browser-controlled autonomous mobile robot (AMR) simulation, orchestration,
+and verification platform built with ROS 2 Jazzy and Gazebo Harmonic.
 
-The repository is preparing the **v0.1.3 release candidate**. No v0.1.3 tag
-exists yet. The last published tag is v0.1.2; the candidate adds fail-closed
-readiness contracts and authoritative lifecycle-state verification while
-preserving the established simulation, mapping, localization, navigation, and
-dashboard interfaces.
-
-## Implemented capabilities
-
-- Browser dashboard served with rosbridge connectivity.
-- Warehouse and hospital Gazebo environments.
-- Differential-drive robot with LiDAR, odometry, joint states, and simulated
-  clock.
-- Manual velocity control with command arbitration and emergency stop.
-- SLAM mapping and validated map saving.
-- AMCL localization with map selection and initial-pose workflows.
-- Nav2 single-goal navigation, feedback, cancellation, and safe terminal stop.
-- Managed simulation and operating-mode process lifecycles.
-- Component lifecycle orchestration with dependency-ordered transitions,
-  structured failures, rollback evidence, and explicit recovery.
-- Fail-closed runtime readiness profiles for simulation, mapping, localization,
-  and navigation.
-- Automated syntax, unit, integration, launch, lifecycle, and runtime
-  acceptance checks.
+The current published release is **v0.1.3 — Readiness Contracts**. Its annotated
+tag points to merge commit `16d3f0dc28b1cd7ab0f90a095fd531a694b06b7b`,
+and the package version is `0.1.3`.
 
 This is a simulation and engineering-verification platform. It is not a
 certified safety system or a production-hardware deployment.
+
+## Implemented capabilities
+
+- Browser dashboard served over HTTP with rosbridge connectivity.
+- Warehouse and hospital Gazebo environments.
+- Differential-drive robot with LiDAR, odometry, joint states, and simulated
+  clock.
+- Manual velocity control, command arbitration, and emergency stop.
+- SLAM mapping with validated map saving and saved-map inventory.
+- AMCL localization with map selection and initial-pose workflows.
+- Nav2 single-goal navigation, feedback, cancellation, and safe terminal stop.
+- Managed simulation and operating-mode process lifecycles.
+- Dependency-ordered component lifecycle transitions with structured failures,
+  rollback evidence, and explicit recovery.
+- Fail-closed readiness profiles for simulation, mapping, localization, and
+  navigation.
+- Syntax, unit, integration, launch, lifecycle, runtime-acceptance, native CI,
+  and Docker CI validation.
 
 ## Architecture
 
@@ -54,20 +51,22 @@ navigation_manager --- Nav2 goal, feedback, cancel, and terminal state
              +-- readiness probes --> /platform/readiness
 ```
 
-The dashboard publishes requests and presents ROS 2 state; it does not
-implement the robotics algorithms. Operating modes remain mutually exclusive.
-Velocity sources pass through the command multiplexer before reaching the
-drive controller. Mapping and localization/navigation retain distinct TF
-ownership:
+The dashboard publishes requests and displays ROS 2 state; it does not
+implement robotics algorithms. Operating modes remain mutually exclusive, and
+supported velocity sources pass through the command multiplexer before reaching
+the drive controller.
+
+TF ownership depends on the operating mode:
 
 - Mapping: SLAM Toolbox owns `map -> odom`.
-- Localization/navigation: AMCL owns `map -> odom`.
+- Localization and navigation: AMCL owns `map -> odom`.
 - ros2_control owns `odom -> base_link`.
-- robot_state_publisher owns the robot link and sensor transforms.
+- `robot_state_publisher` owns robot-link and sensor transforms.
 
-See [system architecture](docs/system_architecture.md) for the original v0.1.0
-baseline, [lifecycle foundation](docs/lifecycle_foundation.md) for v0.1.2, and
-[readiness contracts](docs/readiness_contracts.md) for v0.1.3.
+The [system architecture](docs/system_architecture.md) records the v0.1.0
+baseline. The [lifecycle foundation](docs/lifecycle_foundation.md) and
+[readiness contracts](docs/readiness_contracts.md) describe the additive
+v0.1.2 and v0.1.3 contracts.
 
 ## Technology stack
 
@@ -86,69 +85,53 @@ baseline, [lifecycle foundation](docs/lifecycle_foundation.md) for v0.1.2, and
 
 ```text
 ros2-amr-platform/
-├── .github/
-│   ├── ISSUE_TEMPLATE/
-│   ├── PULL_REQUEST_TEMPLATE.md
-│   └── workflows/ros2_jazzy_ci.yml
-├── docs/
-│   ├── evidence/v0.1.3/
-│   ├── lifecycle_foundation.md
-│   ├── readiness_contracts.md
-│   ├── topic_interface_reference.md
-│   └── AMR_Release_Verification_Tracker.xlsx
+├── .github/                         # CI and contribution templates
+├── docs/                            # architecture, contracts, evidence, plans
 ├── ros2_ws/src/cpp_robotics_sim_ros/
-│   ├── config/      # managers, controllers, environments, and Nav2
-│   ├── include/     # public C++ headers
-│   ├── launch/      # simulation and dashboard launch descriptions
-│   ├── maps/        # repository map assets
-│   ├── msg/         # lifecycle messages
-│   ├── nav2/        # Nav2 parameter sets
-│   ├── scripts/     # installed Python manager and contract nodes
-│   ├── src/         # C++ robot and simulation implementation
-│   ├── srv/         # lifecycle services
-│   ├── test/        # C++, Python, launch, and contract tests
-│   ├── urdf/ and xacro/
-│   ├── web/dashboard/
-│   └── worlds/
-└── scripts/         # setup, build, run, cleanup, and validation entry points
+│   ├── config/ and nav2/            # manager, controller, and Nav2 parameters
+│   ├── include/ and src/            # C++ implementation and public headers
+│   ├── launch/                      # simulation and web launch descriptions
+│   ├── scripts/                     # installed Python manager/contract nodes
+│   ├── test/                        # Python, launch, contract, and C++ tests
+│   ├── urdf/, xacro/, worlds/       # robot and simulation assets
+│   └── web/dashboard/               # browser dashboard
+├── scripts/                         # setup, build, run, cleanup, validation
+├── Dockerfile
+└── README.md
 ```
 
-Generated `build/`, `install/`, and `log/` directories are workspace
-artifacts and are not source.
+Generated `build/`, `install/`, `log/`, and cache directories are not source.
 
-## Supported environment and prerequisites
+## Supported environment
 
-The verified primary environment is:
+The verified primary environment is Ubuntu 24.04, including WSL2, with ROS 2
+Jazzy and Gazebo Harmonic. Interactive Gazebo requires a working graphics stack.
 
-- Ubuntu 24.04 LTS, including WSL2;
-- ROS 2 Jazzy;
-- Gazebo Harmonic;
-- an OpenGL-capable desktop for interactive Gazebo;
-- Bash, Python 3, CMake, colcon, and a C++17 compiler.
-
-The setup helper installs the repository's supported Ubuntu/ROS dependencies:
+The project setup script expects `/opt/ros/jazzy/setup.bash` to exist. It
+initializes rosdep when needed and installs dependencies declared by the ROS
+workspace:
 
 ```bash
 ./scripts/setup.sh
 ```
 
-Review the script before running it on an existing development machine. The
-long-form [installation guide](docs/installation.md) records the v0.1.0
-baseline and should be read as historical release documentation where it names
-that version.
+See the [installation guide](docs/installation.md) for the detailed v0.1.0
+baseline procedure. Its version-specific counts and commit references are
+historical; the commands remain the foundation of the current workflow.
 
-## Clone and build
+## Clone and reproduce v0.1.3
 
 ```bash
 git clone https://github.com/Devansh-Mishra-30/ros2-amr-platform.git
 cd ros2-amr-platform
+git checkout v0.1.3
+./scripts/setup.sh
 ./scripts/build.sh
+./scripts/test.sh
 ```
 
-`build.sh` validates source syntax, sources ROS 2, and builds
-`cpp_robotics_sim_ros` with tests enabled.
-
-To source the built workspace manually:
+`build.sh` runs source syntax checks, sources ROS 2, and builds
+`cpp_robotics_sim_ros` with tests enabled. To source the result manually:
 
 ```bash
 source /opt/ros/jazzy/setup.bash
@@ -162,9 +145,8 @@ source ros2_ws/install/setup.bash
 ```
 
 The launcher starts the dashboard HTTP server, rosbridge, manager layer, and
-supporting ROS 2 nodes. By default it prints and opens the dashboard URL, uses
-port 8080 for HTTP and 9090 for rosbridge, and performs verified owned-process
-cleanup when stopped with Ctrl+C.
+supporting ROS 2 nodes. The default endpoints are HTTP port 8080 and rosbridge
+port 9090. Ctrl+C invokes verified owned-process cleanup.
 
 Useful overrides:
 
@@ -175,75 +157,57 @@ DASHBOARD_PORT=8081 ROSBRIDGE_PORT=9091 ./scripts/run.sh
 
 ## Operator workflows
 
-### Simulation
+### Simulation and manual control
 
-1. Open the dashboard and confirm the rosbridge connection.
-2. Select the warehouse or hospital environment.
-3. Start the simulation.
-4. Wait for the manager to report the simulation running and the
-   `simulation_ready` profile ready.
-5. Stop or reset through the dashboard; do not treat a button click alone as
-   proof of completion.
-
-### Manual control
-
-Activate Manual mode, then use the dashboard controls to publish
-`TwistStamped` commands on `/cmd_vel/gui`. The command multiplexer owns the
-controller input selection. Stop the mode or use emergency stop before leaving
-manual operation.
+Select an environment, start simulation, and wait for both the simulation state
+and `simulation_ready` profile. Manual mode publishes `TwistStamped` commands on
+`/cmd_vel/gui`; the command multiplexer controls admission to the drive
+controller. Stop the mode or engage emergency stop before leaving manual
+operation.
 
 ### Mapping
 
-Start Mapping mode only after simulation readiness succeeds. Drive the robot to
-cover the environment, enter a valid map name, save the map, and confirm the
-reported result and saved-map inventory. Map names and filesystem paths are
-validated.
+Start Mapping only after simulation readiness succeeds. Drive the environment,
+save with a valid map name, and confirm both the reported result and saved-map
+inventory. Runtime map paths are validated and default outside the repository.
 
-### Localization
+### Localization and navigation
 
-Select a saved map, start Localization mode, and provide an initial pose. A
-successful mode request is not reported until clock, scan, map, AMCL pose, and
-the required TF chain satisfy the localization readiness contract.
+Select a saved map, start Localization, and provide an initial pose. Readiness
+requires clock, scan, map, AMCL pose, and the necessary TF chain. After
+localization is valid, Navigation accepts a map-frame goal and reports Nav2
+feedback and terminal state. Deactivation requests cancellation and waits for a
+terminal result before reporting success.
 
-### Navigation
-
-After localization is valid, start Navigation mode and send a map-frame goal.
-The manager reports Nav2 feedback and terminal result. Deactivation requests
-goal cancellation and waits for a terminal state; success and cancellation
-both command a safe stop.
-
-## Lifecycle and readiness contracts
+## Lifecycle and readiness
 
 Lifecycle and readiness answer different questions:
 
 - Lifecycle records whether a manager component is unconfigured, inactive,
   active, in error, or finalized.
-- Readiness records whether the runtime dependencies for an operation are
-  presently satisfied.
+- Readiness records whether the runtime dependencies for a specific operation
+  are currently satisfied.
 
-The orchestrator exposes `/platform/lifecycle/transition` and orders
-simulation, mapping, localization, and navigation transitions by dependency.
-Rollback results and failures are kept separate from the originating failure.
-Manager adapters publish transient-local state plus a heartbeat and provide an
+The orchestrator exposes `/platform/lifecycle/transition` and orders simulation,
+mapping, localization, and navigation transitions by dependency. Manager
+adapters publish transient-local state and heartbeat data and provide an
 authoritative read-only snapshot service. Aggregate success requires two
 complete, stable authoritative reads; missing, expired, or changed evidence
 fails closed.
 
-Simulation and mode managers publish transient-local JSON readiness reports on
-`/platform/readiness`. Reports include the profile, runtime ID, monotonic
-observation and lease, all blocked dependencies, reasons, guidance, and
-per-dependency checks. Consumers must reject the wrong profile, an earlier
-runtime ID, or an expired lease.
+Simulation and mode managers publish transient-local JSON reports on
+`/platform/readiness`. Reports identify the profile, runtime ID, observation and
+lease, all blocked dependencies, reasons, guidance, and individual checks.
 
 | Profile | Principal dependencies |
 | --- | --- |
-| `simulation_ready` | clock, scan, odometry, joint states, TF, controller service and controller states |
+| `simulation_ready` | clock, scan, odometry, joint states, TF, controller service and states |
 | `mapping_ready` | clock, scan, odometry, TF |
 | `localization_ready` | clock, scan, map, AMCL pose, map/odom/base TF |
-| `navigation_ready` | localization inputs plus Nav2 action/lifecycle and controller state |
+| `navigation_ready` | localization inputs, Nav2 action/lifecycle, controller state |
 
-The exact schemas, rates, freshness limits, and fail-closed rules are in
-[readiness_contracts.md](docs/readiness_contracts.md).
+See [readiness contracts](docs/readiness_contracts.md) for exact schemas,
+freshness rules, and fail-closed behavior.
 
 ## Principal ROS 2 interfaces
 
@@ -261,13 +225,13 @@ The exact schemas, rates, freshness limits, and fail-closed rules are in
 | `/navigate_to_pose` | `nav2_msgs/action/NavigateToPose` | Nav2 goal action |
 | `/platform/lifecycle/transition` | custom service | Aggregate lifecycle transition |
 
-Simulation and mode control services use `std_srvs/srv/Trigger`. See the
-[topic and interface reference](docs/topic_interface_reference.md) for the
-complete public and internal contract.
+Simulation and mode control services use `std_srvs/srv/Trigger`. The
+[topic and interface reference](docs/topic_interface_reference.md) is the full
+v0.1.3 contract.
 
-## Validation
+## Validation and release evidence
 
-Run the native release gate from the repository root:
+Run the native gate from the repository root:
 
 ```bash
 ./scripts/build.sh
@@ -275,108 +239,94 @@ Run the native release gate from the repository root:
 git diff --check
 ```
 
-`test.sh` repeats syntax validation, executes the colcon suite, reports
-individual results, and runs simulator launch regression, headless dashboard
-integration, and public-launcher lifecycle integration.
+`test.sh` repeats syntax validation, executes the colcon suite, reports results,
+then runs simulator launch regression, headless dashboard integration, and
+public-launcher lifecycle integration.
 
-The accepted historical v0.1.3 candidate evidence from 2026-09-26 records:
+Final v0.1.3 local acceptance recorded:
 
-- `./scripts/build.sh`: passed;
-- `./scripts/test.sh`: 563 package tests, 0 failures, errors, or skips;
-- launch regression, headless dashboard, and launcher lifecycle integrations:
+- 565 tests across 26 CTest targets, with no failures, errors, or skips;
+- simulator launch, headless dashboard, and launcher lifecycle integrations
   passed;
-- full runtime acceptance: 34/34 checks passed;
-- final managed process registry: empty;
-- critical manager-node multiplicity: exactly one each.
+- 34/34 runtime acceptance checks passed;
+- final managed process registry and managed-process scan were empty.
 
-The evidence was captured from a dirty candidate based on commit
-`7764c3683387c966873e00195d0417810624f33c`. It is bound to that source by a
-hashed tracked patch and untracked-source archive; it is not evidence for a
-v0.1.3 tag or commit. See the
-[acceptance summary](docs/evidence/v0.1.3/2026-09-26_012656Z/acceptance_summary.md),
-[metadata](docs/evidence/v0.1.3/2026-09-26_012656Z/metadata.json), and
-[checksums](docs/evidence/v0.1.3/2026-09-26_012656Z/SHA256SUMS).
+The [final acceptance summary](docs/evidence/v0.1.3/2026-11-06_171445Z/acceptance_summary.md)
+is source-bound to the reviewed candidate. The annotated tag and published
+release identify the accepted commit, and the
+[release-commit GitHub Actions run](https://github.com/Devansh-Mishra-30/ros2-amr-platform/actions/runs/42301211782)
+passed both native ROS 2 and Docker jobs.
 
-The recorded graph contains five noncritical
-`/simulation_readiness_probe` entries; the accepted oracle excludes those
-internal probe nodes from its critical-node uniqueness check. The evidence
-does not claim that every graph name is unique.
+The earlier [2026-09-26 evidence](docs/evidence/v0.1.3/2026-09-26_012656Z/acceptance_summary.md)
+remains immutable historical candidate evidence. Its source bindings and scope
+must not be interpreted as evidence for a different commit.
 
-Fresh final-candidate verification completed on 2026-11-06 against the staged
-uncommitted release candidate:
-
-- syntax validation and `./scripts/build.sh`: passed;
-- `./scripts/test.sh`: 565 tests, 0 errors, failures, or skips;
-- launch regression, headless dashboard, and public-launcher lifecycle:
-  passed;
-- isolated runtime acceptance: 34/34 checks passed with an empty final process
-  registry and no remaining managed ROS/Gazebo processes.
-
-The raw output, full build/test logs, source-candidate patch, metadata, tracker
-reconciliation, and verified SHA-256 manifest are in the
-[final-candidate evidence bundle](docs/evidence/v0.1.3/2026-11-06_171445Z/acceptance_summary.md).
-The bundle is source-bound to the staged diff, not yet to a release commit or
-tag; its metadata records the post-commit reconciliation rule.
-
-## Continuous integration and Docker
-
-The GitHub Actions workflow targets Ubuntu 24.04 and ROS 2 Jazzy. It runs the
-native build/test path and Docker build/test coverage defined in
-[ros2_jazzy_ci.yml](.github/workflows/ros2_jazzy_ci.yml). Hosted CI does not
-exercise interactive Gazebo GUI scenarios.
-
-For local container validation, use the repository's Docker scripts:
+### Docker validation
 
 ```bash
-./scripts/docker_build.sh
-./scripts/docker_test.sh
+docker build --tag cpp-robotics-sim:local .
+docker run --rm --init --network host \
+  cpp-robotics-sim:local \
+  bash -lc 'cd /workspace && ./scripts/test.sh'
 ```
 
-## Historical media
-
-The screenshots and demonstration links under
-[`docs/media/v0.1.0`](docs/media/v0.1.0) document the v0.1.0 user experience.
-They are retained as historical media and are not presented as fresh v0.1.3
-runtime evidence.
-
-## v0.1.3 release materials
-
-- [Release notes](docs/v0.1.3_release_notes.md)
-- [Manual release checklist](docs/v0.1.3_manual_release_checklist.md)
-- [Media capture plan](docs/v0.1.3_media_capture_plan.md)
-- [LinkedIn publication package](docs/v0.1.3_linkedin_package.md)
-- [v0.1.4 engineering handoff](docs/v0.1.4_handoff.md)
+Hosted CI does not exercise interactive Gazebo GUI scenarios.
 
 ## Known limitations
 
-- The candidate has not yet been committed or tagged as v0.1.3.
-- The accepted evidence binds an uncommitted candidate with hashes rather than
-  a release commit; final-source verification must remain distinct from that
-  historical run.
-- Five internal readiness-probe graph entries were observed; critical manager
-  uniqueness still passed the accepted oracle.
-- GUI Gazebo scenarios are not run in hosted CI.
-- The platform supports the repository's configured robot, environments,
-  maps, and autonomy algorithms; arbitrary dashboard-driven imports and tuning
-  are not implemented.
+- Validation is simulation-only; physical hardware, hardware-in-the-loop,
+  safety certification, and production deployment are not claimed.
+- Hosted CI does not exercise interactive Gazebo GUI scenarios.
+- Five internal `/simulation_readiness_probe` graph entries may appear; the
+  accepted oracle excludes these noncritical probes from manager uniqueness.
+- The platform supports the configured robot, environments, maps, and autonomy
+  algorithms; arbitrary dashboard-driven imports and tuning are not provided.
 - Runtime maps default to user data outside the repository.
-- Hardware deployment, safety certification, performance benchmarking, and
-  dynamic-obstacle qualification are outside v0.1.3 scope.
-- A final authoritative lifecycle verification failure is reported but cannot
-  undo already completed irreversible runtime effects.
+- Final lifecycle verification reports external irreversible effects but cannot
+  reverse effects that already completed.
 
-## Roadmap
+## Release history
 
-Future work is planning-only and is not part of v0.1.3. The current forward
-plan is documented in
-[`docs/v0.1.4-v0.1.6_forward_engineering_plan.md`](docs/v0.1.4-v0.1.6_forward_engineering_plan.md).
-It must not be interpreted as implemented behavior.
+| Release | Summary |
+| --- | --- |
+| v0.1.0 | Browser-controlled simulation, mapping, localization, navigation, and validation baseline |
+| v0.1.1 | Deterministic process ownership and runtime cleanup |
+| v0.1.2 | Managed component lifecycle foundation |
+| v0.1.3 | Fail-closed readiness contracts and authoritative lifecycle verification |
+
+See the [v0.1.3 release notes](docs/v0.1.3_release_notes.md) and
+[published GitHub release](https://github.com/Devansh-Mishra-30/ros2-amr-platform/releases/tag/v0.1.3).
+
+## Roadmap boundary
+
+Post-v0.1.3 work is planning-only. The
+[v0.1.4–v0.1.6 engineering plan](docs/v0.1.4-v0.1.6_forward_engineering_plan.md)
+and [v0.1.4 handoff](docs/v0.1.4_handoff.md) are not implemented behavior and do
+not authorize feature work.
+
+## Documentation navigation
+
+- [Installation guide](docs/installation.md) — detailed v0.1.0 baseline setup.
+- [System architecture](docs/system_architecture.md) — v0.1.0 architectural
+  baseline and ownership model.
+- [Lifecycle foundation](docs/lifecycle_foundation.md) — v0.1.2 component and
+  orchestration contracts.
+- [Readiness contracts](docs/readiness_contracts.md) — v0.1.3 profiles and
+  fail-closed rules.
+- [Topic and interface reference](docs/topic_interface_reference.md) — current
+  public and internal v0.1.3 contract.
+- [Debugging and validation](docs/debugging_and_validation.md) — detailed
+  v0.1.0 validation baseline; use repository scripts for the current gate.
+- [Release verification tracker](docs/AMR_Release_Verification_Tracker.xlsx) —
+  planning, traceability, release gates, and supported evidence index.
+- [v0.1.3 release notes](docs/v0.1.3_release_notes.md) — release scope,
+  validation, and limitations.
 
 ## Development and contribution
 
-Keep changes bounded, preserve established ROS interfaces unless intentionally
-versioned, and include validation proportional to the affected subsystem.
-Before proposing a merge:
+Keep changes bounded, preserve established interfaces unless intentionally
+versioned, and run validation proportional to the affected subsystem. Before a
+merge proposal:
 
 ```bash
 ./scripts/test.sh
@@ -384,26 +334,10 @@ git diff --check
 git status --short
 ```
 
-Use the issue and pull-request templates to record objective, scope,
-architecture/interface impact, commands actually executed, results, risks,
-and remaining limitations. Do not commit generated workspace artifacts,
-runtime maps, bags, logs, or local environment files.
-
-## Release information
-
-| Item | Value |
-| --- | --- |
-| Candidate | v0.1.3 |
-| Package | `cpp_robotics_sim_ros` |
-| Package version | `0.1.3` |
-| Primary environment | Ubuntu 24.04, ROS 2 Jazzy, Gazebo Harmonic |
-| License | MIT |
-| Published baseline tags | v0.1.0, v0.1.1, v0.1.2 |
-| v0.1.3 tag | Not created |
-
-Release publication requires a reviewed commit whose final tree has passed the
-applicable release gates. This repository intentionally contains no claim that
-the untagged candidate is already published.
+Use the issue and pull-request templates to record scope, architecture and
+interface impact, commands executed, results, risks, and limitations. Do not
+commit generated workspace artifacts, runtime maps, bags, logs, caches, or
+local environment files.
 
 ## License
 

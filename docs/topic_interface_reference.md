@@ -2,8 +2,8 @@
 
 ## ROS 2 AMR Platform
 
-**Release:** `v0.1.3` candidate (untagged)
-**Candidate base commit:** `7764c3683387c966873e00195d0417810624f33c`
+**Release:** `v0.1.3` (published 2026-11-06)
+**Release commit:** `16d3f0dc28b1cd7ab0f90a095fd531a694b06b7b`
 **Primary package:** `cpp_robotics_sim_ros`
 **Primary platform:** Ubuntu 24.04, ROS 2 Jazzy, Gazebo Harmonic
 
@@ -12,7 +12,7 @@
 ## 1. Document Purpose
 
 This document defines the public runtime interface contract for
-`ros2-amr-platform` at the untagged `v0.1.3` release candidate.
+`ros2-amr-platform` at the published `v0.1.3` release.
 
 It covers:
 
