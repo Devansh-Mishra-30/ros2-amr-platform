@@ -13,6 +13,89 @@ and the package version is `0.1.3`.
 This is a simulation and engineering-verification platform. It is not a
 certified safety system or a production-hardware deployment.
 
+## Platform Preview & Demonstrations
+
+A browser-controlled ROS 2 simulation platform for autonomous navigation,
+mapping, localization, and managed robot-system operation.
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=zKf_hjIYtlk">
+    <img src="docs/media/v0.1.0/dashboard.png"
+         alt="ROS 2 AMR browser dashboard and simulation controls"
+         width="900">
+  </a>
+</p>
+
+<p align="center">
+  <strong>Browser Dashboard · ROS 2 Jazzy · Gazebo Harmonic · Nav2</strong>
+</p>
+
+### Simulation Environments
+
+<table>
+<tr>
+<td width="50%" align="center">
+  <img src="docs/media/v0.1.0/warehouse_gazebo.png"
+       alt="ROS 2 AMR Warehouse Gazebo environment"
+       width="100%">
+  <br>
+  <strong>Warehouse Environment</strong>
+</td>
+<td width="50%" align="center">
+  <img src="docs/media/v0.1.0/hospital_gazebo.png"
+       alt="ROS 2 AMR Hospital Gazebo environment"
+       width="100%">
+  <br>
+  <strong>Hospital Environment</strong>
+</td>
+</tr>
+</table>
+
+### Explore the Project
+
+**[Watch 32-Second Demo](https://www.youtube.com/watch?v=zKf_hjIYtlk)**
+&nbsp; | &nbsp;
+**[YouTube Demonstration Playlist](https://www.youtube.com/playlist?list=PLP_aJnUqSRf8)**
+&nbsp; | &nbsp;
+**[Portfolio Case Study](https://devanshportfolio.bubbleapps.io/version-test/project-12)**
+&nbsp; | &nbsp;
+**[Latest Release — v0.1.3](https://github.com/Devansh-Mishra-30/ros2-amr-platform/releases/tag/v0.1.3)**
+
+> **Demo version:** The screenshots and linked demonstration videos show
+> the original v0.1.0 platform workflows. The current v0.1.3 release
+> additionally includes managed lifecycle and fail-closed readiness
+> contracts. Refer to the release evidence below for their verification.
+
+### Engineering Highlights
+
+| Area | Published v0.1.3 evidence |
+| --- | --- |
+| **Autonomous navigation** | SLAM Toolbox, AMCL, Nav2 |
+| **Robot simulation** | ROS 2 Jazzy, Gazebo Harmonic, ros2_control |
+| **System orchestration** | Managed lifecycle and readiness contracts |
+| **Automated acceptance** | 565 tests across 26 CTest targets |
+| **Runtime acceptance** | 34/34 checks passed |
+| **Continuous integration** | Native ROS 2 and Docker CI passed at the release commit |
+
+The test counts above are from the documented v0.1.3 acceptance run,
+not a new execution of the suite.
+
+### Video Walkthroughs
+
+The following recordings demonstrate the original v0.1.0 workflows.
+
+| Demonstration | What it covers |
+| --- | --- |
+| [Project Teaser](https://www.youtube.com/watch?v=zKf_hjIYtlk) | Complete platform overview |
+| [Manual Robot Control](https://www.youtube.com/watch?v=eXRZwrg_8eY) | Dashboard and keyboard-based control |
+| [SLAM Mapping](https://www.youtube.com/watch?v=gJ5ggf250xE) | LiDAR-based occupancy mapping |
+| [AMCL Localization](https://www.youtube.com/watch?v=HJZlihnV8Ko) | Robot localization using a saved map |
+| [Nav2 Navigation](https://www.youtube.com/watch?v=O9wMdFE_PvU) | Autonomous navigation goals and cancellation |
+| [Installation and First Launch](https://www.youtube.com/watch?v=_x2Z7jXXnWw) | Build, launch, and environment setup |
+| [Docker Validation](https://www.youtube.com/watch?v=4M628CFYiz8) | Original v0.1.0 container validation |
+
+---
+
 ## Implemented capabilities
 
 - Browser dashboard served over HTTP with rosbridge connectivity.
