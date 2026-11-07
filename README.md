@@ -357,6 +357,16 @@ Hosted CI does not exercise interactive Gazebo GUI scenarios.
 
 ## Known limitations
 
+- **Network exposure:** The current v0.1.3 dashboard HTTP server and
+  rosbridge WebSocket bind to `0.0.0.0`. Depending on firewall and network
+  configuration, these interfaces can be accessible from other machines.
+  They do not provide an application-level authentication boundary.
+  Operate the platform only in a trusted, isolated development environment.
+  Do not expose these interfaces directly to the public internet or
+  untrusted networks.
+- **Emergency-stop scope:** Dashboard emergency-stop functionality is
+  software-level command handling, not a safety-rated physical emergency
+  stop or certified safety mechanism.
 - Validation is simulation-only; physical hardware, hardware-in-the-loop,
   safety certification, and production deployment are not claimed.
 - Hosted CI does not exercise interactive Gazebo GUI scenarios.
@@ -370,12 +380,16 @@ Hosted CI does not exercise interactive Gazebo GUI scenarios.
 
 ## Release history
 
-| Release | Summary |
-| --- | --- |
-| v0.1.0 | Browser-controlled simulation, mapping, localization, navigation, and validation baseline |
-| v0.1.1 | Deterministic process ownership and runtime cleanup |
-| v0.1.2 | Managed component lifecycle foundation |
-| v0.1.3 | Fail-closed readiness contracts and authoritative lifecycle verification |
+| Version | GitHub publication status | Engineering milestone |
+| --- | --- | --- |
+| **v0.1.0** | Published GitHub release | Browser-controlled simulation, mapping, localization, navigation, and initial validation |
+| **v0.1.1** | Git tag; no separate GitHub release | Deterministic process ownership and runtime cleanup |
+| **v0.1.2** | Git tag; no separate GitHub release | Managed component lifecycle foundation |
+| **v0.1.3** | Published GitHub release | Fail-closed readiness contracts and authoritative lifecycle verification |
+
+The intermediate v0.1.1 and v0.1.2 milestones are preserved as Git
+tags. They should not be confused with separately published GitHub
+releases. The latest published release is v0.1.3.
 
 See the [v0.1.3 release notes](docs/v0.1.3_release_notes.md) and
 [published GitHub release](https://github.com/Devansh-Mishra-30/ros2-amr-platform/releases/tag/v0.1.3).
